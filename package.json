@@ -4,11 +4,8 @@
   "description": "Distributes the implementation skills used to develop with Hora Kit.",
   "type": "module",
   "files": [
-    "kit/",
-    "types/",
-    "!types/env/**"
+    "kit/"
   ],
-  "types": "./types/index.d.ts",
   "scripts": {
     "l": "npm run lint",
     "lint": "eslint .",
