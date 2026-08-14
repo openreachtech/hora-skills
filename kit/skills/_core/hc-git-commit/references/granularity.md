@@ -1,0 +1,102 @@
+# Granularity (What Belongs in One Commit)
+
+Conventions for deciding which changes are staged together. Referenced from `SKILL.md`.
+
+This is decided **while working**, not at commit time. By the time the work is finished and
+the tree holds six unrelated edits, the cheap moment to have made the decision has passed.
+
+## Principle: one commit is one decision
+
+A commit is the unit a reviewer accepts or rejects. It should therefore contain **exactly one
+decision** — one behavior change, one rename, one new artifact — and everything required to
+make that decision coherent, and nothing else.
+
+Two consequences follow.
+
+- A reviewer who disagrees with one decision can reject that commit **without** unpicking
+  unrelated work that happened to travel with it.
+- A later reader bisecting for a regression lands on a commit that changes **one** thing, so
+  the answer to "what broke it" is the commit itself, not a subset of it.
+
+## The "and" test
+
+If an accurate subject line needs the word "and", the commit is two commits.
+
+```
+Bad:  Add LockEmployeeSignInInputValidator and fix unrelated JSDoc typo
+Good: Add LockEmployeeSignInInputValidator
+      Fix JSDoc of EmployeeSignInMutationResolver#resolve()
+```
+
+The same applies to a subject that reaches for a vague umbrella noun to cover several
+changes — `Update auth handling`, `Various fixes`, `Cleanup`. The umbrella is the "and" in
+disguise.
+
+## Scale
+
+Keep commits small. **1 to 4 files** is the working range, and a single-file commit is a
+perfectly normal unit of work. A commit touching more than a handful of files is something to
+justify, not a default to settle into.
+
+Large commits are legitimate in a few cases — a mechanical rename across many files, a
+generated artifact, an initial scaffold. What makes them legitimate is that they are still
+**one decision**, and the reviewer only has to agree with that one decision once.
+
+## What to split
+
+| Split these apart | Why |
+| :-- | :-- |
+| Implementation and its tests | The test commit states what the implementation is expected to do, and reads as its own reviewable claim. Reviewing them separately keeps a weak test from being waved through on the strength of the code beside it. |
+| Refactor and behavior change | A refactor is reviewed by confirming behavior did **not** change. Mixed together, the reviewer cannot tell which lines were meant to alter behavior. |
+| Mechanical rename and logic edit | A rename is verified by scanning that it is uniform. One hand-edited line hidden among 200 renamed ones is invisible. |
+| Formatting or lint fixes and substance | Whitespace churn buries the two lines that matter. |
+| Dependency bumps and code that uses them | The bump is a separate risk with a separate rollback. |
+| Generated artifacts (`package-lock.json`, generated types) and hand-written source | Generated diffs are large and unreviewable; keeping them separate keeps the source commit readable. |
+| Unrelated files that happen to be dirty | They are unrelated. This is the most common cause of an accidental umbrella commit. |
+
+Registering a new artifact in an index or export barrel is its own commit as well. Adding the
+class and exporting it are two decisions, and the export is the one with a public-surface
+consequence.
+
+## What to keep together
+
+- A change and the **type annotations or JSDoc that describe it**. A signature and its
+  documented contract are one decision; splitting them leaves a commit whose documentation
+  contradicts its code.
+- A change and whatever is **required for the tree to stay lint-clean and coherent** at that
+  commit. If splitting would produce a commit that does not build, the split is in the wrong
+  place — find a different seam rather than committing a broken intermediate state.
+- A rename and **every call site it touches**. Half a rename is a broken tree.
+
+## Staging a mixed working tree
+
+When the tree already holds several unrelated changes, do not resolve it by committing
+everything at once.
+
+```bash
+git add -p            # stage one decision's hunks at a time
+git diff --cached     # confirm what is actually staged before committing
+git diff              # confirm what is being left for the next commit
+```
+
+- Never `git add -A` or `git add .` without first checking what that sweeps in. Untracked
+  scratch files, editor artifacts, and `.env` variants are picked up this way.
+- When hunks for two decisions are interleaved in the same file, stage the first, commit, and
+  then stage the second. `git add -p` splits hunks with `s` and edits them with `e`.
+- Verify the split before committing: each commit should pass lint on its own.
+
+## Anti-patterns
+
+- **Checkpoint commits.** `wip`, `save progress`, `saving` — a commit holding real changes
+  whose message records that time passed rather than what changed. If a checkpoint is needed
+  mid-work, use `git stash` or a local branch, and squash before the work is shared.
+  - This does **not** apply to the branch-opening `Start …` marker described in `SKILL.md`.
+    That commit is deliberately empty, so it makes no claim about granularity at all — there
+    is no change in it to have scoped correctly.
+- **End-of-day dumps.** A single commit holding everything touched since morning is the
+  default outcome of never deciding granularity. Decide it while working.
+- **Typo-fix follow-ups on unpushed work.** A `Fix typo` commit immediately after the commit
+  that introduced the typo is noise. Fold it in with `git commit --amend` — but only while
+  the commit is **unpushed**. Once pushed, a separate fix commit is correct.
+- **Splitting past the point of coherence.** A commit that does not build so that the "one
+  decision" rule could be honored more purely has traded a real property for a cosmetic one.

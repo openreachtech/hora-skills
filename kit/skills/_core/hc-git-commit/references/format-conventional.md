@@ -1,0 +1,92 @@
+# Format: Conventional Commits
+
+The message format used when a project resolves to `conventional`. Referenced from `SKILL.md`.
+
+## Shape
+
+```
+<type>[(<scope>)]: <lowercase summary>
+```
+
+- **`type`** is lowercase, from the table below, and is required — with one exception: the
+  empty branch-opening `Start …` marker described in `SKILL.md` carries **no prefix**, even in
+  a repository that otherwise uses this format. Write `Start dev`, not `chore: start dev`.
+- **`scope`** is optional, lowercase, in parentheses — the area of the codebase affected.
+- A **colon and a single space** separate the prefix from the summary.
+- The **summary is lowercase** (unless it opens with an identifier that is itself capitalized)
+  and in the **imperative mood**, with **no trailing period**.
+
+```
+feat: add LockEmployeeSignInInputValidator for employee sign-in validation
+fix: return 401 instead of 500 when the visa is expired
+refactor: update return types in LockClientMemberSignInMutationResolver
+test: add generateCommentFilesAssignments tests to client TaskCommentsQueryResolver
+feat(resolver): add unlockClientMemberSignIn mutation
+```
+
+## Types
+
+| type | use for |
+| :-- | :-- |
+| `feat` | a new capability visible to a caller or user |
+| `fix` | corrected behavior |
+| `refactor` | restructuring with no change in behavior |
+| `test` | tests added or changed, with no production-code change |
+| `docs` | documentation only |
+| `chore` | build config, dependencies, tooling |
+| `style` | formatting only, no code meaning changed |
+| `perf` | a change made for performance |
+
+- The type describes **the change**, not the file it lands in. A bug fixed inside a test
+  helper is `fix`, not `test`.
+- `refactor` asserts that behavior did not change. If behavior changed, it is `feat` or `fix`
+  — and the two should have been separate commits in the first place. See the granularity
+  detail file.
+- When two types would both fit, the commit is doing two things. Split it.
+
+## Summary
+
+The summary follows the same substance rules as any other format: name the concrete thing that
+changed, in the imperative mood, using the class-member notation given in `SKILL.md`.
+
+The characteristic failure of this format is a **redundant trailing clause** that restates the
+identifier already named:
+
+```
+Bad:  feat: add LockEmployeeSignInInputValidator for employee sign-in validation
+Good: feat: add LockEmployeeSignInInputValidator
+
+Bad:  feat: implement LockClientMemberSignInMutationResolver for locking client member sign-in accounts
+Good: feat: add LockClientMemberSignInMutationResolver
+```
+
+The identifier already carries the purpose. Add a clause only when it says something the name
+does not.
+
+```
+Good: fix: reject empty clientMemberId before the resolver reaches the model
+```
+
+Related: `add` and `implement` are not two different things. Use `add`.
+
+## Breaking changes
+
+A breaking change is marked with `!` before the colon, and explained in the body under a
+`BREAKING CHANGE:` trailer.
+
+```
+feat(resolver)!: require clientMemberId on unlockClientMemberSignIn
+
+BREAKING CHANGE: unlockClientMemberSignIn previously resolved the member from
+the visa. Callers must now pass clientMemberId explicitly.
+```
+
+- Mark the break even when it feels minor. The marker is what downstream tooling and release
+  notes key on.
+
+## Scope
+
+- Use a scope only when the repository already uses scopes consistently. A history where a
+  quarter of commits carry one is worse than a history with none.
+- Scope names an **area**, not a file: `resolver`, `validator`, `model`, `job` — not
+  `LockEmployeeSignInInputValidator`, which belongs in the summary.
