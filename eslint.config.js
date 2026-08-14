@@ -9,6 +9,7 @@ export default [
   {
     ignores: [
       './playground/**',
+      './kit/**',
     ],
   },
 
