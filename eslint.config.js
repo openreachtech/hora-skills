@@ -8,8 +8,11 @@ export default [
 
   {
     ignores: [
-      './playground/**',
+      // dist/ is generated build output (see the flatten skill), not source.
+      './dist/**',
+
       './kit/**',
+      './playground/**',
     ],
   },
 
