@@ -4,6 +4,7 @@
   "description": "Distributes the implementation skills used to develop with Hora Kit.",
   "type": "module",
   "files": [
+    "docs/",
     "kit/"
   ],
   "scripts": {
