@@ -67,13 +67,13 @@ After the prefix, name the subject, not the source tree:
   them — one level, with no grouping directories in between:
 
 ```
-lib/skills/
+kit/skills/
 ├── _core/     hc-*   Common/foundational (conventions applied across backend/frontend)
 ├── backend/   hb-*   Backend-specific
 └── frontend/  hf-*   Frontend-specific
 ```
 
-So every skill in the library is at `lib/skills/<domain>/<name>/SKILL.md`, and nowhere else. There
+So every skill in the library is at `kit/skills/<domain>/<name>/SKILL.md`, and nowhere else. There
 is no `backend/<framework>/`, no `frontend/<library>/components/`: what a nested directory would
 have said belongs in the name instead, where the reader of an installed skill can see it.
 
