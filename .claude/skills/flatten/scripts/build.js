@@ -131,7 +131,7 @@ const unexpectedRootEntries = readdirSync(sourceRoot, { withFileTypes: true })
 
 const skillEntries = domains
   .filter(it => !missingDomains.includes(it))
-  .flatMap(readDomainEntries)
+  .flatMap(it => readDomainEntries(it))
 
 const issues = [
   ...missingDomains.map(it => `Missing domain directory: kit/skills/${it}/`),
