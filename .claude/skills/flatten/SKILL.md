@@ -1,6 +1,6 @@
 ---
 name: flatten
-description: "Repository-specific build convention: kit/skills/ holds exactly three domain directories (_core/, backend/, frontend/), each containing one level of skill folders named hc-*, hb-* or hf-*, and the build copies those folders into dist/skills/ unchanged — dropping only the domain level — to produce the flat .claude/skills/ layout that consuming repositories install. kit/rules/ and kit/share/ are copied into dist/rules/ and dist/share/ unchanged as well. Use when rebuilding the dist/ output, or when adding, renaming or placing a skill under kit/skills/."
+description: "Repository-specific build convention: kit/skills/ holds exactly three domain directories (_core/, backend/, frontend/), each containing one level of skill folders named hc-*, hb-* or hf-*, and the build copies those folders into dist/skills/ unchanged — dropping only the domain level — to produce the flat .claude/skills/ layout that consuming repositories install. Use when rebuilding the dist/ output, or when adding, renaming or placing a skill under kit/skills/."
 ---
 
 # Flatten
@@ -8,8 +8,6 @@ description: "Repository-specific build convention: kit/skills/ holds exactly th
 Consuming repositories install skills as a single flat list directly under `.claude/skills/`, with no domain subdirectories. `dist/skills/` is the build output of this repository that already has that flat shape, ready to be installed as-is.
 
 `kit/skills/` is organized by domain for whoever maintains it, but only by one level, and each skill's folder is already named exactly as it will be installed. Flattening is therefore the whole of the build: drop the domain level, copy everything else through untouched.
-
-`kit/rules/` and `kit/share/` need no flattening — consuming repositories install them at the same nested paths they already have (e.g. `kit/rules/frontend/` → `.claude/rules/frontend/`). The build script copies both directly into `dist/rules/` and `dist/share/` unchanged.
 
 ## Source layout
 
@@ -47,7 +45,7 @@ Two characters buy two things. A consuming repository installs these skills side
 node .claude/skills/flatten/scripts/build.js
 ```
 
-It validates the whole source tree first (below), then deletes `dist/skills/`, `dist/rules/` and `dist/share/` outright and recreates them: `dist/` is a function of the current source alone. Without the deletion, a skill renamed or removed at the source would keep its stale folder in `dist/` indefinitely, and the build would go on shipping a skill that no longer exists — a failure invisible in a diff, because nothing about the stale folder changes.
+It validates the whole source tree first (below), then deletes `dist/skills/` outright and recreates it: `dist/` is a function of the current source alone. Without the deletion, a skill renamed or removed at the source would keep its stale folder in `dist/` indefinitely, and the build would go on shipping a skill that no longer exists — a failure invisible in a diff, because nothing about the stale folder changes.
 
 Each skill folder is then copied to `dist/skills/<folder name>/` **byte for byte**. Nothing is rewritten:
 

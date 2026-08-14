@@ -14,30 +14,6 @@ const DOMAIN_PREFIX = {
 }
 
 /**
- * Delete a dist/ output directory outright, before anything is copied into dist/.
- *
- * @param {string} name - Directory name directly under dist/ (e.g. 'skills', 'rules', 'share').
- * @returns {void}
- */
-function emptyOutput (name) {
-  rmSync(join(repoRoot, 'dist', name), { recursive: true, force: true })
-}
-
-/**
- * Copy a kit/ directory into dist/ as-is, with no flattening.
- *
- * @param {string} name - Directory name directly under kit/ and dist/ (e.g. 'rules', 'share').
- * @returns {void}
- */
-function copyAsIs (name) {
-  cpSync(
-    join(repoRoot, 'kit', name),
-    join(repoRoot, 'dist', name),
-    { recursive: true }
-  )
-}
-
-/**
  * Read the `name:` value from a SKILL.md's frontmatter.
  *
  * @param {string} skillMdPath - Path to the SKILL.md to read.
@@ -204,9 +180,7 @@ if (issues.length > 0) {
   )
 }
 
-emptyOutput('skills')
-emptyOutput('rules')
-emptyOutput('share')
+rmSync(outputRoot, { recursive: true, force: true })
 
 mkdirSync(outputRoot, { recursive: true })
 
@@ -218,8 +192,4 @@ skillEntries.forEach(({ absolutePath, folderName }) => {
   )
 })
 
-copyAsIs('rules')
-copyAsIs('share')
-
 process.stdout.write(`Flattened ${skillEntries.length} skills into ${outputRoot}\n`)
-process.stdout.write('Copied kit/rules and kit/share into dist/ as-is\n')
