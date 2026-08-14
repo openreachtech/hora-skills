@@ -17,14 +17,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/openreachtech/todo-fulfill-here.git"
+    "url": "git+https://github.com/openreachtech/hora-skills.git"
   },
   "author": "Open Reach Tech Inc.",
   "license": "UNLICENSED",
   "bugs": {
-    "url": "https://github.com/openreachtech/todo-fulfill-here/issues"
+    "url": "https://github.com/openreachtech/hora-skills/issues"
   },
-  "homepage": "https://github.com/openreachtech/todo-fulfill-here#readme",
+  "homepage": "https://github.com/openreachtech/hora-skills#readme",
   "dependencies": {
   },
   "devDependencies": {
