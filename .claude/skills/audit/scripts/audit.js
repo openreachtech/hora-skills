@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const repoRoot = fileURLToPath(new URL('../../../../', import.meta.url))
-const sourceRoot = join(repoRoot, 'lib/skills')
+const sourceRoot = join(repoRoot, 'kit/skills')
 const namePattern = /^h[cbf]-[a-z0-9-]{1,61}$/u
 
 const DOMAIN_PREFIX = {
@@ -71,7 +71,7 @@ function findNestedSkillMds (
 /**
  * Read one entry of a domain directory.
  *
- * @param {string} domain - Domain directory name directly under lib/skills/ (e.g. '_core').
+ * @param {string} domain - Domain directory name directly under kit/skills/ (e.g. '_core').
  * @param {import('node:fs').Dirent} dirent - Child of the domain directory.
  * @returns {{domain: string, folderName: string, path: string, isDirectory: boolean, hasSkillMd: boolean, name: string | null, nestedSkillMds: Array<string>}} The entry.
  */
@@ -80,7 +80,7 @@ function readDomainEntry (
   dirent
 ) {
   const absolutePath = join(sourceRoot, domain, dirent.name)
-  const path = `lib/skills/${domain}/${dirent.name}`
+  const path = `kit/skills/${domain}/${dirent.name}`
 
   if (!dirent.isDirectory()) {
     return {
@@ -113,7 +113,7 @@ function readDomainEntry (
 /**
  * Read every entry of one domain directory.
  *
- * @param {string} domain - Domain directory name directly under lib/skills/ (e.g. '_core').
+ * @param {string} domain - Domain directory name directly under kit/skills/ (e.g. '_core').
  * @returns {Array<{domain: string, folderName: string, path: string, isDirectory: boolean, hasSkillMd: boolean, name: string | null, nestedSkillMds: Array<string>}>} One entry per child of the domain directory.
  */
 function readDomainEntries (domain) {
@@ -127,7 +127,7 @@ const missingDomains = domains.filter(it => !existsSync(join(sourceRoot, it)))
 
 const unexpectedRootEntries = readdirSync(sourceRoot, { withFileTypes: true })
   .filter(it => !(it.isDirectory() && domains.includes(it.name)))
-  .map(it => `lib/skills/${it.name}`)
+  .map(it => `kit/skills/${it.name}`)
 
 const skillEntries = domains
   .filter(it => !missingDomains.includes(it))
@@ -136,7 +136,7 @@ const skillEntries = domains
 const problemGroups = [
   {
     heading: 'Missing domain directory',
-    lines: missingDomains.map(it => `lib/skills/${it}/`),
+    lines: missingDomains.map(it => `kit/skills/${it}/`),
   },
   {
     heading: 'Not one of the three domain directories',
@@ -189,7 +189,7 @@ const problemGroups = [
 ]
   .filter(it => it.lines.length > 0)
 
-process.stdout.write(`Checked ${skillEntries.length} skills under lib/skills/\n`)
+process.stdout.write(`Checked ${skillEntries.length} skills under kit/skills/\n`)
 
 problemGroups.forEach(({ heading, lines }) => {
   process.stdout.write(`\n${heading}: ${lines.length}\n\n`)

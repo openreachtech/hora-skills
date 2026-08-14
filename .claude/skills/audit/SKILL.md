@@ -1,6 +1,6 @@
 ---
 name: audit
-description: "Repository-specific check that every skill under lib/skills/ sits one level below its domain directory, carries the domain's hc-/hb-/hf- prefix, and declares a `name:` equal to its own folder name — the same rules the flatten build aborts on, reported all at once with a non-zero exit for CI. Use before committing a new, renamed or moved skill. It reports only; it renames and moves nothing, and it checks no frontmatter field other than `name:`."
+description: "Repository-specific check that every skill under kit/skills/ sits one level below its domain directory, carries the domain's hc-/hb-/hf- prefix, and declares a `name:` equal to its own folder name — the same rules the flatten build aborts on, reported all at once with a non-zero exit for CI. Use before committing a new, renamed or moved skill. It reports only; it renames and moves nothing, and it checks no frontmatter field other than `name:`."
 ---
 
 # Audit
@@ -11,9 +11,9 @@ That protection is only as real as the layout. A skill placed one directory deep
 
 ## What is checked
 
-For every entry directly under `lib/skills/_core/`, `lib/skills/backend/` and `lib/skills/frontend/`:
+For every entry directly under `kit/skills/_core/`, `kit/skills/backend/` and `kit/skills/frontend/`:
 
-- **A domain directory that is missing, or an entry directly under `lib/skills/` that is not one of the three, is a failure.** There is no fourth domain, and an entry outside the three has no prefix and no place in the output.
+- **A domain directory that is missing, or an entry directly under `kit/skills/` that is not one of the three, is a failure.** There is no fourth domain, and an entry outside the three has no prefix and no place in the output.
 - **An entry under a domain that is not a directory, or a directory with no `SKILL.md` directly inside it, is a failure.** Only skill folders belong there, and a folder with no `SKILL.md` installs nothing.
 - **A `SKILL.md` anywhere below a skill folder's own top level is a failure.** The one-level layout is what makes the folder name the skill name; a skill nested inside another has no name of its own. A skill folder's `references/` and `scripts/` subdirectories are its own files, never more skills.
 - **A folder name that is not `hc-`/`hb-`/`hf-` followed by 1–61 characters of `[a-z0-9-]` is a failure.** The name is joined onto `dist/skills/` as a path segment, so a value carrying `/` or `..` would land the folder somewhere else entirely; 64 characters is the limit an installed skill name has to stay within, of which the prefix takes 3. A single case keeps two names from folding onto one folder on a case-insensitive filesystem (macOS, Windows default).
@@ -24,7 +24,7 @@ Duplicate names are not checked, because they cannot occur. Two skills in one do
 
 Nothing else is checked here. Description length, quoting, and the rest of how a `SKILL.md` is written belong to the skill-writing convention, which owns them.
 
-The walk starts at `lib/skills/` and goes nowhere else. This repository's own skills under `.claude/skills/` — this audit and the flatten build — are tooling for maintaining the library, not library content: they are never installed into a consuming repository, so they never enter the flat namespace being protected here, and none of the rules above apply to them. That is why they are free to carry an unprefixed one-word name of their own.
+The walk starts at `kit/skills/` and goes nowhere else. This repository's own skills under `.claude/skills/` — this audit and the flatten build — are tooling for maintaining the library, not library content: they are never installed into a consuming repository, so they never enter the flat namespace being protected here, and none of the rules above apply to them. That is why they are free to carry an unprefixed one-word name of their own.
 
 These are exactly the failures the flatten build aborts on, and they are stated identically in both places on purpose. The build enforces them because a violation would destroy or misplace its output; this audit enforces them so a CI job can reject the commit before anyone runs a build. Neither is a substitute for the other, so the rule is written out in both rather than shared through an import that would tie one skill's script to the other's — and a test pins the two copies of the name pattern to each other, so changing it in one place alone fails.
 

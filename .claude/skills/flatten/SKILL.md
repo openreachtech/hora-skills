@@ -1,19 +1,19 @@
 ---
 name: flatten
-description: "Repository-specific build convention: lib/skills/ holds exactly three domain directories (_core/, backend/, frontend/), each containing one level of skill folders named hc-*, hb-* or hf-*, and the build copies those folders into dist/skills/ unchanged — dropping only the domain level — to produce the flat .claude/skills/ layout that consuming repositories install. lib/rules/ and lib/share/ are copied into dist/rules/ and dist/share/ unchanged as well. Use when rebuilding the dist/ output, or when adding, renaming or placing a skill under lib/skills/."
+description: "Repository-specific build convention: kit/skills/ holds exactly three domain directories (_core/, backend/, frontend/), each containing one level of skill folders named hc-*, hb-* or hf-*, and the build copies those folders into dist/skills/ unchanged — dropping only the domain level — to produce the flat .claude/skills/ layout that consuming repositories install. kit/rules/ and kit/share/ are copied into dist/rules/ and dist/share/ unchanged as well. Use when rebuilding the dist/ output, or when adding, renaming or placing a skill under kit/skills/."
 ---
 
 # Flatten
 
 Consuming repositories install skills as a single flat list directly under `.claude/skills/`, with no domain subdirectories. `dist/skills/` is the build output of this repository that already has that flat shape, ready to be installed as-is.
 
-`lib/skills/` is organized by domain for whoever maintains it, but only by one level, and each skill's folder is already named exactly as it will be installed. Flattening is therefore the whole of the build: drop the domain level, copy everything else through untouched.
+`kit/skills/` is organized by domain for whoever maintains it, but only by one level, and each skill's folder is already named exactly as it will be installed. Flattening is therefore the whole of the build: drop the domain level, copy everything else through untouched.
 
-`lib/rules/` and `lib/share/` need no flattening — consuming repositories install them at the same nested paths they already have (e.g. `lib/rules/frontend/` → `.claude/rules/frontend/`). The build script copies both directly into `dist/rules/` and `dist/share/` unchanged.
+`kit/rules/` and `kit/share/` need no flattening — consuming repositories install them at the same nested paths they already have (e.g. `kit/rules/frontend/` → `.claude/rules/frontend/`). The build script copies both directly into `dist/rules/` and `dist/share/` unchanged.
 
 ## Source layout
 
-`lib/skills/` contains exactly three directories, and nothing else:
+`kit/skills/` contains exactly three directories, and nothing else:
 
 | Domain directory | Prefix | What it holds |
 |---|---|---|
@@ -24,7 +24,7 @@ Consuming repositories install skills as a single flat list directly under `.cla
 Each domain directory contains skill folders and nothing else. Every skill is therefore at exactly this depth:
 
 ```
-lib/skills/<domain>/<name>/SKILL.md
+kit/skills/<domain>/<name>/SKILL.md
 ```
 
 A skill folder may hold its own subdirectories (`references/`, `scripts/`), but no `SKILL.md` below its top level — those subdirectories are the skill's own files, never more skills. There are no intermediate grouping directories: no `backend/renchan/`, no `frontend/nuxt-vue/components/`, no `_core/declarations/classes/`.
@@ -34,7 +34,7 @@ A skill folder may hold its own subdirectories (`references/`, `scripts/`), but 
 A skill folder's name is the skill's `name:`, and the folder name it gets under `dist/skills/`, all one string:
 
 ```
-lib/skills/frontend/hf-cp-table/   name: hf-cp-table   →   dist/skills/hf-cp-table/
+kit/skills/frontend/hf-cp-table/   name: hf-cp-table   →   dist/skills/hf-cp-table/
 ```
 
 The prefix is part of the name: the skill is invoked as `/hf-cp-table`. The `h` stands for **hora**, from Hora Kit — the Open Reach Tech product this skill library is part of — and the second character is the domain: `c` for `_core`, `b` for `backend`, `f` for `frontend`.
@@ -52,13 +52,13 @@ It validates the whole source tree first (below), then deletes `dist/skills/`, `
 Each skill folder is then copied to `dist/skills/<folder name>/` **byte for byte**. Nothing is rewritten:
 
 - The `name:` line stays. The field and the folder name are the same string by construction, so there is no second, divergent source of truth to remove.
-- No source note is appended. The source path is `lib/skills/<domain>/<name>/`, and the prefix names the domain, so an installed `hf-cp-table/` already says where it came from. A footer repeating it would be text to maintain that carries nothing.
+- No source note is appended. The source path is `kit/skills/<domain>/<name>/`, and the prefix names the domain, so an installed `hf-cp-table/` already says where it came from. A footer repeating it would be text to maintain that carries nothing.
 
 Validation runs before the deletion, so a source tree that cannot produce a valid flat namespace leaves the previous output untouched rather than half-replaced. Every problem found is reported at once, not one per run:
 
 | Aborts the build | Why |
 |---|---|
-| An entry directly under `lib/skills/` that is not one of the three domain directories | It has no domain, so no prefix and no place in the output. |
+| An entry directly under `kit/skills/` that is not one of the three domain directories | It has no domain, so no prefix and no place in the output. |
 | A non-directory entry directly under a domain | Only skill folders belong there. |
 | A skill folder with no `SKILL.md` | There is nothing to install. |
 | A `SKILL.md` below a skill folder's top level | The one-level layout is the guarantee that the folder name is the skill name; a nested skill would have no name of its own. |
