@@ -28,6 +28,8 @@ export default [
           .filter(it => it.selector !== 'ClassDeclaration[superClass=null]:not(:has(MethodDefinition[kind=constructor])), ClassDeclaration[superClass=null]:has(MethodDefinition[kind=constructor]):not(:has(MethodDefinition[kind=constructor] AssignmentExpression[left.object.type=ThisExpression]))'), // Kick out `Do not declare static class`
       ],
 
+      'jsdoc/require-jsdoc': 'off',
+
       'max-classes-per-file': 'off',
     },
   },
