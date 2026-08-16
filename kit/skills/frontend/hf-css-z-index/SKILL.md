@@ -55,7 +55,9 @@ Here we liken this notation to "chapter and verse". The **chapter** is which lay
   + 2
   ```
 
-Always keeping the same notation serves to show later workers how to use `--value-z-index-layer-*` — that is, the convention itself. The existing styles become the example, so whoever writes z-index next can follow the same shape without hesitation. As a secondary benefit, it also keeps diffs small when making changes.
+Always keeping the same notation shows later workers how to use `--value-z-index-layer-*` — that is, the convention
+itself. The existing styles become the example, so whoever writes z-index next can follow the same shape without
+hesitation. As a secondary benefit, it also keeps diffs small when making changes.
 
 ## Within the same layer, stack in steps of 1000
 

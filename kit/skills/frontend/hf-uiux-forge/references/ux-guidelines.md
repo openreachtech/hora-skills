@@ -154,10 +154,10 @@ modals, tables, or toasts from scratch.
 
 Scope: the legal obligations a front-end developer actually controls in the interface. This
 is not legal advice — it's the set of UI-level requirements that keep generated interfaces
-on the right side of common accessibility, privacy, and consumer-protection law. When a
-feature clearly implicates any of these, treat the relevant point as a hard rule; when in
-doubt or when a jurisdiction-specific obligation is involved, flag it for the developer/
-their counsel rather than guessing.
+compliant with common accessibility, privacy, and consumer-protection law. When a feature
+clearly implicates any of these, treat the relevant point as a hard rule; when in doubt or
+when a jurisdiction-specific obligation is involved, flag it for the developer/ their
+counsel rather than guessing.
 
 - **Accessibility is a legal baseline, not just best practice.** In many jurisdictions the
   WCAG target in §1 is legally mandated (e.g. ADA in the US, Section 508 for US federal,
@@ -290,7 +290,7 @@ Named principles behind good product decisions. Apply them to layout, flow, and 
 > **Use these to help users, never to manipulate them. No dark patterns — this is a hard
 > rule, not a heuristic.** The persuasion-oriented principles above and in the wider
 > catalog (Scarcity, Decoy Effect, Social Proof, Reciprocity, Authority Bias, Loss
-> Aversion, Variable Reward, Bandwagon, Sunk Cost) are easy to weaponize. Never fabricate
+> Aversion, Variable Reward, Bandwagon, Sunk Cost) are easy to misuse. Never fabricate
 > scarcity or social proof, use confirmshaming, force continuity, obscure exits/costs, or
 > preselect paid options. If a requested pattern would deceive or trap the user, flag it
 > instead of building it.

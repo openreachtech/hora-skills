@@ -23,7 +23,7 @@ client differs. Only the blank questionnaire is bundled here (`templates/uiux-co
 - `hf-uiux-forge` or `hf-uiux-audit` looked for a context file (`uiux-context.md`, or any
   `uiux-context-<suffix>.md`) and found none — they route here to create one, then resume.
 
-## Step 1 — Look before you write (never clobber)
+## Step 1 — Look before you write (never overwrite)
 
 Search the workspace for an existing context file: `uiux-context.md` and any
 `uiux-context-<suffix>.md` (the `uiux-context-` prefix followed by any word, e.g.
@@ -42,9 +42,9 @@ older file predates that convention.
 Create the context files under `<project-root>/ai/contexts/` — that directory is their
 canonical home, so both skills discover them there. Make the `ai/contexts/` directory if it
 doesn't exist yet, then copy the bundled questionnaire `templates/uiux-context.md` into it
-as `ai/contexts/uiux-context.md` (and any `ai/contexts/uiux-context-<suffix>.md` for
-overflow topics). Keep the section structure and the `Q:` prompts intact — downstream skills
-and future edits rely on it.
+as `ai/contexts/uiux-context.md` (and any `ai/contexts/uiux-context-<suffix>.md` for extra
+topics). Keep the section structure and the `Q:` prompts intact — downstream skills and
+future edits rely on it.
 
 ## Step 3 — Fill in everything discoverable, mark the rest
 

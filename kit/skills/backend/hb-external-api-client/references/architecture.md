@@ -89,7 +89,7 @@ app/documentApiClient/
 - **Why separate files**: one class per file is a repository-wide convention
   ([conventions.md](./conventions.md)). The base launcher and the derived launcher are separate files
   too, so that what is shared across the service (connection settings) and what is specific to the
-  operation (tying Payload/Capsule together) are physically apart.
+  operation (tying Payload/Capsule together) are kept in separate files.
 
 ## The classes the module provides (swapped in from `Payload` / `Capsule` / `Launcher`)
 
@@ -123,5 +123,6 @@ the transport step differs**.
 | **Direct HTTP** (default) | The `fetch` built into `BaseLauncher` | No vendor SDK / hitting REST directly | Nothing extra to implement. Define `clientConfig` / `Payload` / `Capsule` ([launcher.md](./launcher.md)) |
 | **SDK wrapping** | The SDK the vendor provides | An official SDK/client exists | The launcher holds the SDK and overrides `launchRequest()` ([sdk-wrapper.md](./sdk-wrapper.md) — an interim implementation) |
 
-- A new REST integration is **direct HTTP** as a rule. SDK wrapping is an **interim implementation**
-  until rocket-client supports it properly, so use it only where an SDK is provided.
+- A new REST integration is **direct HTTP** by default. SDK wrapping is an **interim
+  implementation** until rocket-client supports it properly, so use it only where an SDK is
+  provided.

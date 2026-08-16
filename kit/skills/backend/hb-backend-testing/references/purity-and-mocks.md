@@ -61,8 +61,8 @@ naturally trigger).
   method under test; never call `Model.findOne` / `findAll` / `update` directly in the test body to
   fetch or verify state. Exercising the method *is* the test — re-reading the row yourself tests the
   ORM, not the code under test.
-- A double that is *only ever* borrowed as a stub must still be exercised **for real** in its own test
-  (below) — never let it go untested.
+- A double that is *only ever* borrowed as a stub must still be exercised **for real** in its own
+  test (below) — always test it too.
 
 ## Test doubles live under `tests/`, and are themselves tested
 

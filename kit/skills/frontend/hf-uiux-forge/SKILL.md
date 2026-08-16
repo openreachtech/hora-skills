@@ -29,8 +29,8 @@ fabricate company rules.
 
 ## Step 2 — Determine the source of truth and load its module (always)
 
-The single most important decision is **what defines the design** for this task. Pick the
-mode that fits and read the matching module in full. This is the seam the skill is built
+The most important decision is **what defines the design** for this task. Pick the mode
+that fits and read the matching module in full. This is the seam the skill is built
 around; do not skip it.
 
 - **Figma / MCP** — the developer references a Figma file, frame, or component, OR a Figma
@@ -55,16 +55,15 @@ proceed. Do not stall.
 
 ## Step 3 — Load the project/client context (if present)
 
-Look for a project context file in the workspace/session — their canonical home is
-`<project-root>/ai/contexts/` (also check the project root for older files). **Match by
-filename:** treat the file named `uiux-context.md` (case-insensitive) as the project context
-file, along with any `uiux-context-<suffix>.md` — the `uiux-context-` prefix followed by any
-word (e.g. `uiux-context-notes.md`, `uiux-context-billing.md`) — as additional project
-context. Read them all together. Also accept a file the developer attaches this session that clearly
-describes the overall application. If several files match, read them all as one combined
-context; if two of them conflict, prefer the most specific/most recently provided and note
-which you used. This file is project-specific and is
-deliberately NOT bundled in the skill, because each client differs.
+Look for a project context file in the workspace/session — their usual location is
+`<project-root>/ai/contexts/` (also check the project root for older files). **Match by filename:**
+treat the file named `uiux-context.md` (case-insensitive) as the project context file, along with
+any `uiux-context-<suffix>.md` — the `uiux-context-` prefix followed by any word (e.g.
+`uiux-context-notes.md`, `uiux-context-billing.md`) — as additional project context. Read them all
+together. Also accept a file the developer attaches this session that clearly describes the overall
+application. If several files match, read them all as one combined context; if two of them conflict,
+prefer the most specific/most recently provided and note which you used. This file is
+project-specific and is deliberately NOT bundled in the skill, because each client differs.
 
 If found, read it in full and treat it as binding context: app type/users/goals; scope and
 out-of-scope (never build what's marked out of scope — flag it instead); tech stack,

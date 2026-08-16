@@ -27,12 +27,12 @@ detail files is this principle applied to one kind of data.
 
 - **Why**: when the canonical tables stay minimal and non-redundant, each fact lives in exactly one
   place, so responsibility boundaries are clear and the structure stays flexible as requirements
-  change — which is what makes the schema stable over the long life of a project. The moment
-  derived or presentational data leaks into the core, that data drifts out of sync, ossifies the
-  schema, and every later change has to reconcile duplicates.
+  change — which keeps the schema stable over the project's long life. The moment derived or
+  presentational data leaks into the core, that data drifts out of sync, makes the schema rigid,
+  and every later change has to reconcile duplicates.
 - **When a rule and performance conflict, do not compromise the core** — add a separate, additive,
-  rebuildable structure (a summary table, a search DB) beside it. A query-speed concern must never
-  be paid for by corrupting the write model.
+  rebuildable structure (a summary table, a search DB) beside it. Never fix a query-speed concern
+  by corrupting the write model.
 
 This skill is design-level. Whenever a decision needs to be *written*, cross to `hb-sequelize-migration`
 (column types, `DATE(3)`, `TEXT('medium')`, `JSON`, no DB foreign-key constraint, indexes) and

@@ -23,8 +23,8 @@ and jobs they enqueue (`hb-renchan-job-bullmq`). This skill is about the
 **wiring layer** that mounts all of them onto an endpoint.
 
 > The class names, endpoints, and ports below (`CustomerGraphqlServerEngine`, `/graphql-customer`, …)
-> are **illustrative placeholders**; the pattern is the general Renchan convention. Adapt the anchors
-> to whatever roles your project actually has.
+> are **placeholders**; the pattern is the general Renchan convention. Adapt the anchors to whatever
+> roles your project has.
 
 ## What an engine configures (the whole surface)
 
@@ -232,10 +232,9 @@ generateFilterHandler () {
   `hasSchemaPermission` (this principal may call this specific operation). Each reads `context.visa`;
   keep the order and the early returns.
 - **`schemasToSkipFiltering` is security-critical.** An entry here is **fully public**. Only put
-  genuinely unauthenticated operations in it; never park a sensitive mutation there to "make it work".
-  Conversely, a public operation missing from the list will 401. This is exactly check #3 of
-  `hb-security-audit` — every operation authenticated unless intentionally
-  public.
+  genuinely unauthenticated operations in it; never place a sensitive mutation there to "make it
+  work". Conversely, a public operation missing from the list will 401. This is exactly check #3 of
+  `hb-security-audit` — every operation authenticated unless intentionally public.
 - **Do not do real work in the filter.** It decides allow/deny from the visa only; it must not run
   business queries or mutate state.
 

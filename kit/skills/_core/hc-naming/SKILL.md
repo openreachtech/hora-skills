@@ -11,7 +11,8 @@ Summarizes naming conventions.
 
 - Class names are written in UpperCamelCase.
 - Use the singular form of a noun.
-- Reason: if a plural noun is used, it becomes impossible to define a variable name for "an array holding instances of that class." This is because there is no way to express "the plural of instances of a plural-named class."
+- Reason: if a plural noun is used, you cannot define a variable name for "an array holding instances of that class."
+  This is because there is no way to express "the plural of instances of a plural-named class."
 - When no specific class name is dictated, name the class to describe the logic it encapsulates.
 
 ```javascript

@@ -1,7 +1,7 @@
 # The Capability Matrix
 
 One table, built from the API surface, that says of every operation the product can perform: where a user
-reaches it, what they press, what that runs, and whether any of it was actually observed.
+reaches it, what they press, what that runs, and whether any of it was observed.
 
 ## Why it starts at the API
 

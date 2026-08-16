@@ -1,7 +1,7 @@
 ---
 name: hb-build-e2e-test-environment
 description: >
-  Build, run and debug the hand-operated local E2E environment under `e2e/docker/` — a
+  Build, run and debug the manual local E2E environment under `e2e/docker/` — a
   container-compose stack of the product's real middleware (system of record, cache and job queue,
   event transport, read model, object storage), its own seed set, and the `up` / `start` / `seed`
   / `clean` / `down` scripts that drive it. Stated per component role, so any stack maps onto it.
@@ -34,26 +34,27 @@ the project's backend test-placement convention, and the two never touch
 > environment `live` ([§3](#3-environment-a-dedicated-environment-name-with-an-env-file-of-its-own)).
 > Sample code follows the project's lint style (no semicolons, 2-space indent, trailing commas).
 
-## Grand principle: a half-built stack must never hand itself over
+## Core principle: hand over only a fully built stack
 
-An operator working through the UI **cannot tell a missing piece of infrastructure from a broken
-feature**. If the transport's channels were never created — the step the example fills with Kafka
-topic creation — the screen simply does not update, and that looks exactly like a product bug. An
-environment that comes up ninety percent of the way and says nothing turns every manual session into
-a false bug report, which is worse than one that refused to start.
+To an operator working through the UI, **a missing piece of infrastructure looks exactly like a
+broken feature**. If the transport's channels were never created — the step the example fills with
+Kafka topic creation — the screen simply does not update, and that looks exactly like a product bug.
+An environment that comes up ninety percent of the way without warning makes every manual session a
+false bug report — worse than one that refused to start.
 
 So: **every step either completes or aborts the build, naming the log to read.** Four properties get
-you there, and the rest of this skill is how:
+you there, and the rest of this skill explains how:
 
-1. **One command per intention, fixed order inside each.** Nothing is assembled by hand, the steps
-   within a script are ordered by dependency, and which script to run is the operator's call rather
-   than something a script infers ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
-2. **Private.** Nothing the compose file starts is reachable from outside the machine, and — where the
-   two are meant to run at once — nothing it starts collides with the developer's own stack
+1. **One command per intention, fixed order inside each.** Every step is scripted, the steps within
+   a script are ordered by dependency, and which script to run is the operator's call rather than
+   something a script infers
+   ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+2. **Private.** Everything the compose file starts is reachable only from this machine, and — where
+   the two are meant to run at once — everything it starts stays clear of the developer's own stack
    ([§4](#4-ports-are-published-to-loopback-only-on-a-dedicated-block)).
 3. **Disposable, and predictably so.** Each command's effect on the data is fixed and stated in its
-   name — rebuild, start, seed, clean — so nothing has to detect anything and the operator is never
-   surprised by what survived ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+   name — rebuild, start, seed, clean — so no step has to detect state and the operator always knows
+   what survived ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
 4. **Complete.** The **application and its background processes** are started by the same script, not
    left for the operator to remember. Middleware being up is not the same as data moving
    ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
@@ -67,7 +68,7 @@ of the skill apply to a stack it was not written in.
 | Role in the system | What the examples in this skill use | Other stacks fill the same role with |
 | --- | --- | --- |
 | **system of record** — where the product's writes land | a relational database configured to write a row-format change log | PostgreSQL with logical replication, SQL Server with CDC enabled, a document store with change streams, a local emulator of a managed database |
-| **cache and job queue** — where deferred work is handed through | Redis behind the job queue | RabbitMQ, a local queue emulator, a table-backed queue in the system of record, an in-memory cache server |
+| **cache and job queue** — where deferred work is queued | Redis behind the job queue | RabbitMQ, a local queue emulator, a table-backed queue in the system of record, an in-memory cache server |
 | **event transport** — what carries change events between processes | Kafka in single-node mode | Redpanda, NATS JetStream, a pub/sub or stream emulator, RabbitMQ, the database's own notification channel |
 | **change propagation** — what turns a write in the system of record into an update of the read model | a CDC connector running in Kafka Connect | a CDC runner without Connect, an outbox table plus a poller, a database trigger, an application-level write to both stores |
 | **read model / search** — the derived store screens read from | a search cluster with an analyzer plugin baked in | another search engine, a materialized view, a denormalized table, a cache the read path is served from |
@@ -129,26 +130,31 @@ and deliberately lives outside `e2e/`: the stack's own `.env.<stack-env>`, commi
 repository root beside the other environments' files, where the environment facade finds it
 ([§3](#3-environment-a-dedicated-environment-name-with-an-env-file-of-its-own)).
 
-- **Nothing here belongs to the automated test suite.** This directory holds no test files, and
-  `npm run test` neither runs nor requires any part of it. The unit suite's promise is that it runs
-  in seconds, on a local file database, with no services running; adding this environment to the
-  repository must not change that in any way.
+- **This directory is entirely separate from the automated test suite.** This directory holds no
+  test files, and `npm run test` does not run or use any part of it. The unit suite's promise is
+  that it runs in seconds, on a local file database, with no services running; adding this
+  environment to the repository must not change that in any way.
 - **The separation is of namespaces, not of the machine.** While the stack is up, its resident
   processes — the application, the worker daemons, and anything that **polls on an interval** —
   keep taking CPU and memory the whole time, with no operator touching a screen. Any memory-hungry
   job run beside them — the unit suite in parallel workers is the classic — competes for the same
   physical memory, and a job that fit on an idle machine can be killed by the operating system on
-  one where the stack resides. Run heavy jobs after `down.sh`, or count the stack's resident
-  footprint against the memory the job budgets for itself.
+  one where the stack resides. Two defences, and they are complementary: the compose file **hard-caps
+  every container with `mem_limit` and holds the sum of those caps to a conservative slice of physical
+  memory** (~40%, sized so two stacks can be up at once), so the stack's *ceiling* is bounded no matter
+  what runs beside it ([compose-definition.md](./references/compose-definition.md)); and even under
+  that ceiling, run heavy jobs after `down.sh` — or count the stack's capped footprint against the
+  memory the job budgets for itself — because the ceiling protects the machine, it does not make the
+  memory free.
 - **The compose file for E2E is its own file**, not the development one. The development stack is a
   place to *work*; this one is built to be filled from scratch and thrown away — it binds different
-  ports, holds a smaller heap, and is expected to be destroyed. Sharing one file would force the two
-  to compromise.
+  ports, hard-caps every container's memory and holds a smaller heap, and is expected to be destroyed.
+  Sharing one file would force the two to compromise.
 - **Everything the compose file references by relative path lives beside it, under `docker/`.**
   `build:` contexts, init SQL, config files a service mounts: compose resolves all of them against
-  the compose file's own directory, so a path that worked from the repository root resolves somewhere
-  else here. Keeping them in one directory means the definition moves as a unit, and no entry has to
-  climb out with `../`.
+  the compose file's own directory, so a path that worked from the repository root resolves
+  somewhere else here. Keeping them in one directory means the definition moves as a unit, and no
+  entry has to point outside the directory with `../`.
 - **Git-ignore what the run produces** — the process logs and the per-run file storage. The
   definition is committed; the output of a session is not.
 
@@ -162,10 +168,10 @@ The stack runs under an **environment name that belongs to the E2E environment a
 `<stack-env>` here. **`live-local` is the recommended name**: the project's real-dialect test
 environment (`live`, per the backend testing convention) selects the same database engine but exists
 for running the unit suite against it, not for a running full stack — so the local full-stack
-environment gets a name of its own, derived from it. A dedicated name is what makes it structurally
-impossible for a build — or a seeder or migration run by hand — to reach the developer's development
-stack or the `live` test database by default: `NODE_ENV=<stack-env>` selects the E2E stack's own
-values everywhere, instead of relying on every command remembering to apply overrides.
+environment gets a name of its own, derived from it. A dedicated name stops a build — or a seeder or
+migration run by hand — from reaching the developer's development stack or the `live` test database
+by default: `NODE_ENV=<stack-env>` selects the E2E stack's own values everywhere, instead of relying
+on every command remembering to apply overrides.
 
 The stack reads its own committed **`.env.<stack-env>`**, at the repository root beside the other
 environments' files. Two rules govern that file:
@@ -222,7 +228,7 @@ the wiring.
 
 ## 4. Ports are published to loopback only, on a dedicated block
 
-Two rules, and they are not negotiable:
+Two firm rules:
 
 - **Every published port is prefixed with `127.0.0.1`.** `ports: ['13306:3306']` binds every
   interface — on a developer machine that puts an unauthenticated database on the network. Written
@@ -276,8 +282,8 @@ The environment gets **two seeder directories of its own**, seeded by their own 
   anywhere else. A one-line `module.exports = require('../<production-master-dir>/<same-name>.cjs')`
   keeps them the same by construction.
 - **Ids come from a reserved band of their own** — the same 10,000-wide blocks the project's seeder
-  convention already uses, based above every block the other sets occupy — so a row's origin is
-  readable from its id and the two sets cannot collide even if both are somehow applied.
+  convention already uses, set above every block the other sets use — so a row's origin is readable
+  from its id and the two sets cannot collide even if both are somehow applied.
 - **Seeds insert rows, not files.** A row that claims a stored file whose bytes are absent answers
   404 on the screen that opens it, which reads as a product bug — so the build also **generates the
   binary artifacts the seeds promise**, as a step of its own.
@@ -359,13 +365,14 @@ Four properties of the scripts matter more than the steps:
   that also deleted the operator's data would be the worst outcome of all.
 - **Finish by handing over.** The last thing the script prints is what the operator needs to start
   working: the URL to open, where the process logs are, whether data was loaded or kept, and the
-  commands that stop and that wipe it. An environment nobody can find the entrance to was not finished.
+  commands that stop and that wipe it. An environment nobody can find their way into is not
+  finished.
 
 ## 7. Traps that let a half-built stack look finished
 
 Each of these produces a stack that **starts cleanly and behaves wrongly** — the failure mode this
-skill exists to prevent, because the operator will read it as a product defect. They are written with
-the example stack's components; the shape is what carries over
+skill exists to prevent, because the operator will read it as a product defect. Written in the
+example stack's components — the shape carries over
 ([§1](#1-roles-first-the-component-set-here-is-one-example)). The first two are the most common.
 
 - **A remapped port on a service that advertises its own address** — connects, then fails on every
@@ -398,18 +405,29 @@ the example stack's components; the shape is what carries over
   and nothing propagates. Start them from the script ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
 - **No logs kept** — when something does not appear on screen, the answer is in the daemon's or the
   consumer's output, and a run that discarded it forces a rebuild to find out why.
+- **A container started with no `mem_limit`** — it grows into whatever the machine has, so one
+  uncapped service silently undoes the whole memory budget and the machine swaps or OOM-kills under a
+  load the caps were supposed to prevent. Cap every container, and set each JVM service's heap to
+  about half its cap — the heap flag alone is not a cap
+  ([compose-definition.md](./references/compose-definition.md)).
+- **JVM heap flags mistaken for the memory limit** — `-Xmx` bounds the heap only, off-heap and page
+  cache push a JVM service to two-to-three times its heap, so a stack "sized" by heap flags alone
+  uses far more than the flags suggest and exceeds the budget. Size with `mem_limit`, keep the heap
+  near half of it ([compose-definition.md](./references/compose-definition.md)).
 - **The stack left up while something heavy runs beside it** — the resident processes go on polling
   and caching, the heavy job (a parallel test suite above all) sizes itself as if the machine were
-  idle, and the machine dies under the sum. Neither side is at fault alone; the operator chose
-  cohabitation without a budget. `down.sh` first, or budget for both
+  idle, and the machine dies under the sum. The `mem_limit` caps bound the stack's *ceiling*, but
+  the memory under that ceiling is still spent; neither side is at fault alone if the operator chose
+  to run both at once without a budget. `down.sh` first, or budget for both
   ([§2](#2-where-the-e2e-environment-lives)).
 
 ## Finishing checklist
 
-- [ ] Every component the product talks to is accounted for by role, and the ones the project does not have are consciously absent rather than forgotten ([§1](#1-roles-first-the-component-set-here-is-one-example)).
+- [ ] Every component the product talks to is accounted for by role, and the ones the project does not have are deliberately absent rather than forgotten ([§1](#1-roles-first-the-component-set-here-is-one-example)).
 - [ ] The whole environment is under `e2e/`, with the compose file and everything it references by relative path together under `e2e/docker/`, the scripts at the root, and the run's output (logs, storage) git-ignored ([§2](#2-where-the-e2e-environment-lives)).
 - [ ] `npm run test` is completely unaffected — no test file was added under `e2e/`, and the unit suite still needs nothing but Node ([§2](#2-where-the-e2e-environment-lives)).
-- [ ] No heavy job (the parallel unit suite above all) is assumed to share the machine with the running stack — it runs after `down.sh`, or the stack's resident footprint is counted against its memory budget ([§2](#2-where-the-e2e-environment-lives)).
+- [ ] Every service declares a `mem_limit`, each JVM service's heap is about half its cap, and the sum of all caps sits at a conservative slice of physical memory (~40%, so two stacks can be up at once) ([compose-definition.md](./references/compose-definition.md)).
+- [ ] No heavy job (the parallel unit suite above all) is assumed to share the machine with the running stack — it runs after `down.sh`, or the stack's capped footprint is counted against its memory budget ([§2](#2-where-the-e2e-environment-lives)).
 - [ ] Every published port is `127.0.0.1`-prefixed — on a block of its own if the stack coexists with the developer's — and services the host does not reach publish nothing ([§4](#4-ports-are-published-to-loopback-only-on-a-dedicated-block)).
 - [ ] Any service that advertises its own address is published on the port it advertises ([§4](#4-ports-are-published-to-loopback-only-on-a-dedicated-block)).
 - [ ] The stack has its own compose project name, so it cannot adopt the development stack's volumes ([§4](#4-ports-are-published-to-loopback-only-on-a-dedicated-block)).
@@ -431,13 +449,14 @@ the example stack's components; the shape is what carries over
 
 ## Detail files
 
-Every detail file is written in the same example stack as this one, and carries the same caveat: the
-components are illustrations of the roles in [§1](#1-roles-first-the-component-set-here-is-one-example).
+Every detail file uses the same example stack, whose components illustrate the roles in
+[§1](#1-roles-first-the-component-set-here-is-one-example).
 
 - [compose-definition.md](./references/compose-definition.md) — the whole compose file for the E2E
   stack, the per-service settings the pipeline depends on (row-image change log, transport listeners,
-  read-model heap and security, baked-in plugins), project naming, volumes vs `tmpfs`, and
-  healthchecks (§2, §4)
+  read-model heap and security, baked-in plugins), the per-container `mem_limit` caps and the
+  physical-memory budget that sizes them, project naming, volumes vs `tmpfs`, and healthchecks
+  (§2, §4)
 - [environment-and-ports.md](./references/environment-and-ports.md) — the dedicated environment name
   and how its standalone `.env.<stack-env>` is authored, the table of values that must differ per
   environment, the dotenv/`process.env` precedence rule with the merge that causes it, the

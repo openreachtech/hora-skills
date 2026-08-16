@@ -17,7 +17,7 @@ user to make an explicit yes/no decision (e.g. delete confirmation).
 optional drag handle, swipe-to-dismiss, and snap points — use it for
 persistent side panels, mobile sheet-style UI, or content too long/wide for a
 centered modal. All three share the same `title` / `description` / `busy` /
-`initialFocus` / `closeOnEscape` vocabulary in their `parcel`.
+`initialFocus` / `closeOnEscape` keys in their `parcel`.
 
 - Layer: organism
 - Import: `import { FuroDialog, FuroAlertDialog, FuroDrawer } from '@openreachtech/furo-vue'`
@@ -214,7 +214,7 @@ export default {
 - All three use `parcel` + `v-model:open` for open/close state — this is the
   documented exception to the project's general no-`v-model` rule, which
   applies only to custom in-project components, not to `furo-vue` library
-  components. `FuroDrawer` additionally supports `v-model:activeSnapPoint`.
+  components. `FuroDrawer` also supports `v-model:activeSnapPoint`.
 - None of the three follow the form-control (`parcel.value`) contract — they
   are visibility/overlay components, not inputs.
 - `FuroAlertDialog` is not a generic modal: it has no `update:open`-driven

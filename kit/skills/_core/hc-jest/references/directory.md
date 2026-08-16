@@ -48,17 +48,17 @@ benefits listed below.
    **endlessly maintaining exclusions** in `.npmignore` (e.g.
    `**/*.test.js`) — and any gap leaks tests into the production package.
 
-4. **It complements a build that skips compilation.**
-   This package **publishes `lib/*.js` as-is** (ESM, no build; types are checked
-   only via JSDoc + `tsc --noEmit`). This gives real benefits: no build
-   toolchain needed, faster CI, and "what you debug is what you ship" (no
-   source maps needed, stack traces point to real file lines). At the same
-   time, this setup has **no emit step** (the filter a TS compile configuration
-   would use to sift `.test.ts` out of build artifacts). A dedicated tree keeps
-   `lib/` pure from the start, which is **consistent** with the absence of that
-   filter. Co-location combined with no-compile is the **worst combination** —
-   tests sit in `lib/` with no sifting boundary at all, forcing you to manually
-   fill in all of the denylists from points 2 and 3 above.
+4. **It complements a build that skips compilation.** This package **publishes
+   `lib/*.js` as-is** (ESM, no build; types are checked only via JSDoc +
+   `tsc --noEmit`). This gives real benefits: no build toolchain needed, faster
+   CI, and "what you debug is what you ship" (no source maps needed, stack
+   traces point to real file lines). At the same time, this setup has **no emit
+   step** (the filter a TS compile configuration would use to filter `.test.ts`
+   out of build artifacts). A dedicated tree keeps `lib/` pure from the start,
+   which is **consistent** with the absence of that filter. Co-location combined
+   with no-compile is the **worst combination** — tests sit in `lib/` with no
+   filtering boundary at all, forcing you to manually fill in all of the
+   denylists from points 2 and 3 above.
 
 ## Directory Structure
 
@@ -85,7 +85,7 @@ Incorrect example: `tests/__tests__/lib/tools/PathnameBuilder.js`
 
 If a single test file grows too large, it may be **split by method**. In that
 case, use **the class name as a directory** and place per-method files
-underneath it, encompassing them.
+underneath it.
 
 - Before splitting: `tests/__tests__/tools/PathnameBuilder.js`
 - After splitting: turn the class name `PathnameBuilder` into a directory.

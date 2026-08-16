@@ -114,7 +114,7 @@ return {
 
 ## Shared reactive vocabulary
 
-Pages create two reactive hashes in `setup` and thread them into the PageContext/Fetcher/SubmitterContext:
+Pages create two reactive hashes in `setup` and pass them into the PageContext/Fetcher/SubmitterContext:
 
 - `statusReactive` — typed `Reactive<UserInterfaceState>`; loading flags like `isFetching<Entity>` / `isInvoking<Operation>`.
 - `errorMessageHashReactive` — typed `Reactive<ErrorMessageHash>`; per-operation error strings.

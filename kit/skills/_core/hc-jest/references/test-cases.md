@@ -178,10 +178,10 @@ to bottom.
 ## Show intent for strings that carry meaning, either via the string itself or an English inline comment
 
 When a string value is used as **a value carrying a specific intent (role,
-kind)** (not just an indexed placeholder, but a case where you're **imbuing
-meaning** into the string, such as "a value that is not a constructor" or
-"an unparseable date string"), supplement that intent **in English**, via
-one of the following:
+kind)** (not just an indexed placeholder, but a case where you're **giving
+meaning** to the string, such as "a value that is not a constructor" or "an
+unparseable date string"), supplement that intent **in English**, via one
+of the following:
 
 - **Make the string itself descriptive**: make the value such that reading it
   reveals the role (e.g. `'not-a-constructor'` / `'unparseable-date'`). Don't
@@ -296,7 +296,7 @@ Even for the same transformation, the granularity of verification varies by
 
 ## For features that handle integers, always test near the `Number.MAX_SAFE_INTEGER` threshold
 
-For tests of features that evoke integers (integer scalars, integer
+For tests of features that involve integers (integer scalars, integer
 validation, anything with a safe-integer check like `Number.isSafeInteger`),
 always include a case **near the `Number.MAX_SAFE_INTEGER` threshold**.
 JavaScript's `Number` can only safely represent integers up to `2 ** 53 - 1`

@@ -1,6 +1,6 @@
 # App share (`AppShare`)
 
-App-wide shared services and state that live on `nuxtApp` — the `AppShare` instance provided as `$furo`. Reactive UI state is one common thing it holds, but it can carry anything app-wide.
+App-wide shared services and state that live on `nuxtApp` — the `AppShare` instance provided as `$furo`.
 
 ## What `AppShare` is
 

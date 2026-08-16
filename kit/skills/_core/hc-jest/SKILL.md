@@ -24,21 +24,21 @@ Tests must be written so that they **notice even if the implementation is wrong*
 Using knowledge gained from reading the implementation to judge "this will always
 be this value" or "this member is obvious" and then **omitting cases or members,
 or collapsing them into a single `test()`, is a QA mistake**. What a test must
-guarantee is not the implementation's internal circumstances, but verifying the
-member's **contract (externally observable behavior) as a black box**.
+guarantee is not the implementation's internal circumstances, but the member's
+**contract (externally observable behavior) as a black box**.
 
-- Do not omit something on the grounds that "the implementation is written this
-  way so it's fine." If you do, hard-coding or regressions can slip in without
-  the test noticing, which defeats the purpose of having a test at all.
+- Do not omit something because "the implementation is written this way so it's
+  fine." If you do, hard-coding or regressions can slip in without the test
+  noticing, which defeats the purpose of having a test at all.
 - Example: for the instance getter `get Ctor () { return this.constructor }`,
   collapsing it into a single `test()` that says "in the base class it's always
   `BoundCtorRegistry`" would still pass even for the hard-coded implementation
   `return BoundCtorRegistry`. Only by running the variable element (the
   instance's type) through `test.each()` can you verify the contract
   ([structure.md](./references/structure.md#instance-getters-require-testeach-the-variable-element-is-the-instance)).
-- Example: don't skip testing a static property on the grounds that "the
-  memoization pool is an implementation detail." Members that appear public
-  should be verified as part of the contract.
+- Example: don't skip testing a static property because "the memoization
+  pool is an implementation detail." Members that appear public should be
+  verified as part of the contract.
 - Example: for a member that **transforms a property/argument before using it**
   (escape / normalize / encode, etc.), don't test only with values for which the
   transformation is a no-op. Always include **a value that actually exercises the
@@ -93,14 +93,13 @@ test()`.
   tests without being able to find existing ones, which easily produces
   duplication and coverage gaps. Indexing by definition name concentrates
   "the test for this member is in exactly one place," letting you check
-  existing tests before adding new ones, and preventing duplication.
+  existing tests before adding new ones.
 - As a consequence of this policy, the class-name `describe()` is **repeated**
   per member (one class `describe()` holds only one member). Even when
   fast-scrolling a long file, the class name always sits directly above the
   member `describe()`, so "which class, which member am I looking at" always
-  stays on screen (a syntactically achieved sticky header). We accept that
-  the class name is duplicated in Jest's output, in favor of prioritizing
-  human explorability.
+  stays on screen (a syntactically achieved sticky header). We accept that the
+  class name is duplicated in Jest's output, in favor of human explorability.
 - For details on nesting structure and notation, see
   [structure.md](./references/structure.md#describe-structure) /
   [naming.md](./references/naming.md#notation-of-class-members).

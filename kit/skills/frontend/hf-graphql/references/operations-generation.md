@@ -5,7 +5,7 @@ Prefer generating the Launcher/Payload/Capsule trio from the backend GraphQL sch
 Run it from the Frontend project root with Node (the project is ESM and has `graphql` installed):
 
 ```bash
-node .claude/skills/hf-graphql/references/generate-graphql-clients.js \
+node lib/skills/frontend/hf-graphql/references/generate-graphql-clients.js \
   <backend-repo>/server/graphql/schemas \
   --out app/graphql/client
 ```
@@ -13,7 +13,9 @@ node .claude/skills/hf-graphql/references/generate-graphql-clients.js \
 Notes:
 
 - **`--out app/graphql/client`** is the standard Frontend output path. The generator writes `queries/<field>/` and `mutations/<field>/` trios under it.
-- **Do not pass `--force`.** By default the generator **skips** any operation whose files already exist, so previously written (possibly hand-tuned) clients are never overwritten. Only add `-f`/`--force` when you deliberately want to regenerate and clobber existing files.
+- **Do not pass `--force`.** By default the generator **skips** any operation whose files already exist, so previously
+  written (possibly hand-tuned) clients are preserved. Only add `-f`/`--force` when you deliberately want to
+  regenerate and overwrite existing files.
 - Narrow the output with `--target <name ...>` (e.g. `--target signIn signUp`) to generate only specific operations, or point the schema path at a single `.graphql` file / subfolder.
 - `--depth <n>` controls how deep nested selection sets are expanded (default 10).
 

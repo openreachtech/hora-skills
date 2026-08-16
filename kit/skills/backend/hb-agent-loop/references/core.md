@@ -37,8 +37,8 @@ static create({ context })   +   async run({ input, onProgress })
 ```
 
 - **Why unify it**: you can freely put a loop as a pipeline stage, or another pipeline inside a
-  composite, precisely because every Runnable has the same `create` / `run`. When you add a new
-  Runnable, always give it this shape.
+  composite, because every Runnable has the same `create` / `run`. When you add a new Runnable,
+  always give it this shape.
 
 ## The state model (do not mix the three concepts)
 
@@ -131,7 +131,7 @@ emits `onProgress` every iteration (not overridable).
 | Fits | Exploratory tasks with no readable procedure | Tasks with a fixed procedure |
 
 - **Why `maxIterations` is always enforced**: whether AI-driven or procedural, a bug in the stop
-  condition or a wobble in an external response can loop forever. `maxIterations` (default 10) is the
+  condition or an unstable external response can loop forever. `maxIterations` (default 10) is the
   safety bound; even if `isComplete` never returns true, the loop still stops.
 - ⚠️ Procedural does not mean "no AI". You may use the AI as a **tool inside a step**. The difference is
   **whether the AI holds the control flow**.
@@ -408,8 +408,8 @@ mergeResults ({
 ```
 
 - **Why cap `concurrency`**: if sub-agents hit an AI / external API, unbounded parallelism causes rate
-  overruns and memory blowups. Do not leave it at the default `Infinity`; set a finite value whenever
-  external I/O is involved.
+  overruns and memory exhaustion. Do not leave it at the default `Infinity`; set a finite value
+  whenever external I/O is involved.
 
 ## Runner (execution-mode abstraction)
 

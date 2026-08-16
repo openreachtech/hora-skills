@@ -14,8 +14,8 @@ description: >
 A skill for the **`.d.ts` type declarations** that describe an app's data shapes: the **model
 interfaces** (one per table) and the **resolver input/output types** (one per resolver). Both are
 declared as **ambient global namespaces**, so any JSDoc can reference them (`model.User`,
-`graphql.user.CreateOrderInput`) without an import. The governing move is **one file per entity** —
-one model, one resolver — merged into a single namespace by TypeScript's declaration merging.
+`graphql.user.CreateOrderInput`) without an import. The core rule is **one file per entity** — one
+model, one resolver — merged into a single namespace by TypeScript's declaration merging.
 
 > This skill states a **general, project-independent rule** — a refined best practice, not a
 > description of any one project's code, so it need not match a given repo's existing notation. The
@@ -176,8 +176,8 @@ async resolve ({
 ```
 
 - Model shapes are referenced the same way: `@param {model.User} user`.
-- This global-access ergonomics is the reason the types are ambient — the split into many files never
-  forces an import.
+- This global access is the reason the types are ambient — the split into many files never forces an
+  import.
 
 ## 5. Naming & placement (quick reference)
 

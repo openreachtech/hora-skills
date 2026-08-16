@@ -14,7 +14,9 @@ Typical file locations:
 
 The backend returns a dotted **error code** (e.g. `203.M006.005`). The frontend turns that code into a user-facing message at a single resolution point.
 
-The map yields an i18n **locale path** (a key such as `errors.invalidPhoneNumber`), and the i18n layer renders it into whatever language is active. Every code is its own entry; no arrays, no reverse map. The full dictionary shapes are in [[dictionaries]].
+The map yields an i18n **locale path** (a key such as `errors.invalidPhoneNumber`), and the i18n layer renders it into
+the active language. Every code is its own entry; no arrays, no reverse map. The full dictionary shapes are in
+[[dictionaries]].
 
 ---
 

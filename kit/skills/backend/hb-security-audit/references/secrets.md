@@ -42,10 +42,10 @@ git ls-files | grep -E '(^|/)\.env' | while read f; do echo "== $f =="; \
 
 - **FINDING (HIGH):** a real secret value sits in a committed env file. Recommend replacing it with a
   placeholder, moving the real value to an untracked file / secret manager, and rotating.
-- **Best practice to recommend:** keep exactly one committed, **secret-free** template
-  (e.g. `.env.example`) enumerating every required key with placeholder values, and source **all**
-  real credentials for non-local environments from env / a secret manager — never commit them, and
-  do not leave per-env files (`.env.staging`, `.env.production`) tracked.
+- **Best practice to recommend:** keep exactly one committed, **secret-free** template (e.g.
+  `.env.example`) listing every required key with placeholder values, and source **all** real
+  credentials for non-local environments from env / a secret manager — never commit them, and do
+  not leave per-env files (`.env.staging`, `.env.production`) tracked.
 - **PASS:** values are empty / obvious placeholders (`your-key-here`, `changeme`, `xxxx`), and a
   secret-free template exists.
 

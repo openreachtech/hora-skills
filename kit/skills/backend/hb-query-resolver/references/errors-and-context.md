@@ -40,8 +40,7 @@ Code format is `<family>.<identifier>.<seq>`:
     them: `102` unauthenticated / unauthorized / denied-permission, `104` database, `100` unknown,
     `101` concrete-member-not-found.
 - **`<identifier>`** (`Q002`, …) is a **stable per-query id**. Keep one resolver on one identifier;
-  the letter tracks the endpoint family (`Q` for the query endpoints). Reuse the same identifier
-  across a resolver's codes.
+  the letter tracks the endpoint family (`Q` for the query endpoints).
 - **`<seq>`** (`001`, `002`, …) numbers the errors within this resolver, per family.
 
 ## The validator ↔ errorHash contract

@@ -13,7 +13,7 @@ make that decision coherent, and nothing else.
 
 Two consequences follow.
 
-- A reviewer who disagrees with one decision can reject that commit **without** unpicking
+- A reviewer who disagrees with one decision can reject that commit **without** undoing
   unrelated work that happened to travel with it.
 - A later reader bisecting for a regression lands on a commit that changes **one** thing, so
   the answer to "what broke it" is the commit itself, not a subset of it.

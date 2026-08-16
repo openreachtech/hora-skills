@@ -97,7 +97,8 @@ Bound.prototype instanceof OriginalCtor // true
 Bound.name // 'OriginalCtor'
 ```
 
-- Since inflators are memoized, they are **safe to call every time**. There's no need for the caller to stash the inflator's return value in a variable to cache it.
+- Since inflators are memoized, they are **safe to call every time**. There's no need for the caller to store the
+  inflator's return value in a variable to cache it.
 
 ```javascript
 // OK: it is fine to inflate on every call (memoization prevents wasteful creation)

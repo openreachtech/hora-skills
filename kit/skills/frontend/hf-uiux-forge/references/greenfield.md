@@ -92,5 +92,5 @@ from the first component.
 - **State your choices briefly, don't lecture.** One line on the direction and the token
   set is enough; the developer can override in a follow-up or a context file.
 - **If the developer later adds a Figma file or real brand tokens,** that becomes the
-  source of truth and supersedes the provisional greenfield set (switch to the Figma/MCP or
+  source of truth and replaces the provisional greenfield set (switch to the Figma/MCP or
   existing-project path).

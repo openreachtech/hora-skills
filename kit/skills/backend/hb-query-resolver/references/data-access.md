@@ -206,7 +206,7 @@ builds the output object. Never return a raw model instance.
 ### Deep values via FieldPathValueExtractor
 
 When a value sits several associations deep, pull it with `FieldPathValueExtractor` instead of
-hand-walking `a?.b?.c`. Create one per root entity and read by dotted field path:
+walking `a?.b?.c` by hand. Create one per root entity and read by dotted field path:
 
 ```js
 const userFieldPathValueExtractor = FieldPathValueExtractor.create({

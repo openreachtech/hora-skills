@@ -68,8 +68,8 @@ second viewport, keyboard recording).
 ## Rules of the report
 
 - Blockers first, always. Never bury an accessibility failure under spacing nits.
-- No score theater: the per-dimension rating is Pass / Needs work / Fail — resist inventing
-  numeric scores that imply false precision.
+- No invented scores: the per-dimension rating is Pass / Needs work / Fail — resist
+  inventing numeric scores that imply false precision.
 - "Not assessable" is a valid rating (no context file → Expectation fit not assessable) and
   better than guessing.
 - If mechanical checks ran (validate-tokens, contrast-check), include their raw verdict

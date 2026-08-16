@@ -7,16 +7,14 @@ their ids are allocated, and the artifacts a seeder cannot carry. Referenced fro
 directory names and values are **illustrative examples**.
 
 > Everything here is about the **system of record's rows** and is the least stack-dependent part of the
-> skill: the seeder tooling in the examples is Sequelize's CLI, and "a document in the read model" is
-> the example's search index, but the rules — a set of its own, master rows re-exported, a reserved id
-> band, artifacts generated rather than committed, a pipeline-shaped set — hold for any store and any
-> seeding tool.
+> skill: the tooling shown is Sequelize's CLI and the read model is a search index, but the rules
+> below hold for any store and any seeding tool.
 
 ## Two directories of its own
 
 | Directory | Holds | Applied by | Corresponds to |
 | --- | --- | --- | --- |
-| `sequelize/seeders/<stack-env>-master/` | the master / metadata rows the stack cannot run without, **re-exported** from the production master, plus E2E-only master samples | `db:seed:<stack-env>-master` | the dev-master set |
+| `sequelize/seeders/<stack-env>-master/` | the master / metadata rows the stack requires to run, **re-exported** from the production master, plus E2E-only master samples | `db:seed:<stack-env>-master` | the dev-master set |
 | `sequelize/seeders/<stack-env>/` | the operational rows the environment is filled with, including the accounts the operator signs in with | `db:seed:<stack-env>` | the development set |
 
 ```json
@@ -29,26 +27,26 @@ directory names and values are **illustrative examples**.
 - **The master directory is named `<stack-env>-master`, never `master-<stack-env>`.** In the
   project's seeder convention, `master-*` is the release-split **production** master namespace
   (`master-000001/`, `master-000002/`, …), applied in ascending order by `db:seed:prod` — a
-  directory named into that pattern gets classified as a production release, and can be swept up by
+  directory named into that pattern gets classified as a production release, and can be picked up by
   the production seed run. The suffix form keeps the environment name first, pairing
   `<stack-env>-master/` with `<stack-env>/` the way `dev-master/` pairs with `development/`.
-- **Write seeders for a single application to an empty schema.** Every row carries an explicit id, so
-  applying the set to a database that already holds it collides on insert — and that collision is the
-  intended behaviour, not a gap to close. It is the environment saying *you meant `up.sh`*, which
-  cleans first. Adding upserts, `IGNORE` or existence checks to make the set survive a second
-  application buys nothing and costs the guarantee that the rows in the database are the rows in the
-  file ([runner-and-lifecycle.md](./runner-and-lifecycle.md)).
-- The environment name is set inside the script, so the seeders cannot be applied to the wrong
-  database by forgetting an export.
-- The directory is chosen by `--seeders-path`, exactly as the existing seed sets do; nothing about the
-  seeder file format changes (skeleton, `TimestampSeedsSupplier`, explicit ids, `up`/`down` — follow
-  the project's seeder convention).
+- **Write seeders for a single application to an empty schema.** Every row carries an explicit id,
+  so applying the set to a database that already holds it collides on insert — and that collision is
+  the intended behaviour, not a gap to close. It is the environment saying *you meant `up.sh`*,
+  which cleans first. Adding upserts, `IGNORE` or existence checks to make the set survive a second
+  application gains nothing and gives up the guarantee that the rows in the database are the rows in
+  the file ([runner-and-lifecycle.md](./runner-and-lifecycle.md)).
+- The environment name is set inside the script, so forgetting an export cannot apply the seeders to
+  the wrong database.
+- The directory is chosen by `--seeders-path`, exactly as the existing seed sets do; the seeder file
+  format stays the same (skeleton, `TimestampSeedsSupplier`, explicit ids, `up`/`down` — follow the
+  project's seeder convention).
 - **A file skeleton stays identical to every other seeder.** Only the *directory* says which
   environment the rows are for.
 
 ## Why not reuse the unit-test fixtures
 
-The two sets are consumed by things that want opposite shapes:
+The two sets are used by tools that need opposite shapes:
 
 | | unit-test fixtures | E2E rows |
 | --- | --- | --- |
@@ -93,9 +91,9 @@ module.exports = require('../<production-master-dir>/<same-name>.cjs')
 
 ## Ids come from a reserved band
 
-Follow the project's existing id rule — every row carries an **explicit** id, blocks are 10,000
-wide — but allocate the stack's blocks from a **band of their own**, based above every block the
-other seed sets already occupy:
+Follow the project's existing id rule — every row carries an **explicit** id, blocks are 10,000 wide
+— but allocate the stack's blocks from a **band of their own**, starting above every block the other
+seed sets already occupy:
 
 | Seed set | Id band | Example bases |
 | --- | --- | --- |
@@ -115,18 +113,18 @@ other seed sets already occupy:
 
 ## Seeds insert rows, not files
 
-A seeder cannot carry a binary: committing one means maintaining it, and the real assets are often
-not committable at all. So the rows say a file is present — a status, a size, a page or item
+A seeder cannot carry a binary: committing one means maintaining it, and the real assets often
+cannot be committed at all. So the rows say a file is present — a status, a size, a page or item
 count — while the bytes are not on disk, and every request for the file answers 404.
 
 A screen that opens such a record then breaks for a reason that has nothing to do with the code.
 **The build therefore has a step that generates the artifacts the seeds promise**, after seeding and
 before the environment is handed over:
 
-- Generate from the rows, so the two cannot disagree — read the seeded records and write a stand-in
-  for each.
+- Generate from the rows, so the two always match — read the seeded records and write a stand-in for
+  each.
 - **Write only what the application actually serves** (the derived artifacts the screens or the API
-  hand back). There is no original for the stand-in to be an original of.
+  hand back). There is no original file for it to reproduce.
 - **Make the stand-in obviously synthetic** — a placeholder that is unmistakable at a glance — so
   nobody takes a fixture for real data on a screen.
 - **Write it under the per-run storage path** (`FILE_STORAGE_PATH` is overridden for the run), not
@@ -143,5 +141,5 @@ A row earns its place here by covering a **path**, not a branch. When adding row
   whether something arrived rather than something being counted.
 - **A deliberate negative** — one record that must *not* reach the read model (unsynced column,
   excluded category), so the filter's effect is visible too. Without one, propagating everything
-  indiscriminately looks exactly like the filter working.
+  looks exactly like the filter working.
 - **Nothing added just because a unit test wanted it.** That row belongs in the other set.

@@ -98,7 +98,7 @@ async sendRequestToAi ({
 ## 2. A concrete model processor — only `#get:aiModel` is unique
 
 Everything else (build the instruction, prepare files, build the payload, send, handle one round of
-function calls, wrap the response) is the same canonical flow inherited/composed from the provider base.
+function calls, wrap the response) is the same standard flow inherited/composed from the provider base.
 
 ```js
 import BaseClaudeAIProcessor from '../BaseAiModelProviderProcessor/BaseClaudeAIProcessor.js'

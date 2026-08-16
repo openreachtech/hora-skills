@@ -57,8 +57,8 @@ concrete value is how you **pass input** to the Mixin.
 
 - **Why**: a Mixin is a reusable frame and does not know the model-specific counterpart (backup
   target, status table, etc.). If you do not implement the abstract getter, the moment that
-  Mixin's handler runs it dies with `".get:XxxModel" must be inherited`. Which getter to pass is
-  fixed per Mixin (table below).
+  Mixin's handler runs it fails with `".get:XxxModel" must be inherited`. Which getter to pass
+  is fixed per Mixin (table below).
 - Return the related model with **`this._.<ModelName>`**, same as
   [associations.md](./associations.md#reference-the-associated-model-via-this_modelname) (to avoid
   a circular import).

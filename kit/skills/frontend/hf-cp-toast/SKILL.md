@@ -21,9 +21,9 @@ render its own notification queue.
 - Import: `import { FuroToaster, toast } from '@openreachtech/furo-vue'`
 - Manifest entry: `node_modules/@openreachtech/furo-vue/public/furo-vue/components.json` → `components[].name === 'FuroToast'` / `'FuroToaster'`
 
-Read the manifest before writing markup if you need to confirm this
-information is still current — the library may have added props/events since
-this skill was written.
+Read the manifest before writing markup if you need to confirm it's still
+current — the library may have added props/events since this skill was
+written.
 
 ## When NOT to use
 

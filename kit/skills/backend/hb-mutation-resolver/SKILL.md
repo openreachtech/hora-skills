@@ -23,7 +23,7 @@ itself only **orchestrates**.
 > `BaseResolver` come from the renchan framework; the `*InputValidator` comes from the shared
 > validator layer; the models come from `sequelize/models/`.
 
-## Grand principle: a mutation resolver is a filled-in template
+## Core principle: a mutation resolver is a filled-in template
 
 Every mutation resolver has the **same skeleton** — the same method set in the same order, and the
 same `resolve()` flow:

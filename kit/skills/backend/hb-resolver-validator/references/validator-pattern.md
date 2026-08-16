@@ -7,7 +7,7 @@ Referenced from [SKILL.md](../SKILL.md).
 
 A validator extends `BaseInputValidator`, overrides `generateValidationEntries()`, and adds one
 `isValidX()` predicate per rule plus small `create*` helpers for the sub-validators / inspectors it
-uses. This is the canonical shape (a query validator that reuses pagination):
+uses. This is the standard shape (a query validator that reuses pagination):
 
 ```js
 import {
@@ -148,7 +148,7 @@ export default class EmailInsertableVariablesInputValidator extends BaseInputVal
 
 ## `BaseInputValidator` contract
 
-The base (`app/validator/forResolver/BaseInputValidator.js`) provides the machinery so subclasses
+The base (`app/validator/forResolver/BaseInputValidator.js`) provides the logic so subclasses
 only declare rules:
 
 - **Instance state:** `this.input` (the resolver input) and `this.errorHash` (the resolver's error

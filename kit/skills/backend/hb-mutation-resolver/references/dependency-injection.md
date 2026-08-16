@@ -21,7 +21,7 @@ does validate → transaction → format with plain model calls, skip this file 
 
 ## The triple: constructor, factory, per-dependency creators
 
-The example: a `createArticle` resolver that needs a `RandomTextGenerator` to mint a public id.
+The example: a `createArticle` resolver that needs a `RandomTextGenerator` to generate a public id.
 
 ```js
 import {

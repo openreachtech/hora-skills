@@ -10,9 +10,12 @@ This summarizes conventions related to class accessor (getter / setter) definiti
 ## Setters are prohibited
 
 - Do not define setters (`set xxx () {}`).
-- Reason: this codebase implements all classes as immutable (properties are set once in the constructor and never reassigned). A setter would provide a means of reassignment after creation, breaking the premise of immutability.
+- Reason: this codebase implements all classes as immutable (properties are set once in the constructor and never
+  reassigned). A setter would allow reassignment after creation, breaking the premise of immutability.
 - When you want to change state, instead of rewriting via a setter, generate a new instance via a factory method (see "Classes are immutable / property reassignment is prohibited" in the property-definition convention).
-- Exception: for arguments passed to `Proxy` (such as the handler in `new Proxy(target, handler)`), a `set` trap may be defined as needed. This is not a reassignment of a class property but the definition of `Proxy` behavior, and does not go against the intent of immutability.
+- Exception: for arguments passed to `Proxy` (such as the handler in `new Proxy(target, handler)`), a `set` trap may
+  be defined as needed. This is not a reassignment of a class property but the definition of `Proxy` behavior, and
+  does not conflict with the intent of immutability.
 
 ## Reserve `#get:Ctor` as a conventional getter
 
@@ -25,7 +28,7 @@ This summarizes conventions related to class accessor (getter / setter) definiti
 - When a module (the class itself) depends on another module — whether a native module, a third-party module, or an in-house module — do not use the reference to that dependency directly as the imported identifier. **Extract it into a getter.**
 - Reason:
   - **Easy patching**: if the dependency module has a bug and needs an emergency patch, it suffices to override the getter in a subclass; call sites do not need to change.
-  - **Easy mocking**: in tests, swapping the getter is enough to replace the dependency module wholesale.
+  - **Easy mocking**: in tests, swapping the getter is enough to replace the dependency module entirely.
 - When the dependency is a **class to be instantiated** via `new` / `.create(...)`, extract it into a static getter named `[TargetClassName]Ctor` per the next section, and instantiate via a dedicated factory method (see "Instantiate dependency classes via a factory method" in the method-definition convention).
 
 ```javascript

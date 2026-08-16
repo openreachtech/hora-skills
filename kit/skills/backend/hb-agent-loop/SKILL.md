@@ -19,8 +19,8 @@ ready-made base classes.
 
 This skill covers the libraries' specs and use cases, plus the integration patterns for renchan's
 GraphQL and renchan-job-bullmq. **Always use these three packages** (never hand-roll your own
-iteration engine, queue bridge, or progress channel). The depth is split into the
-[detail files](#detail-files) at the end.
+iteration engine, queue bridge, or progress channel). The details are split into the [detail
+files](#detail-files) at the end.
 
 ## Grand principle: write actions and loops without knowing about AI, DB, queues, or GraphQL (one-way dependency)
 

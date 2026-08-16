@@ -17,8 +17,7 @@ beside them:
   rebuilt from the canonical tables; or
 - an external **search database** (Elasticsearch, etc.) for full-text or faceted search.
 
-- **Why**: normalization is what keeps the responsibility boundaries sharp and the structure
-  flexible (the
+- **Why**: normalization keeps the responsibility boundaries sharp and the structure flexible (the
   [grand principle](../SKILL.md#grand-principle-the-database-holds-canonical-normalized-truth)). A
   denormalized column copied into the core (e.g. a customer's name cached onto every order row) has
   two owners: it drifts the instant the source changes, and it freezes the schema because now two

@@ -16,7 +16,7 @@ Always reference the associated model via **`this._.<ModelName>`**. `this._` is 
   model while avoiding the cycle. The reference name matches the class name = filename
   ([notation.md](./notation.md#one-model-per-file-filename-matches-class-name)), so you spell it
   `this._.Customer`.
-- Do not forget to put `super.associate?.()` first (so a Mixin's relations are not swallowed;
+- Remember to put `super.associate?.()` first (so a Mixin's relations are not swallowed;
   [default-methods.md](./default-methods.md#even-unused-extension-points-call-super-and-keep-a-noop)).
 
 ```js

@@ -13,11 +13,12 @@ description: >
 
 A **read-only checklist audit** of a Node (JS/TS) repository. The goal is to **check and list
 places that could become vulnerabilities** — not to fix them. Work through every check, run its
-detection commands, judge each against its finding criteria, and emit a single **findings report**.
+detection commands, judge each against its finding criteria, and produce a single **findings
+report**.
 
 This skill is **stack-agnostic within the Node ecosystem**: it names common frameworks / ORMs /
-loggers only as *examples*. Discover what the target project actually uses (read `package.json`, the
-entry point, the config files) and adapt each check's patterns to it. Do not assume any specific file
+loggers only as *examples*. Discover what the target project uses (read `package.json`, the entry
+point, the config files) and adapt each check's patterns to it. Do not assume any specific file
 layout — detect it.
 
 ## Rules (read first)

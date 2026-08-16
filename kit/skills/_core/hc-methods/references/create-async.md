@@ -4,7 +4,8 @@ This covers the convention for `.createAsync(...)`, defined when the arguments p
 
 - When the arguments passed to the constructor need to be generated via asynchronous processing, define `static createAsync (...)`.
 - The JSDoc of `.createAsync(...)` should conform to that of `.create(...)` (the return value becomes `Promise<InstanceType<T>>`).
-- Calling `new this(...)` directly from `.createAsync(...)` is prohibited. In principle, `.createAsync(...)` should basically return the return value of `.create(...)`.
+- Calling `new this(...)` directly from `.createAsync(...)` is prohibited. In principle, `.createAsync(...)` should
+  return the return value of `.create(...)`.
 
 ```javascript
 // NG: calling new this(...) directly from createAsync

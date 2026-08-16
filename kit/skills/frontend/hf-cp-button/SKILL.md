@@ -5,8 +5,8 @@ description: Use when adding a clickable action trigger in a repo that consumes 
 
 # FuroButton
 
-Atom-layer action trigger. It is **not** a form-control value component —
-it has no `parcel.value` and no `v-model` contract of any kind. It exposes a
+Atom-layer action trigger. It is **not** a form-control value component — it
+has no `parcel.value` and no `v-model` contract. It exposes a
 `variant`/`size` visual system, `disabled`/`loading` interaction states, and
 an `asChild` composition mode for merging button behavior onto another
 element (e.g. an anchor or a dropdown-menu trigger). Its only contract with

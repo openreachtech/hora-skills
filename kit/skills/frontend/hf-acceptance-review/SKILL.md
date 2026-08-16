@@ -17,12 +17,12 @@ dependencies on purpose to watch what the screen says. None of that is possible 
 its own with nothing behind it. Before Phase 0, confirm that:
 
 - the application runs locally **together with every service it talks to**, not just the UI;
-- the accounts for each role can actually sign in;
+- the accounts for each role can sign in;
 - there is reviewable data present, or a command that puts it there.
 
 **Building that environment is outside this skill.** How the stack is defined, started, loaded and disposed
 of is a separate convention's business. This review only records whether the result was available, and reads
-the commands for using it out of the project declaration (`references/project-declaration.md`).
+the commands for using it from the project declaration (`references/project-declaration.md`).
 
 If the environment cannot be brought up, **the review does not quietly continue as a static-only pass**: say
 so in the capability note, record Phase 4 as not run, mark Gate 4 accordingly, and leave every finding that
@@ -128,8 +128,7 @@ appears.
 For each screen in scope:
 
 1. **Mount it and require the console to be silent.** An uncaught exception is a failure, not a warning.
-   This single assertion is the one that catches a page whose template dereferences state that does not
-   exist yet.
+   This single assertion catches a page whose template dereferences state that does not exist yet.
 2. **Walk each core flow to completion** — create, read back, update, delete, and undo the delete. A flow
    that ends anywhere but its declared success condition is a finding.
 3. **Provoke the failure branches**: stop a dependency, submit invalid input, act as a role without
@@ -165,9 +164,9 @@ Write to `<project-root>/docs/reports/acceptance-<date>-<scope>.md` using
 `references/report-format.md`. The report opens with the capability note and the gate results, then findings
 ranked by severity, then what could not be verified, then the capability matrix as an appendix.
 
-Element-level accessibility, contrast, token discipline and visual craft are the province of the
-interface-audit convention. Do not re-derive them here — hand those findings over, and keep this report on
-capability, reachability, and truthfulness.
+Element-level accessibility, contrast, token discipline and visual craft belong to the interface-audit
+convention. Do not re-derive them here — hand those findings over, and keep this report on capability,
+reachability, and truthfulness.
 
 ## What this skill does not decide
 

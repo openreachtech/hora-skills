@@ -155,7 +155,8 @@ const results = array
 ## The callback passed to a higher-order function should basically be a single statement
 
 - The body of a function (callback) passed as an argument to a higher-order function should ideally consist of **only a single statement**.
-- Even when writing multiple statements, limit it to the extent that its responsibility can be expressed as a single method name (i.e., the extent to which it can be extracted as a single responsibility).
+- Even when writing multiple statements, limit it to what can be expressed as a single method name (i.e., extracted as
+  a single responsibility).
 - When there are multiple responsibilities, make full use of `Array#filter()` / `Array#map()` to split each stage into a single responsibility.
 
 ```javascript

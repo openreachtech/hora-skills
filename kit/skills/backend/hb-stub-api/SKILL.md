@@ -30,7 +30,7 @@ exception is the pagination slice ([2](#2-paginated-query-stub)).
 
 - **Why literals only**: a stub's job is to pin down the **contract** (the response shape), not to
   approximate the behavior. Any logic you write in a stub is unverified pseudo-implementation — it
-  can drift from the real rules, the frontend starts depending on it, and the divergence surfaces
+  can drift from the real rules, the frontend starts depending on it, and the divergence shows up
   as breakage at migration time. A literal cannot lie about anything except the shape, and the
   shape is exactly what a stub exists to guarantee.
 - **Why schema-accurate**: the returned shape must match the GraphQL schema exactly (every required

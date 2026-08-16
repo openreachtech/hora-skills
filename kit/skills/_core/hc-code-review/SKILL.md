@@ -21,7 +21,7 @@ behind it. Without that document the first pass cannot be run; see
 ## Rules (read first)
 
 1. **Read-only. Never edit, never fix.** Inspect, run non-mutating commands, report. State the
-   remediation per finding as text; do not apply it.
+   fix per finding as text; do not apply it.
 2. **Every requirement id appears in the report** with a verdict, and every check category
    appears as findings, `PASS` or `N/A` with a one-line reason. A gap must never look like
    "nothing to report".

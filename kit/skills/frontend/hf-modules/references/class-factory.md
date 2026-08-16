@@ -8,7 +8,10 @@ app/modules/TimerClerk.js         # class: manages a setTimeout lifecycle
 
 ## Behavioral class with the `create()` factory idiom
 
-Class modules use `export default class`, a `constructor({ ... })` taking a single destructured object, and a static `create()` factory that is the intended construction path (constructors are not called directly). The factory uses the self-typing idiom used across Furo apps (identical in Context classes — see [[hf-furo-context-patterns]], [[hc-jsdoc]]):
+Class modules use `export default class`, a `constructor({ ... })` taking a single destructured object, and a static
+`create()` factory that is the intended construction path (constructors are not called directly). The factory uses the
+self-typing idiom shared across Furo apps (identical in Context classes — see [[hf-furo-context-patterns]],
+[[hc-jsdoc]]):
 
 ```js
 export default class TimerClerk {

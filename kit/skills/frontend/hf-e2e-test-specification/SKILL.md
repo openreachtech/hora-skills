@@ -1,17 +1,17 @@
 ---
 name: hf-e2e-test-specification
-description: "Author and maintain the end-to-end test specification — the durable list of scenarios stating what must be true of the product, flow by flow, derived from the API surface. Use when creating the specification for the first time, adding scenarios for a new capability, or reconciling it after a flow changed. It states what must be true, never how to click it: the harness, the test code, the environment and the pass/fail verdict all belong elsewhere."
+description: "Author and maintain the end-to-end test specification — the durable list of scenarios stating what must be true of the product, flow by flow, derived from the API surface. Use when creating the specification for the first time, adding scenarios for a new capability, or reconciling it after a flow changed. It states what must be true, not how to click it: the harness, the test code, the environment and the pass/fail verdict all belong elsewhere."
 ---
 # E2E Test Specification
 
 A maintained document that says, scenario by scenario, **what must be true of the product when a user works
-through it**. It exists so that exercising the application end to end is a matter of executing a known list
-rather than remembering what to try, and so that a run can report *coverage* — which scenarios ran, which
-did not — instead of an impression.
+through it**. It exists so that testing the application end to end means running a known list rather than
+remembering what to try, and so that a run can report *coverage* — which scenarios ran, which did not —
+instead of an impression.
 
-The boundary, in one line: **this specifies what must be true; it never says how to click it.** The harness,
+The boundary, in one line: **this specifies what must be true; it does not say how to click it.** The harness,
 the selectors, the waiting and the test code belong to whatever automation the project uses. A specification
-that mentions them stops being executable by a person and stops surviving a redesign.
+that mentions them can no longer be run by a person, and does not survive a redesign.
 
 ## Two principles
 
@@ -33,8 +33,8 @@ that mentions them stops being executable by a person and stops surviving a rede
 ```
 
 - **A third kind of document.** A review already reads facts that do not change per run, and writes dated
-  reports that do. This is neither: it is **maintained** — amended when the product changes, and read by
-  every later run. Keeping it beside them, under its own directory, is what stops it being treated as either.
+  reports that do. This is neither: it is **maintained** — amended when the product changes, and read by every
+  later run. Keeping it beside them, under its own directory, stops it being treated as either.
 - **One file per flow**, because a flow is the unit that changes, the unit a reader reviews, and the unit two
   people edit at once. A single file for a mature product becomes unreviewable and conflicts on every change.
 
@@ -76,8 +76,8 @@ others cannot:
 
 - **Failure scenarios are first-class**, written and numbered like any other. A specification of happy paths
   describes an application nobody has ever misused.
-- **A flow is one scenario, not one assertion.** The unit has to match what a live pass walks, or coverage
-  cannot be reported against it.
+- **A flow is one scenario, not one assertion.** The unit has to match what a live pass runs through, or
+  coverage cannot be reported against it.
 
 > **Gate 2** — every operation in the inventory appears in at least one scenario, or carries an exclusion
 > **with a reason**. A reason-less exclusion is an oversight that has been written down.
@@ -112,9 +112,8 @@ this project** — and 2 is not a pass.
   identifier meaningful across reports.
 - **A scenario a live pass never executes is a defect in one of the two documents** — either it cannot be
   performed as written, or the pass skipped it. Resolve it while it is one; a specification accumulating
-  unexecuted scenarios is the written form of the false confidence it was meant to remove.
-- **Results never go in here.** Which scenario passed on which day belongs to the dated report. This document
-  says what must be true, not what was true last Tuesday.
+  unexecuted scenarios is exactly the false confidence it was meant to remove, now written down.
+- **Results never go in here.** Which scenario passed on which day belongs to the dated report.
 
 ## What this skill does not decide
 

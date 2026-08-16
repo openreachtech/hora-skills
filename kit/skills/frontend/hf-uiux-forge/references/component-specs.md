@@ -91,6 +91,6 @@ replaces label **within the same dimensions** — no size change, submit locked)
 
 ## When the project has its own library
 
-If the codebase uses shadcn/ui, MUI, or an in-house system, its components supersede these
+If the codebase uses shadcn/ui, MUI, or an in-house system, its components override these
 specs — reuse them, pass variants through their API, and don't re-implement lookalikes
 (see `existing-project.md` §2). These specs are for when you must build from scratch.

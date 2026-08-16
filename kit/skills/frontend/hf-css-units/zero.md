@@ -24,7 +24,10 @@ When a `<length>` value is 0, write `0` with no unit. Do not add a unit like `0p
 }
 ```
 
-- Reason: a length of zero does not depend on the unit. `0rem` and `0px` are equally "a length of zero", and the added unit contributes no information. A meaningless unit lowers readability, and it even opens room to drag the "rem or px" base-unit debate (→ [rem-base.md](./rem-base.md)) into a place that is merely zero. Writing just `0` conveys at a glance that the value is "a unit-independent zero".
+- Reason: a length of zero does not depend on the unit. `0rem` and `0px` are equally "a length of zero", and the added
+  unit contributes no information. A meaningless unit lowers readability, and it can even drag the "rem or px"
+  base-unit debate (→ [rem-base.md](./rem-base.md)) into a place that is merely zero. Writing just `0` conveys at a
+  glance that the value is "a unit-independent zero".
 
 ## Keep the unit on a `<time>` / `<angle>` zero
 

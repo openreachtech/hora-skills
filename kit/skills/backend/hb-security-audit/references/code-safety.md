@@ -4,7 +4,7 @@ Injection (SQL / NoSQL / command), dynamic code execution (`eval`), and maliciou
 or install hooks. Referenced from [SKILL.md](../SKILL.md).
 
 Commands below use `git grep` so the search stays on tracked source (no `node_modules`, no build
-output). Adjust the patterns to the ORM / driver / framework the project actually uses.
+output). Adjust the patterns to the ORM / driver / framework the project uses.
 
 ## 1. Injection (SQL / NoSQL / command)
 

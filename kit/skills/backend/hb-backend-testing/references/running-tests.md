@@ -33,9 +33,9 @@ NODE_OPTIONS="--experimental-vm-modules --max-old-space-size=1536" npx jest --ma
 ```
 
 - **`--max-old-space-size` is a ceiling, not a reservation.** It does not set memory aside; it is
-  the point up to which V8 may **defer garbage collection**. A generous value therefore buys no
-  headroom — it licenses each worker to grow that far before the GC is forced to work. Set it above
-  what the machine can actually give and the limit never engages: the worker balloons until the
+  the point up to which V8 may **defer garbage collection**. A generous value therefore gives no
+  headroom — it just lets each worker grow that far before the GC is forced to run. Set it above
+  what the machine can actually give and the limit never engages: the worker keeps growing until the
   **operating system**, not V8, ends it — and **one worker is enough** to take the machine down.
 - **The budget is a multiplication.** Every worker may sit at its peak at once, so the invariant is:
 
@@ -47,17 +47,56 @@ NODE_OPTIONS="--experimental-vm-modules --max-old-space-size=1536" npx jest --ma
   database, an E2E stack's daemons and pollers — not the installed total.
 - **Derive the cap from a measured peak, not from hope.** Run the suite once with `--logHeapUsage`
   (Jest prints each test file's heap as it finishes) and set the cap comfortably above the largest
-  value. A cap below the real peak thrashes the GC and fails anyway; a cap far above it only moves
-  the death from V8's out-of-memory error (which comes with a trace) to the machine's (which comes
-  with nothing).
-- **The budget rots as the project grows.** Per-worker usage rises with every model, seeder and test
-  added, so a workers × cap pair that fit when it was chosen silently stops fitting. When a
+  value. A cap below the real peak thrashes the GC and fails anyway; a cap far above it only shifts
+  where the crash happens — from V8's out-of-memory error (which comes with a trace) to the
+  machine's (which comes with nothing).
+- **The budget goes stale as the project grows.** Per-worker usage rises with every model, seeder
+  and test added, so a workers × cap pair that fit when it was chosen silently stops fitting. When a
   previously green suite starts dying without output, **re-measure the peak and re-do the
   multiplication** before suspecting the tests.
 
-How the two failures announce themselves is the diagnostic: a worker stopped **by the cap** throws
-`JavaScript heap out of memory` with a stack trace; a worker stopped **by the machine** is killed
-silently and can take the whole run — and every other process on the box — with it.
+You can tell the two failures apart by how each announces itself: a worker stopped **by the cap**
+throws `JavaScript heap out of memory` with a stack trace; a worker stopped **by the machine** is
+killed silently and can take the whole run — and every other process on the box — with it.
+
+### Check the machine first, then dial parallelism to fit it
+
+The default worker count (one per core) is sized for an **idle** machine with nothing else resident.
+A real developer machine rarely is: an editor, a browser, a local database, and, worst of all, a
+running E2E stack's daemons and pollers are all holding memory before the suite starts. So **read
+the machine's actual free resources before a full run**, and set the workers to what is free, not to
+what is installed:
+
+```bash
+# free memory and core count — the two inputs to the worker budget above
+free -h            # Linux: the "available" column is what a run may actually use
+nproc              # cores — the ceiling on useful workers
+# macOS equivalents: `vm_stat` (free/inactive pages) and `sysctl -n hw.ncpu`
+```
+
+- **When the machine is under pressure, lower `--maxWorkers` before anything else.** The budget is
+  `workers × (heap cap + overhead) ≤ available memory`; when `available` shrinks because something
+  else is resident, the only lever that keeps the product ≤ available without re-measuring the heap is
+  the worker count. Halve it and re-run — `--maxWorkers=2`, then `1` — rather than letting the OS pick
+  which process to kill. `--maxWorkers=50%` expresses it as a fraction of cores when the constraint is
+  CPU rather than memory.
+- **If one worker's cap already approaches what is free, go serial.** When even a single worker at
+  its measured peak does not comfortably fit beside what else is resident, there is no room left for
+  parallelism — run the suite in-band:
+
+  ```bash
+  NODE_OPTIONS="--experimental-vm-modules --max-old-space-size=1536" npx jest --runInBand
+  ```
+
+  `--runInBand` runs every test file in the **main process, one after another**, so the peak is one
+  worker's, not `workers ×` it. It is slower, but a serial run that finishes beats a parallel one the
+  OS kills halfway. This is the same flag the single-test fast loop uses for DB-writing tests below —
+  there for correctness, here for memory; both reasons point the same way on a constrained machine.
+- **Bring the E2E stack down before a full run, or count it in.** A running E2E stack
+  ([hb-build-e2e-test-environment](../../hb-build-e2e-test-environment/SKILL.md)) is capped, but its
+  capped footprint is still spent memory: subtract it from `available` before doing the
+  multiplication, or run `e2e/down.sh` first so the suite has the machine. Size the run with the
+  stack counted in.
 
 ## A single test through the suite runner
 

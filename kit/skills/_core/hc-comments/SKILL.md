@@ -10,5 +10,6 @@ Conventions related to comment writing. Applies across both JSDoc and inline com
 ## Language
 
 - Comments in actual code are written in English unless there is a reason otherwise. **Generated code** (such as test code) is also included as actual code.
-- Only when there is a specific reason (such as needing to explain background that is specific to Japanese), it is acceptable to write in Japanese.
+- Only when there is a specific reason (such as needing to explain Japanese-specific background), it is acceptable to
+  write in Japanese.
 - **Exception**: Comments within **code examples intended for explanation** in documentation/skills (Markdown ` ``` ` code blocks) are not actual code, so they are exempt from this convention (English) and should be written in the same language as the surrounding explanatory text.

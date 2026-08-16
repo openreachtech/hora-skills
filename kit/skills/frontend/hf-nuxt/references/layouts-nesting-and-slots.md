@@ -39,7 +39,8 @@
 
 ## Use `<slot/>` instead of `<NuxtPage/>`
 
-Generally, `<slot/>` and `<NuxtPage/>` will have the same effect as by default a page will be rendered in the slot of `<NuxtLayout/>`. However, prefer `<slot/>` over `<NuxtPage/>` as it allows us to have nested layout.
+Generally, `<slot/>` and `<NuxtPage/>` have the same effect, since by default a page is rendered in the slot of
+`<NuxtLayout/>`. However, prefer `<slot/>` over `<NuxtPage/>` because it allows nested layouts.
 
 ```vue
 <template>

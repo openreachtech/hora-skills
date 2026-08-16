@@ -41,4 +41,5 @@ When a positioner library computes the anchor edge for you, prefer its exposed c
 
 **Exception — modals.** A modal is not anchored to a trigger; it appears centered in the viewport, so keep `transform-origin: center` for modals and full-screen overlays.
 
-Whether any single user notices the difference doesn't matter — in aggregate these unseen details are what make the UI feel right.
+Whether any single user notices the difference doesn't matter — together these unseen details are what make the UI
+feel right.

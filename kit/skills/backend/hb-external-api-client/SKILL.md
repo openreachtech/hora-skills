@@ -19,10 +19,10 @@ bottom; read the one that matches what you are doing.
 ## First principle: confine every difference from the external API to Payload / Capsule (anti-corruption layer)
 
 Every convention in this skill follows from one goal: **an external API's interface differences must
-not spread into application code.** Key names, value formats, paths, authentication and response
-shapes of an external API can all change, and they disagree with our own naming conventions anyway.
-Confine those differences to **a single layer (the anti-corruption layer)** so the caller (a resolver
-or a job) never has to know about them.
+stay out of application code.** Key names, value formats, paths, authentication and response shapes
+of an external API can all change, and they disagree with our own naming conventions anyway. Confine
+those differences to **a single layer (the anti-corruption layer)** so the caller (a resolver or a
+job) never has to know about them.
 
 - **Differences on the way in** (key names, value formats, path, query, authentication) belong to
   **`Payload`**.
@@ -31,10 +31,9 @@ or a job) never has to know about them.
 - The caller only builds a `Payload` and pulls values out of a `Capsule`. **If the external API's raw
   shape reaches the caller, this layer has failed.**
 - **Why**: without this layer — or with a thin one — every change to the external API forces edits in
-  resolvers and jobs, and the blast radius of a change becomes impossible to read. Collecting the
-  differences in one place is what keeps a spec change contained to `Payload` / `Capsule`. When an
-  individual rule leaves you unsure, decide it by extending this principle: which class owns this
-  difference?
+  resolvers and jobs, and the reach of a change becomes impossible to see. Collecting the differences
+  in one place is what keeps a spec change contained to `Payload` / `Capsule`. When an individual
+  rule leaves you unsure, decide it by extending this principle: which class owns this difference?
 
 ## Cross-cutting rules (they apply to every layer)
 

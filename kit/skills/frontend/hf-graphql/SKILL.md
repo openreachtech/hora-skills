@@ -8,7 +8,13 @@ metadata:
 
 # GraphQL
 
-Everything GraphQL in this Furo app splits into two halves: the **schema types** (`types/graphql-schema.d.ts`) that describe entity/input/result shapes, and the **operations** (`app/graphql/client/`) that actually run queries and mutations. Use this skill when adding/updating generated GraphQL types, referencing an entity/input/result type in a Payload/Capsule, store ([[hf-nuxt]]), or component prop ([[hf-nuxt]]), or when adding or editing a GraphQL query or mutation. Each operation is a **Launcher / Payload / Capsule trio** built on Furo base classes, consumed via `useAppGraphqlClient` ([[hf-nuxt]]) and driven from a Fetcher ([[fetcher-operation]]) or SubmitterContext ([[mutation-operation]]).
+Everything GraphQL in this Furo app splits into two halves: the **schema types** (`types/graphql-schema.d.ts`) that
+describe entity/input/result shapes, and the **operations** (`app/graphql/client/`) that run queries and mutations.
+Use this skill when adding/updating generated GraphQL types, referencing an entity/input/result type in a
+Payload/Capsule, store ([[hf-nuxt]]), or component prop ([[hf-nuxt]]), or when adding or editing a GraphQL query or
+mutation. Each operation is a **Launcher / Payload / Capsule trio** built on Furo base classes, consumed via
+`useAppGraphqlClient` ([[hf-nuxt]]) and driven from a Fetcher ([[fetcher-operation]]) or SubmitterContext
+([[mutation-operation]]).
 
 > Schema types are real TypeScript declarations under `namespace schema.graphql`, not JSDoc typedefs — see [[hf-nuxt]] for the other ambient `.d.ts` files.
 

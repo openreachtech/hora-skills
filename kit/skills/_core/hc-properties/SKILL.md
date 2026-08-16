@@ -26,7 +26,9 @@ constructor ({
 - Basically, all classes are implemented as immutable. Once a property is set in the constructor, it must **not be reassigned** thereafter.
 - `this.xxx = ...` within the constructor (the initial set) is permitted. ESLint also does not prohibit this.
 - What is prohibited is **property reassignment outside the constructor**. This is enforced by ESLint.
-- Being immutable means that even a property with public access scope is in a state of being "protected by coding rules." Hence there is no need to make it native private for encapsulation purposes (for details, see "The meaning of `#alpha` notation and the treatment of native private" below).
+- Being immutable means that even a property with public access scope is "protected by coding rules." Hence there is
+  no need to make it native private for encapsulation purposes (for details, see "The meaning of `#alpha` notation and
+  the treatment of native private" below).
 - **Updating a collection (Array/Set) itself is permitted. What is prohibited is a structure that references individual elements** — pulling out a single element via `array[i]` and treating it as mutable state. This subverts the prohibition on mutable objects and is not permitted. A collection's value must always be "used all at once" (scanned/transformed/aggregated over every element as a whole). When you want to change scalar state, generate a new instance via a factory method (for the policy of not deep-freezing collections, see the class design principles convention).
 
 ```javascript

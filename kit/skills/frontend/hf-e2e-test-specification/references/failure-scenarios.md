@@ -27,7 +27,7 @@ what most failure scenarios forget.
    failure into lost work, and that is a worse defect than the failure being reported.
 
 Where the failure is a wait rather than a refusal, the first claim becomes **the wait ends**: the screen
-reaches a terminal state and stops promising a result that is not coming.
+reaches a terminal state and stops promising a result that will never arrive.
 
 ## Naming a provocation without binding to the environment
 
@@ -68,7 +68,7 @@ A failure scenario is written to catch one of these. Naming which keeps the asse
   asserting the terminal state, which is why "stops waiting" must appear in the words.
 - **The wrong state** — a failure rendered as empty. "There is nothing here" and "I could not find out what is
   here" are different sentences; the scenario asserts the second one, by name.
-- **A misleading affordance** — an invitation the product cannot honour: a drop zone nothing listens to, a
+- **A misleading affordance** — an invitation the product cannot deliver on: a drop zone nothing listens to, a
   control offered to a role whose request will be refused. Ruled out by asserting absence, not just refusal.
 
 ## Restore the world

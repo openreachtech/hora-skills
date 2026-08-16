@@ -108,7 +108,7 @@ see [dependency-injection.md](./dependency-injection.md).
 ## Optional: a local ErrorHash typedef
 
 For editor help you may add a `@typedef` naming the errors the resolver throws, and annotate the
-throw site. It documents the contract but is not required:
+throw site. It documents the contract but is optional:
 
 ```js
 /**

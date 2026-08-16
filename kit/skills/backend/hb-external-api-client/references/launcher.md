@@ -43,7 +43,7 @@ For each service (each external API) create one abstract base, `Base<Service>Lau
 - `static get fetch ()` returns the native `fetch` by default. **This is what tests replace**
   ([testing.md](./testing.md)).
 - **Why environment variables**: a base URL or an API token differs per environment (development /
-  staging / live) and is a secret besides. Going through `env` absorbs the difference between
+  staging / live) and is also a secret. Going through `env` absorbs the difference between
   environments and keeps the secret out of the repository.
 
 ```js

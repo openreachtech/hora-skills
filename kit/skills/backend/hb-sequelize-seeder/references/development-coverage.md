@@ -25,7 +25,7 @@ cases that arise in the app's operation**, not only the normal success path:
 
 - **Why**: if the fixtures hold only happy-path rows, tests for failure / error / status-specific
   behavior have nothing to read, and each such test ends up fabricating its own rows inline —
-  duplicative, and drifting from the shape of real data. Comprehensive fixtures let a test pick the
+  repetitive, and drifting from the shape of real data. Comprehensive fixtures let a test pick the
   row that matches the case under test. A missing case means that branch is either untested or
   tested against ad-hoc data. This is the same QA stance the rest of these skills take: do not let
   coverage be decided by whatever the fixtures happen to contain.

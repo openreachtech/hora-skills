@@ -215,7 +215,7 @@ export default class UpdateArticleMutationResolver extends BaseMutationResolver 
 4. **format** — `return this.formatResponse({ ... })`.
 
 Anything else (a post-commit side effect) is an explicit extra line **between step 3 and step 4**,
-never logic smuggled into the four calls. Keep `resolve()` readable top-to-bottom.
+never logic hidden inside the four calls. Keep `resolve()` readable top-to-bottom.
 
 - **`context`** carries `now` (request timestamp — use it, do not call `new Date()` yourself so all
   rows in the request share one time) and the actor (`userId` or `user`). Destructure only what the

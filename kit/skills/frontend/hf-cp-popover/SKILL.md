@@ -6,13 +6,13 @@ description: Use when building a floating panel anchored to a trigger, or a hove
 # FuroPopover / FuroTooltip
 
 Both are floating-overlay molecules anchored to a `trigger` slot, but they solve
-different problems. `FuroPopover` is a click-triggered surface that holds
-arbitrary interactive content (inline cell edit forms, action menus, small
-panels) and can be modal (focus-trapped). `FuroTooltip` is a hover/focus-only
-hint — non-interactive by convention, shows short text (or a rich `content`
-slot), and opens after a configurable delay. Pick based on trigger interaction
-(click vs. hover/focus) and content interactivity (form/buttons vs. plain
-text), not on visual similarity.
+different problems. `FuroPopover` is a click-triggered surface that holds any
+interactive content (inline cell edit forms, action menus, small panels) and can
+be modal (focus-trapped). `FuroTooltip` is a hover/focus-only hint —
+non-interactive by convention, shows short text (or a rich `content` slot), and
+opens after a configurable delay. Pick based on trigger interaction (click vs.
+hover/focus) and content interactivity (form/buttons vs. plain text), not on
+visual similarity.
 
 - Layer: molecule
 - Import: `import { FuroPopover, FuroTooltip } from '@openreachtech/furo-vue'`
@@ -77,7 +77,7 @@ Both components take a single `parcel` prop — no other props.
 | Slot | Description |
 | --- | --- |
 | `trigger` | The element the popover is anchored to. Focusable by default (rendered as a button). |
-| `content` | The popover body. Holds arbitrary interactive content. |
+| `content` | The popover body. Holds any interactive content. |
 
 ### FuroTooltip
 

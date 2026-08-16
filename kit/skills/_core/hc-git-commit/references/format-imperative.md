@@ -87,8 +87,8 @@ Kick out trailing ',' from JSDoc in test for BaseRestfulApiLauncher.createRespon
 
 ## Bodies
 
-Most commits in this format carry no body. Add one only when the *why* is not deducible from
-the subject and the diff together.
+Most commits in this format carry no body. Add one only when the *why* cannot be worked out
+from the subject and the diff together.
 
 ```
 Use late registration date unless it doesn't exist

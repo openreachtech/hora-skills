@@ -42,7 +42,7 @@ tags_json      JSON            -- should be a tags table + join (queryable, cons
 avatar_url     STRING(255)     -- silently truncates a long signed URL
 ```
 
-## Default integer columns to INTEGER / BIGINT; do not use SMALLINT without a specific reason
+## Default integer columns to INTEGER / BIGINT; use SMALLINT only with a specific reason
 
 For an integer column, default to `INTEGER` (and `BIGINT` for ids and anything that accumulates over
 the table's life). Do **not** reach for `SMALLINT` (or `TINYINT`) to "save space" unless there is a

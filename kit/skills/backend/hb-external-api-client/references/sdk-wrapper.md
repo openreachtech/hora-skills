@@ -8,11 +8,11 @@ HTTP is in [launcher.md](./launcher.md).
 
 ## ⚠️ This is interim. Migrate once it is supported properly
 
-rocket-client does **not support** the SDK-wrapping shape at present. This section is a **provisional
+rocket-client does **not support** the SDK-wrapping shape at present. This section is a **temporary
 workaround that overrides `BaseLauncher.launchRequest()`** — the `fetch` flow — and substitutes an SDK
 call.
 
-- Migrate as soon as a coming update supports it properly.
+- Migrate as soon as an update supports it properly.
 - **Keep it minimal, because it is interim** — add extensions such as holding the error only when you
   actually need them.
 - **Limit where it is used**: only where an official SDK is provided. If REST can be hit directly, use

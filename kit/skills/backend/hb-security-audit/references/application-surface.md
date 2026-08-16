@@ -5,7 +5,7 @@ error-response leakage. Referenced from [SKILL.md](../SKILL.md).
 
 ## 19. File-upload validation (type + content + size)
 
-Any endpoint that accepts an uploaded file must validate it on **three** axes. Checking only one
+Any endpoint that accepts an uploaded file must validate it in **three** ways. Checking only one
 (commonly just size, or just the client-declared MIME type) is insufficient.
 
 1. **Declared type allow-list** — accept only the MIME type(s) / extension(s) the feature needs.

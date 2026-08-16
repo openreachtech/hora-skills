@@ -106,8 +106,8 @@ export default class EmailInsertableVariablesInputValidator extends BaseInputVal
   as `NormalPaginationInputValidator.js` (default-exported, commonly imported as
   `PaginationInputValidator`).
 - **Inspectors:** imported directly from `@openreachtech/mentsu-value-inspector` (`ValueInspector` /
-  `NumberValueInspector` / `IntegerValueInspector`) — the module is published, so use it from the
-  package rather than a local wrapper ([inspector-api.md](./references/inspector-api.md)).
+  `NumberValueInspector` / `IntegerValueInspector`)
+  ([inspector-api.md](./references/inspector-api.md)).
 - Class name = `<Operation>InputValidator` (PascalCase, matching the resolver's `schema`).
 
 ## Predicates & the inspector

@@ -51,7 +51,7 @@ Declare the query and body schemas with the scalars from `@openreachtech/mentsu-
   need conversion or validation; the minimum is a fine place to start.
 - **Why the minimum is enough**: the point of the schema is to shape values to the external API's spec
   before sending. Declaring keys that need no conversion (a plain string, say) achieves nothing, and a
-  declaration that drifts from the actual spec invites misreading. Declare what needs converting.
+  declaration that drifts from the actual spec is easy to misread. Declare what needs converting.
 
 ```js
 import {
