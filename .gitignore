@@ -2,6 +2,11 @@
 .env
 node_modules/
 
+#### build output
+dist/
+.scratch/
+!.scratch/directory-keeper
+
 #### for Windows
 Thumbs.db
 Thumbs.db:encryptable
