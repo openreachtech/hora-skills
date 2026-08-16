@@ -40,19 +40,4 @@ export default [
       'max-classes-per-file': 'off',
     },
   },
-
-  {
-    rules: {
-      'no-shadow': [
-        'error',
-        {
-          allow: [
-            ...coreRuleOptionHash['no-shadow'].allow,
-
-            'require',
-          ],
-        },
-      ],
-    },
-  },
 ]
