@@ -29,8 +29,6 @@ export default [
       ],
 
       'jsdoc/require-jsdoc': 'off',
-
-      'max-classes-per-file': 'off',
     },
   },
 ]
