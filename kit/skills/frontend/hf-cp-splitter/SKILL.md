@@ -12,10 +12,10 @@ between them and reports pane sizes outward — use it when the user should be
 able to drag to resize regions. `FuroScrollArea` wraps a single region of
 overflowing content with a styled, cross-browser scrollbar — use it when
 content inside a fixed-size box needs to scroll, with no resizing involved.
-`FuroSeparator` is a purely presentational divider line (with correct
-`role`/`aria-orientation`) drawn between sibling content — use it when you
-just need a visual/semantic line, not an interactive boundary. A `FuroSplitter`
-pane commonly contains a `FuroScrollArea` for its overflowing content, and a
+`FuroSeparator` is a purely visual divider line (with correct
+`role`/`aria-orientation`) drawn between sibling content — use it when you just
+need a visual/semantic line, not an interactive boundary. A `FuroSplitter` pane
+commonly contains a `FuroScrollArea` for its overflowing content, and a
 `FuroSeparator` is often placed inside a `FuroToolBar` between groups of
 controls (unrelated to `FuroSplitter`'s own drag handle).
 

@@ -10,8 +10,8 @@ description: >
 
 # Light RAG (vector-first / LLM-fallback document retrieval, no vector DB)
 
-This backend does RAG "lightly" — no external vector database, no heavyweight embedding service. Documents
-live as `Document` rows; a **local, offline embedder** produces small vectors stored in `DocumentEmbedding`;
+This backend does RAG "lightly" — no external vector database, no heavy embedding service. Documents live as
+`Document` rows; a **local, offline embedder** produces small vectors stored in `DocumentEmbedding`;
 retrieval ranks them with **in-app cosine** and falls back to an **LLM-driven id selection** when vectors
 find nothing. A separate n-gram fulltext builder exists for generic MySQL/MariaDB keyword search.
 
@@ -24,7 +24,7 @@ to pick document ids from a metadata catalog.
 - **Why a local, dependency-free embedder**: `LocalTextEmbedder` hashes word tokens + CJK n-grams into a
   fixed 256-dim L2-normalized vector — no network, no API cost, works offline, and (being normalized)
   cosine is just a dot product. It matches surface forms well; true semantic paraphrase is its weakness, so
-  the interface is designed to be swapped for a real embedding provider later without changing callers.
+  the interface can be swapped for a real embedding provider later without changing callers.
 - **Why vector-first, LLM-fallback**: the vector path is cheap and deterministic; it wins whenever it
   returns a non-empty selection. Any empty result (feature disabled, no embeddings yet, all below the score
   floor, empty token budget) falls through to the LLM fetcher, which reads a metadata-only catalog and calls
@@ -148,7 +148,7 @@ doc, missing ids omitted). Both paths therefore produce the **same XML shape**.
 
 ## 4. The combination seam — `AiAgentBaseKnowledgeAssembler`
 
-`.createAsync(...)` orchestrates it. It **short-circuits with an empty dynamic section unless the caller
+`.createAsync(...)` coordinates it. It **short-circuits with an empty dynamic section unless the caller
 sets `shouldPrefetchDynamicDocumentsForBackground: true`** (set by the AI-generation jobs / the document
 mutation). When prefetch is on, `#resolvePrefetchedDynamicDocumentsBackgroundSectionAsync(...)` is the
 vector-first / LLM-fallback core:

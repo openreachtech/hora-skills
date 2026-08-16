@@ -7,8 +7,8 @@ description: Use when building a rich-text editing area in a repo that consumes 
 
 Rich-text editor organism with a configurable toolbar. It holds controlled
 HTML content (`parcel.value` paired with `update:value`), supports a plain
-"editor" or bare "plain" appearance, and exposes opt-in seams for
-@-mentions (`parcel.mention.searchMentions`), inline image uploads
+"editor" or bare "plain" appearance, and exposes opt-in hooks for @-mentions
+(`parcel.mention.searchMentions`), inline image uploads
 (`parcel.image.uploadImage`), file attachments (`parcel.attachedFiles`), and
 custom toolbar actions (`parcel.toolbar`, `parcel.actionOverrides`,
 `toolbar-start` / `toolbar-end` slots).

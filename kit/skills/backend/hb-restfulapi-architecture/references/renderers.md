@@ -201,4 +201,4 @@ static get fileFieldsConfigHash () {
 }
 ```
 
-Uploaded files are attached to the request and folded into `body` before `render()` runs.
+Uploaded files are attached to the request and merged into `body` before `render()` runs.

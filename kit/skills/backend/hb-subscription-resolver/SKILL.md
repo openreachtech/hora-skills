@@ -15,7 +15,7 @@ channel** a caller listens on, and **whether they may**. The events themselves a
 whatever changes state (a mutation or a background worker), through a PubSub **broker** — the
 subscription resolver and the publisher meet on a named channel, never calling each other directly.
 
-This overview maps each topic to a section; the depth lives in the detail files under `references/`.
+This overview maps each topic to a section; the details are in the detail files under `references/`.
 
 > This skill states a **general, project-independent rule** — a refined best practice, not a
 > description of any one project's code, so it need not match a given repo's existing notation. The

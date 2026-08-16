@@ -88,7 +88,7 @@ The template for `docs/features/<feature-slug>/requirements.md`, and the rules f
 - Ids are assigned in writing order, never renumbered, never reused.
 - The body states the outcome. It must not name a class, a file or a library — the design is
   decided by the implementation phase, not here.
-- Requirements that ceased to apply keep their heading and gain a status line directly under it.
+- Requirements that no longer apply keep their heading and gain a status line directly under it.
 
 ```markdown
 ### REQ-03 — Suspended accounts are refused

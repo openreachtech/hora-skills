@@ -134,7 +134,7 @@ character** of each word.
   from the `addIndex` `name` (do not inline). If abbreviations collide within a table, add a second
   letter (etc.) to keep them unique while staying meaningful.
 
-### Don't shorten when you don't need to
+### Shorten only when needed
 
 If it fits within ~50 characters, do not shorten. `.join('_')` the full `TABLE_NAME` / `COLUMN_NAME`
 as in `customers_registered_at_index`. **Do not mechanically initialize just because you can** (it

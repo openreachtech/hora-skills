@@ -1,6 +1,7 @@
 # Base class
 
-Every context extends `BaseAppContext` (`app/vue/contexts/BaseAppContext.js`), which extends `BaseFuroContext` from `@openreachtech/furo-nuxt`. Put commonly used methods in `BaseAppContext` so that we can reuse them in pages.
+Every context extends `BaseAppContext` (`app/vue/contexts/BaseAppContext.js`), which extends `BaseFuroContext` from
+`@openreachtech/furo-nuxt`. Put commonly used methods in `BaseAppContext` so pages can reuse them.
 
 ```js
 import {

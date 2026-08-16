@@ -22,7 +22,8 @@ throw new Error(`${this.constructor.name}#normalizeValue() must be inherited`)
 
 1. Modules that behave as **DTOs** (e.g. `BigNumber`) are treated the same as built-in classes. They may be freely instantiated directly with `new`, without going through a dedicated factory method.
    - However, writing a direct `new` expression is allowed **only if the module does not provide a factory method** such as `Model.build()` / `Sample.create()`. If a factory method is provided, use that factory method instead of a `new` expression.
-   - When it is hard to determine whether something is DTO-like, **define a factory method instead of asking a human** (when in doubt, default to going through a factory method).
+   - When it is hard to determine whether something is DTO-like, **define a factory method instead of asking a
+     human**.
    - If the same class is instantiated **frequently across multiple classes**, introduce a new `XxxxFactory` class. It holds the target class's constructor as a property and **performs the `new` expression through that factory class**. If a common base `BaseFactory` class exists, use it (via inheritance); if not, provide a **generic implementation** that doesn't depend on a specific class.
 2. For **delegate-style functional classes** (classes held in a property and used by delegating their functionality), basically implement a factory method to go through (following "instantiation of a dependency class should go through a factory method").
 3. Delegate-style functional classes require a factory method **regardless of whether they are created on the fly within an instance method**. Even when created temporarily within a method, do not `new` them directly; go through a dedicated factory method (e.g. `this.createExternalApiClient()`).

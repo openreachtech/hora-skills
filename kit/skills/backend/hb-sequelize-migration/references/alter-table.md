@@ -131,7 +131,7 @@ module.exports = {
 ## Columns on a table with existing rows use `allowNull: true` or `defaultValue`
 
 When adding a column to a table that already holds data, make it `allowNull: true` or give it a
-`defaultValue`. Do not bolt on a `NOT NULL` column that existing rows cannot satisfy (they would
+`defaultValue`. Do not add a `NOT NULL` column that existing rows cannot satisfy (they would
 violate it and the migration would fail). "All nullable for backward compatibility", as above, is
 the default.
 

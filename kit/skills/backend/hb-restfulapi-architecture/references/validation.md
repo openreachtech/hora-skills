@@ -2,7 +2,7 @@
 
 The current repo validates REST input **ad hoc** inside `render()` — a hand-rolled
 `isValidRequestBody()` per renderer. The **target** is to validate with the **same validator
-structure the GraphQL layer uses**, so the two surfaces share one validation discipline. Reaching
+structure the GraphQL layer uses**, so the two surfaces share one validation approach. Reaching
 that needs two collaborators: an **adapter** that normalizes REST input, and a **validator** that
 runs the rules.
 
@@ -11,8 +11,8 @@ runs the rules.
 ## Why validation needs an adapter here
 
 A GraphQL validator receives a single, already-typed `input` object. REST input does not arrive that
-way — it is **split across `body` / `query` / path params**, and it is all **string-ish** (query and
-path values are strings; body values are whatever the client sent). Before any rule can run, the
+way — it is **split across `body` / `query` / path params**, and it is all **string-like** (query
+and path values are strings; body values are whatever the client sent). Before any rule can run, the
 input has to be **collected and coerced** into the one `input` object the validator expects. That
 collect-and-coerce step is the **adapter**.
 

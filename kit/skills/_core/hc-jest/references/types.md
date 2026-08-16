@@ -10,10 +10,10 @@ correct type can be inferred from the literal and there is no type error
 whether or not you attach it, it is **redundant, so it can be omitted**.
 
 A cast via `@type {Array<*>}` should be limited to suppressing type errors
-**for the purpose of writing irregular values** (`null` / `undefined` /
-missing keys, etc. that violate the declared type). Irregular values are
-isolated into the **abnormal-value-series `describe()`** by the valid/invalid
-separation ([Separate Valid / Invalid
+**to write irregular values** (`null` / `undefined` / missing keys, etc. that
+violate the declared type). Irregular values are isolated into the
+**abnormal-value-series `describe()`** by the valid/invalid separation
+([Separate Valid / Invalid
 Values](./structure.md#separate-valid--invalid-values)), so **only the
 abnormal-value series needs the cast**.
 
@@ -298,10 +298,10 @@ The source-side JSDoc also uses `value: *`, so align with it.
 
 ## Resolve implicit-any fixtures with `@type`
 
-When a fixture arrow function has an implicit-any argument and trips up the
+When a fixture arrow function has an implicit-any argument and breaks the
 type check (e.g. `key` / `value` in
 `const alphaReplacer = (key, value) => value`), resolve it with a `@type`
-annotation **rather than rewriting the value to dodge the type error**. Write
+annotation **rather than rewriting the value to avoid the type error**. Write
 any as `*`.
 
 ```js

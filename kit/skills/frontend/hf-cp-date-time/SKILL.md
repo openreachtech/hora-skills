@@ -12,8 +12,8 @@ popover) whose wire value is `HH:MM:SS`. `FuroDateTimePicker` composes both
 of them into a single popover control whose wire value is the combined
 `YYYY-MM-DDTHH:MM:SS` string — use it instead of manually pairing a date
 picker and a time field side by side. Pick exactly one of the three based on
-what the underlying data actually represents (date only, time only, or a
-combined timestamp), not on how you want it to look.
+what the underlying data represents (date only, time only, or a combined
+timestamp), not on how you want it to look.
 
 - Layer: molecule (all three)
 - Import: `import { FuroDatePicker, FuroTimeField, FuroDateTimePicker } from '@openreachtech/furo-vue'`
@@ -129,7 +129,7 @@ this skill was written.
 | --- | --- | --- |
 | `change-value` | `DateTimePickerEmitPayload` | Fired when either the date or time part changes. |
 | `commit-value` | `DateTimePickerEmitPayload` | Fired on the same change event. |
-| `update:value` | `string \| null` | Combined `YYYY-MM-DDTHH:MM:SS` string. Selecting a date fabricates `12:00:00`; null only while no date is set. |
+| `update:value` | `string \| null` | Combined `YYYY-MM-DDTHH:MM:SS` string. Selecting a date sets `12:00:00`; null only while no date is set. |
 
 ## Slots
 

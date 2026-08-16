@@ -145,7 +145,7 @@ documentation convention.
 - The body explains **why**, not what. The diff already shows what changed; what it cannot
   show is the constraint, the rejected alternative, or the non-obvious consequence.
 - A ticket or issue identifier may appear in the body, but the body must still explain the
-  change **without** it. A reader who cannot open the ticket must not be left without the
+  change **without** it. A reader who cannot open the ticket must still be given the
   reason.
 
 ### Trailers

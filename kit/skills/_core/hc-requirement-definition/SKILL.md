@@ -59,8 +59,8 @@ Work through the five phases in order. Do not skip to drafting.
 | 4 | Draft | Produce the document from the template. See [document-template.md](./references/document-template.md). |
 | 5 | Approve | Present the document, ask for confirmation, then set the state to `APPROVED`. |
 
-- Phases 2 and 3 repeat. One round of questions almost never suffices; two or three rounds is
-  normal.
+- Phases 2 and 3 repeat. One round of questions is almost never enough; two or three rounds
+  is normal.
 - Phase 1 is not optional. A restatement that gets corrected early saves the whole document
   from being written against the wrong problem.
 
@@ -90,7 +90,8 @@ Work through the five phases in order. Do not skip to drafting.
 - A withdrawn requirement keeps its id with the status `WITHDRAWN` and a one-line reason. **Its
   id is never reused** for a different requirement.
 - A requirement added after approval takes the next unused number, even if it belongs at the top
-  of the document logically. Order in the document is presentational; the id is the identity.
+  of the document logically. Order in the document is only for presentation; the id is the
+  identity.
 
 ## Every requirement must be verifiable
 

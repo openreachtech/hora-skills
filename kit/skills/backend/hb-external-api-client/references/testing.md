@@ -31,8 +31,8 @@ The unit-test conventions for an external API client. The files live under
 - That `hasError()` is `true` for a status code (>= 400), a network error and an input error.
 - **Why the absent case is mandatory**: the null guard and the default in `extractXxx()`
   ([capsule.md](./capsule.md#extractxxx-always-guards-against-null-and-returns-null--an-empty-array-when-the-value-is-missing))
-  only come into play when the response is missing something. Asserting only the present case lets a
-  missing guard through — `body` is `null` and it throws a `TypeError`.
+  only matter when the response is missing something. Asserting only the present case lets a missing guard through —
+  `body` is `null` and it throws a `TypeError`.
 
 ## What to test on a launcher
 

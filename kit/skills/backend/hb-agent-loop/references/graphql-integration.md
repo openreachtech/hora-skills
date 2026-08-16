@@ -75,10 +75,10 @@ export default class RequestResearchMutationResolver extends BaseRequestAgentMut
   them through `context.share`. This keeps DI in one place and lets tests swap the provider via a fake
   share. The provider reuses its connection, so the resolver never calls `createAsync` / `teardown`.
 - **Why the seam takes `context`**: the `enqueue({ body, context })` hook receives the per-request
-  `context` precisely so the dispatcher can be sourced from `context.share`. A parameterless getter
-  could not — a renchan resolver instance holds only `errorHash`, and `context` is a per-call argument
-  to `resolve`. `resolve` (implemented by the base) calls `enqueue` with the built body, so the app
-  never reimplements `resolve`. The house provider is keyed by `DispatcherCtor`
+  `context` so that the dispatcher can be sourced from `context.share`. A parameterless getter could
+  not — a renchan resolver instance holds only `errorHash`, and `context` is a per-call argument to
+  `resolve`. `resolve` (implemented by the base) calls `enqueue` with the built body, so the app never
+  reimplements `resolve`. The house provider is keyed by `DispatcherCtor`
   (`dispatchJob({ DispatcherCtor, body })`), which the app passes inside `enqueue`.
 - **Do not turn a light loop into a job**: a loop that finishes quickly and needs no progress
   subscription can be run inside a normal resolver with `InlineAgentRunner` ([core.md](./core.md)),

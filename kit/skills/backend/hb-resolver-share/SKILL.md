@@ -10,9 +10,9 @@ description: >
 
 # Resolver Share
 
-A skill for the **Share class**: the object that holds the instances **shared across every resolver
-of an API** and is reachable from a resolver as `context.share`. The framework builds one Share **once
-per server process** at boot and threads it into each request's Context, so resolvers read shared
+A skill for the **Share class**: the object that holds the instances **shared across every resolver of
+an API** and is reachable from a resolver as `context.share`. The framework builds one Share **once
+per server process** at boot and passes it into each request's Context, so resolvers read shared
 dependencies from it instead of constructing their own.
 
 > This skill states a **general, project-independent rule** — a refined best practice, not a
@@ -226,9 +226,9 @@ The flow is one-directional and happens once at boot, then per request:
 - **Share never imports resolvers or the Context** — the arrows point Context → Share, resolver →
   `context.share`. Keeping the dependency one-way stops Share from becoming a hub that knows about
   request handling.
-- **One assembly point.** All shared instances are wired in `createAsync`; a resolver never news up a
-  broker/dispatcher/client of its own. If a resolver needs a new shared instance, add it to Share (in
-  `createAsync` + a property), don't construct it ad hoc.
+- **One assembly point.** All shared instances are wired in `createAsync`; a resolver never
+  constructs a broker/dispatcher/client of its own. If a resolver needs a new shared instance, add it
+  to Share (in `createAsync` + a property), don't construct it ad hoc.
 
 ## 5. Naming
 

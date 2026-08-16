@@ -8,7 +8,8 @@ A code is looked up and resolved to a locale path at a single point in `BaseAppG
 
 ## Locale paths (i18n)
 
-Every code is its own addressable entry — **no array grouping** and **no reverse map**. The map value is a locale **path**, never a message string.
+Every code is its own entry — **no array grouping** and **no reverse map**. The map value is a locale **path**, never
+a message string.
 
 **`ERROR_CODE_HASH`** — unique identifier (`<SemanticName><CodeSuffix>`) → a single code. The suffix is the code with dots removed, so a code seen in logs maps to exactly one entry:
 
@@ -34,7 +35,8 @@ export const ERROR_LOCALE_HASH = /** @type {const} */ ({
 })
 ```
 
-The path is resolved to text by the i18n layer, so the message follows the active language. The text lives in the locale files, keyed by the same path:
+The i18n layer resolves the path to text, so the message follows the active language. The text lives in the locale
+files, keyed by the same path:
 
 ```jsonc
 // i18n/locales/ja.json

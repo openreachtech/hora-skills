@@ -18,23 +18,24 @@ how its fields are typed.
 
 ## Grand principle: the SDL is a derived contract — names, nullability, and placement follow mechanical rules, not taste
 
-Every schema decision in this convention is derivable: the operation name drives the type
-names one-to-one (`<Operation>Input` / `<Operation>Result`), non-null `!` is the default
-unless a value is genuinely optional, each business domain gets its own numbered file, and
-each audience keeps its own schema. **Do not invent ad-hoc names, nullable-by-default
-fields, or a shared "misc" file** — a reader who knows the operation name must be able to
-predict the file, the type names, and the nullability without opening anything.
+Every schema decision in this convention can be derived: the operation name drives the
+type names one-to-one (`<Operation>Input` / `<Operation>Result`), non-null `!` is the
+default unless a value is genuinely optional, each business domain gets its own numbered
+file, and each audience keeps its own schema. **Do not invent ad-hoc names,
+nullable-by-default fields, or a shared "misc" file** — a reader who knows the operation
+name must be able to predict the file, the type names, and the nullability without opening
+anything.
 
 - **Why mechanical naming**: resolvers are matched to operations by name
   (`static get schema()` in `hb-query-resolver` / `hb-mutation-resolver` returns the SDL field
   name), and JSDoc types reference `<Operation>Input` / `<Operation>Result` directly. One
-  divergent name breaks the chain from SDL to resolver to type-check.
+  mismatched name breaks the chain from SDL to resolver to type-check.
 - **Why non-null by default**: a nullable field forces every consumer to write a null
   branch. Reserving nullability for genuinely optional values makes each remaining `?`
   meaningful — nullability becomes documentation, not noise.
 - **Why per-audience, per-domain files**: audiences (e.g. customer / admin) have different
-  contracts and different lifecycles. Merging them, or piling domains into one file, makes
-  it impossible to see which audience a change affects.
+  contracts and lifecycles. Merging them, or piling domains into one file, makes it
+  impossible to see which audience a change affects.
 
 ```graphql
 # Good: names derived from the operation, non-null by default, deliberate nullability
@@ -127,8 +128,8 @@ scalar Upload
 ```
 
 - Do not re-declare a scalar in any other file. Just reference it (`createdAt: DateTime!`).
-- Scalars can differ across audiences — declare only the scalars the audience actually
-  uses, matching the sibling audiences' style rather than copying their scalar list.
+- Scalars can differ across audiences — declare only the scalars the audience uses,
+  matching the sibling audiences' style rather than copying their scalar list.
 
 ## 4. Query / Mutation blocks — colocated per domain file
 
@@ -189,8 +190,8 @@ exposes, so renaming a concept is one change across the migration, the model, an
   `n`, `p` state nothing about what the value is; name the key for what it holds (`searchQuery`,
   `sortKey`, `pageNumber`). The SDL is the contract every client reads *before* it reads any code,
   so a one-letter key costs every consumer a trip into the resolver to learn what to pass, and the
-  generated TypeScript type inherits the same opaque name. Abbreviations in general are limited to
-  the shared naming convention's whitelist, and no single letter is on it.
+  generated TypeScript type inherits the same opaque name. Abbreviations are limited to the shared
+  naming convention's whitelist, and no single letter is on it.
 
 ```graphql
 # Good: the key states what the value is

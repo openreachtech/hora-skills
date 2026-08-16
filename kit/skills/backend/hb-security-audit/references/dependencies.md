@@ -38,8 +38,8 @@ git grep -nE "min-release-age|minimumReleaseAge|_authToken|_auth=|npmAuthToken|N
 
 - **Lockfile committed** — required for reproducible / clean installs (check 18). Missing lockfile →
   **MEDIUM**.
-- **Version-pinning delay** — a cooldown before installing a just-published version blunts a class of
-  supply-chain attacks (a malicious release pulled before it is caught). npm supports
+- **Version-pinning delay** — a cooldown before installing a just-published version weakens a class
+  of supply-chain attacks (a malicious release pulled before it is caught). npm supports
   `min-release-age`; pnpm supports `minimumReleaseAge`. **Recommend ≥ 7 days** where the manager
   supports it. Missing / `< 7` → **LOW**.
 - **No committed registry credentials** — a private-registry token (`_authToken`, `_auth`,

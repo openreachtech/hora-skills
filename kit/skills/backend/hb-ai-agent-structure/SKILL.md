@@ -15,7 +15,7 @@ This skill covers **how this backend structures an AI agent as application code*
 the `ProceduralAgentLoop` subclass, the per-step actions, and the `*Generator` that runs the loop. The
 iteration engine, progress delivery, composition, job execution, and GraphQL integration are provided by
 the `@openreachtech/mentsu-agent-loop-core` package family; see the **`hb-agent-loop` skill** for those. Do
-not re-explain the core package here — this skill is only the app layer that sits on top of it.
+not re-explain the core package here — this skill is only the app layer on top of it.
 
 ## Grand principle: the procedure is code, the AI only judges inside a step
 
@@ -180,7 +180,7 @@ export default class RecordSearchAgentLoop extends ProceduralAgentLoop {
 - **State is updated immutably** (`{ ...state, ... }`) — never mutate it in place.
 - **`registry` is rebuilt each access** — it is cheap and keeps the getter pure.
 - Progress within the procedure is forwarded through `this.context.notifyProgress?.({ phase, status })`
-  (a no-op when the caller does not set it), not through the runner's `onProgress`.
+  (a no-op unless the caller sets it), not through the runner's `onProgress`.
 
 ## 2. Actions — an app base over `BaseAgentAction`, one forced tool call each
 
@@ -321,7 +321,7 @@ export default class PlanSearchAction extends BaseRecordSearchAgentAction {
 - **The model's output is always re-validated in code** (e.g. `#normalizePlan()` checks every category id
   against the catalog and returns `null` if anything is off) — never trust the raw function-call arguments.
 - **A non-AI action is just code**: `ExecuteSearchPlanAction` has no `toolName` and no AI turn; it
-  orchestrates `context.recordSearchService` and returns records.
+  drives `context.recordSearchService` and returns records.
 
 ## 3. The generator — build `context` and run via `InlineAgentRunner`
 
@@ -358,7 +358,7 @@ The assembled `context` is exactly the object the loop reads as `this.context` a
 
 | Key | What it is |
 | --- | --- |
-| `message` | the user utterance / question |
+| `message` | the user input / question |
 | `aiAgent` | the DB agent config (instruction, model) |
 | `historyMessages`, `files`, `documents` | chat history, attachments, RAG documents |
 | `processor` | the LLM processor (see the `hb-multi-llm-provider` skill) |
@@ -370,8 +370,8 @@ The assembled `context` is exactly the object the loop reads as `this.context` a
 Two entrypoints on the generator are common:
 
 - **Chat flow** (`#generate(...)`) runs a standalone **intent gate first** — it creates
-  `ClassifySearchIntentAction` directly (not in the loop registry) and returns `null` when the utterance
-  is ordinary conversation, so the loop only runs for real requests.
+  `ClassifySearchIntentAction` directly (not in the loop registry) and returns `null` when the input is
+  ordinary conversation, so the loop only runs for real requests.
 - **Explicit flow** (`#generateForExplicitSearch(...)`) skips the gate, passes empty history/files, and
   sets `notifyProgress` for streaming.
 

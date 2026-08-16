@@ -446,13 +446,12 @@ describe('BaseRequestBodyStringifier', () => {
 
 ## Do not define shared variables outside `describe()` (at file scope)
 
-A variable used across multiple `describe()`s must **not** be defined outside all
-`describe()`s (i.e. at file scope / module top level) — for example, placing a derived
-binding at the top of the file and reusing it across every describe. Only imports are
-allowed at file scope. A variable you want to share must be **defined afresh inside
-each `describe()` that uses it** (when sharing across behaviors within the same
-member, do so [once directly under the member describe](#define-shared-fixtures-directly-under-the-member-describe);
-when sharing across members, redefine it in each member describe).
+A variable used across multiple `describe()`s must **not** be defined outside all `describe()`s (i.e. at file scope
+/ module top level) — for example, placing a derived binding at the top of the file and reusing it across every
+describe. Only imports are allowed at file scope. A variable you want to share must be **defined fresh inside each
+`describe()` that uses it** (when sharing across behaviors within the same member, do so [once directly under the
+member describe](#define-shared-fixtures-directly-under-the-member-describe); when sharing across members, redefine
+it in each member describe).
 
 - **Why**: File-scope shared state is hard to trace — it's unclear which `describe()`
   / `test()` depends on it — and it invites implicit coupling and contamination
@@ -460,7 +459,7 @@ when sharing across members, redefine it in each member describe).
   is enough to know the full precondition (this also aligns with the sticky-header
   policy of repeating the class-name describe per member).
 - Even if you're worried about the cost of creation (e.g. building a derived class via
-  a factory), it's fine to define it afresh each time (it is memoized / correctness is
+  a factory), it's fine to define it fresh each time (it is memoized / correctness is
   the priority in tests).
 - Imports (the class under test, the base class, test declaration classes, etc.) are
   side-effect-free bindings, so they are fine at file scope.
@@ -687,9 +686,8 @@ For a factory method like `.create()`, test only the following:
 - That it delegates to the constructor (verify `toHaveBeenCalledWith` via
   `constructorSpy`).
 
-Do **not** test property retention. Property retention is the constructor's
-responsibility and is covered by the constructor's own tests — do not duplicate it in
-the factory method's tests.
+Do **not** test property retention. It is the constructor's responsibility, covered
+by the constructor's own tests — do not duplicate it here.
 
 ### Verify default values on omitted arguments by "the default value reaching the constructor"
 
@@ -757,11 +755,10 @@ covered by the delegation test in the "should call constructor" section above). 
   what identifies a case is not the value but the **combination**).
 - Since `input` is sparse, name the `test.each()` titles by **each value in
   `expected`**.
-- Order per
-  [list valid values first](./test-cases.md#list-normal-values-first): put cases with **more items
-  specified (present) first**, and put the **all-omitted (`input: {}`)** case last.
-  All-omitted is the most degenerate edge case, so it does not go first (reducing from
-  2 specified → 1 → 0 reads more naturally).
+- Order per [list valid values first](./test-cases.md#list-normal-values-first): put cases with
+  **more items specified (present) first**, and put the **all-omitted (`input: {}`)** case last.
+  All-omitted is the most trivial edge case, so it does not go first (reducing from 2 specified →
+  1 → 0 reads more naturally).
 
 ```js
 describe('SomeClass', () => {
@@ -872,7 +869,7 @@ alone.
   processed correctly) requires input nested **at least two levels deep** (the QA
   stance in [SKILL.md](../SKILL.md)).
 - Name the dedicated describe to indicate recursion (e.g. `describe('with nested ...')`
-  / `describe('when nested')`). Since this is an axis **orthogonal** to the
+  / `describe('when nested')`). Since this is an axis **independent of** the
   valid/invalid split, do not mix it into the same describe as the flat cases — split
   it out for recursion to make the intent stand out.
 - For recursive cases, pin the fact that the **output is also nested** via the nested
@@ -1326,7 +1323,7 @@ describe('BaseAuthorizationBuilder', () => {
 When a method has two or more arguments and **one changes how the other is
 interpreted or behaves** (a mode / flag / strategy — not independent, but
 **interacting**), **split by the value of the mode-like argument, using
-`describe()`**. The idiomatic form is `describe('with <arg>: <value>')`. Fix the mode
+`describe()`**. The standard form is `describe('with <arg>: <value>')`. Fix the mode
 argument within each describe and vary the remaining arguments.
 
 - If the two axes affect the output independently, the
@@ -1388,10 +1385,9 @@ by `describe()` per value** (`describe('when #isEnabled:false')` /
 splitting by describe is easy, and once split, each `cases`'s `input` / `expected` can
 **focus purely on the other axis**, making it simpler.
 
-- This is the archetypal case of
-  [Separate mutually-interacting arguments with `describe()`](#separate-mutually-interacting-arguments-with-describe).
-  Since the boolean value is fixed per describe, **omit** it from the `cases`
-  elements and write it directly into `args` in the `test` body (e.g.
+- This is the classic case of [Separate mutually-interacting arguments with
+  `describe()`](#separate-mutually-interacting-arguments-with-describe). Since the boolean value is fixed per
+  describe, **omit** it from the `cases` elements and write it directly into `args` in the `test` body (e.g.
   `isEnabled: false`). Leave `input` holding **only the other axis's value**.
 - When coexisting with another describe layer (such as the valid/invalid split), put
   the **boolean describe on the inside**

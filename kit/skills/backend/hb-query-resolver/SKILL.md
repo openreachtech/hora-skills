@@ -21,7 +21,7 @@ input, reads data, throws domain errors, and formats the response**.
 > around it) on the `admin` endpoint. They are placeholders — swap in the resource, fields, and
 > endpoint of the query you are writing.
 
-This skill covers the **resolver class itself**. Two neighbors own the pieces it delegates to:
+This skill covers the **resolver class itself**. Two related skills own the pieces it delegates to:
 
 - The `*InputValidator` it calls belongs to `hb-resolver-validator` —
   this skill only shows the wiring, not the validator internals.
@@ -31,7 +31,7 @@ This skill covers the **resolver class itself**. Two neighbors own the pieces it
 > This is the **Query** side. A **Mutation** resolver is a different template (it wraps a
 > transaction callback and returns save results); do not copy this skeleton for a write.
 
-## Grand principle: a query resolver is a filled-in template
+## Core principle: a query resolver is a filled-in template
 
 Every query resolver has the **same skeleton** — `schema` getter → `errorCodeHash` → `resolve()` →
 validation wiring → finders → `formatResponse()` → error creators → a trailing block of `@typedef`s.

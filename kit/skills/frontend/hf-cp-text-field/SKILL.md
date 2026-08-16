@@ -6,14 +6,14 @@ description: Use when building a single-line text input in a repo that consumes 
 # FuroTextField and typed variants
 
 Single-line text input atoms. `FuroTextField` is the plain generic input;
-`FuroEmailField`, `FuroPasswordField`, `FuroNumberField`, and `FuroFileField`
-are typed variants that hard-code the underlying input semantics (`type="email"`,
-`type="password"`, a numeric spinbutton, `type="file"`) rather than relying on
-a parent passing a native `type` attribute onto `FuroTextField`. Pick the typed
-variant that matches the data you're collecting instead of `FuroTextField
-type="email"` — the typed variants bake in the right payload helpers, ARIA/
-validation semantics, and (for number/file) a materially different internal
-structure that `FuroTextField` does not have.
+`FuroEmailField`, `FuroPasswordField`, `FuroNumberField`, and `FuroFileField` are
+typed variants that hard-code the underlying input semantics (`type="email"`,
+`type="password"`, a numeric spinbutton, `type="file"`) rather than relying on a
+parent passing a native `type` attribute onto `FuroTextField`. Pick the typed
+variant that matches the data you're collecting instead of
+`FuroTextField type="email"` — the typed variants bake in the right payload
+helpers, ARIA/ validation semantics, and (for number/file) a materially different
+internal structure that `FuroTextField` lacks.
 
 - Layer: atom
 - Import:
@@ -24,9 +24,9 @@ structure that `FuroTextField` does not have.
   - `import { FuroFileField } from '@openreachtech/furo-vue'`
 - Manifest entry: `node_modules/@openreachtech/furo-vue/public/furo-vue/components.json` → `components[].name === 'FuroTextField' | 'FuroEmailField' | 'FuroPasswordField' | 'FuroNumberField' | 'FuroFileField'`
 
-Read the manifest before writing markup if you need to confirm this
-information is still current — the library may have added props/events since
-this skill was written.
+Read the manifest before writing markup if you need to confirm it's still
+current — the library may have added props/events since this skill was
+written.
 
 ## When NOT to use
 

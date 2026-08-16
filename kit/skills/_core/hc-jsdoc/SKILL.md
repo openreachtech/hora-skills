@@ -156,8 +156,8 @@ generate ({
 - Vague types such as `object` / `Object` / `any` / `*` are not used unless clearly necessary.
 - Investigate the type and write it as a type literal with the most detailed properties possible,
   or as a concrete type name.
-- Make generics concrete as far as possible. Do not blur the element type as `Array<object>`;
-  write `Array<UserEntity>` instead.
+- Make generics concrete as far as possible. Do not leave the element type vague as
+  `Array<object>`; write `Array<UserEntity>` instead.
 
 ```javascript
 // NG: vague element type and return type
@@ -183,7 +183,7 @@ generate ({
 ### `object` / `Object` is prohibited; use `Record<string, *>`
 
 - `object` / `Object` is prohibited regardless of the reason.
-- Reason: `object` is malicious in that it tolerates ambiguity including `null`. Even when you are
+- Reason: `object` is dangerous in that it tolerates ambiguity including `null`. Even when you are
   forced to represent an object with unknown keys, `Record<string, *>` is better.
 - Still, `Record<string, *>` is a last resort too; write a type literal with explicit properties
   wherever possible.
@@ -214,7 +214,7 @@ generate ({
   `boolean` / `Array` / `Object` / `*` / `null`, etc.) and TS utility types (`Record` / `Partial` /
   `Pick` / `Omit` / `ReturnType`, etc.) must be **defined before** it is referenced, via one of
   `@typedef` / `@class` / `@interface` / import.
-- Do not write undefined type names. Reason: they are a breeding ground for typos and missing imports.
+- Do not write undefined type names. Reason: they are a common source of typos and missing imports.
 - For example, to write `Array<UserEntity>` from the previous section, a `@typedef` (or the like) for
   `UserEntity` must exist in the same file (or its import source).
 

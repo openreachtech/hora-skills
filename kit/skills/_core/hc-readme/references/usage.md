@@ -4,7 +4,9 @@ Rules concerning the README's Usage section, and the placement of files split ou
 
 ## Placement of split-out files (common to all splits)
 
-Files split out from the README (Usage / Features / API, etc.) all go under `docs/`. Since split-out files are not bundled into the npm package, there is no need for them to live in a `readme/` directory adjacent to the README; they are unified under `docs/`, the standard place for documentation.
+Files split out from the README (Usage / Features / API, etc.) all go under `docs/`. Since split-out files are not
+bundled into the npm package, they need not live in a `readme/` directory next to the README; they are unified under
+`docs/`, the standard place for documentation.
 
 - **Separate by language directory**: the default language (English) goes under `docs/en/`, other languages under `docs/<xx>/` (`xx` is the language code; currently only `docs/ja/` exists). This keeps a given language's documentation together in one folder, making it easy to copy or move per language.
 - **Place categories directly under the language directory**: `docs/<lang>/<category>/` (e.g., `docs/en/usage/`, `docs/en/features/`, `docs/en/api/`).

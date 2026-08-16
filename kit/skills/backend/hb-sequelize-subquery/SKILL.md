@@ -124,9 +124,9 @@ The operator inside `[...]` maps to a Sequelize `Op` symbol in the generator's `
 ## 3. Register the subquery in `defineSubqueries()`
 
 Register inside `static defineSubqueries()`. Call `super.defineSubqueries?.()` first (as with
-every extension point in `hb-sequelize-model` — otherwise a Mixin's base
-behavior is swallowed), read the physical field names off `this.getAttributes()`, then add each
-subquery with `this.addSubquery({ name, generator })`.
+every extension point in `hb-sequelize-model` — otherwise a Mixin's base behavior is lost),
+read the physical field names off `this.getAttributes()`, then add each subquery with
+`this.addSubquery({ name, generator })`.
 
 The `generator` receives a params object and returns `{ attributes, where }`:
 

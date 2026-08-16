@@ -11,7 +11,7 @@ Everything here exists to make that decay visible while it is still small.
 
 Every report that ever cites `APP-04` is relying on `APP-04` meaning the same claim it meant then.
 
-- **Never renumber, never reuse.** Re-packing the numbers after a retirement rewrites the history of every
+- **Never renumber, never reuse.** Renumbering to close gaps after a retirement rewrites the history of every
   report at once, silently.
 - **A prefix is a namespace, not a label.** When a flow is renamed, **the prefix stays** — an "Applications"
   flow that becomes "Enrolments" keeps `APP`, and the index records the rename. An ugly prefix costs a moment
@@ -50,8 +50,8 @@ Heading and `Status`, nothing else. Enough to prove the number is spent and to e
 be mistaken for something to run. Steps, preconditions and expectations go — they describe a product that no
 longer exists, and leaving them invites someone to "fix" the scenario back to life.
 
-**A specification that has never retired anything is not being maintained.** Real products lose capabilities.
-An all-active document after two years of change means additions were reconciled and removals were not.
+**A specification that has retired nothing has stopped being maintained.** Real products lose capabilities. An
+all-active document after two years of change means additions were reconciled and removals were not.
 
 ## Reconciling after the product changes
 

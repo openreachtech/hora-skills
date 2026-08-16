@@ -52,14 +52,13 @@ scope compliance, stack/asset rules, project-specific UX rules, the declared acc
 target, and **audience fit** (does the output's density, tone, guidance, and stakes
 handling suit the described users).
 
-If absent, **create `uiux-context.md` so the audit isn't blind to the project** — use the
-`hf-uiux-context` skill to scaffold it under `<project-root>/ai/contexts/` and fill in
-everything discoverable from the codebase. If that skill isn't available, create the file yourself from its
-questionnaire, filling what's verifiable and leaving the rest as `TBD`. Then read it as this
-step's context. Only when no project is in reach (e.g. auditing a lone screenshot with no
-repo) — proceed without: audit against the general standards, mark Expectation fit "not
-assessable," and note that a filled context file would enable it. Never invent client rules
-or scope from thin air.
+If absent, **create `uiux-context.md` so the audit can see the project** — use the `hf-uiux-context` skill
+to scaffold it under `<project-root>/ai/contexts/` and fill in everything discoverable from the codebase.
+If that skill isn't available, create the file yourself from its questionnaire, filling what's verifiable
+and leaving the rest as `TBD`. Then read it as this step's context. Only when no project is in reach (e.g.
+auditing a lone screenshot with no repo) — proceed without: audit against the general standards, mark
+Expectation fit "not assessable," and note that a filled context file would enable it. Never invent client
+rules or scope without evidence.
 
 ## Step 4 — Run mechanical checks (when code or design values are available)
 
@@ -71,13 +70,13 @@ Machine evidence first, judgment second:
   WCAG ratios on a **graded ladder** (BLOCKER / FAIL / RISK / PASS / HARSH / QUIET / EXEMPT)
   rather than binary pass-fail: at-risk pairings within 10% of the floor are surfaced,
   disabled controls and decorative borders (`decor` — dividers, table lines, card outlines)
-  are exempted instead of false-positived, failing focus indicators escalate to
-  Blocker, and compliant-but-harsh extremes (> ~18:1 body text) come back as comfort
-  advisories, never violations. Use `ui` only for boundaries that are a control's sole
-  identifier; use `decor` for structural borders, where quiet low contrast is the intended
-  modern default (rubric §A1/§D — including the named-style override). Pass `--aaa` when
-  the client context escalates the target (older users, outdoor/glare use, safety-critical
-  flows). Map each status to the severity ladder in rubric §A1.
+  are exempted instead of wrongly flagged, failing focus indicators escalate to Blocker, and
+  compliant-but-harsh extremes (> ~18:1 body text) come back as comfort advisories, never
+  violations. Use `ui` only for boundaries that are a control's sole identifier; use `decor`
+  for structural borders, where quiet low contrast is the intended modern default (rubric
+  §A1/§D — including the named-style override). Pass `--aaa` when the client context
+  escalates the target (older users, outdoor/glare use, safety-critical flows). Map each
+  status to the severity ladder in rubric §A1.
 
 Include the raw verdict lines in the relevant findings. If code can be executed/rendered,
 also render at 320/768/1280px to verify responsive behavior and layout shift live. If no

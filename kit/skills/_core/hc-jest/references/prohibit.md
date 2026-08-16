@@ -77,11 +77,12 @@ reasons for this.
   implementation** by default, so no stub implementation is needed.
 - **It is not restored automatically**: `jest.spyOn()` is restored after every
   test via `afterEach(() => jest.restoreAllMocks())`, but a member into which a
-  `jest.fn()` was plugged inline is not restored, becoming a breeding ground
-  for **cross-test contamination**.
-- **It isn't tied to a real seam**: `jest.fn()` is a fake floating in mid-air
-  that hides whether the actual collaborator works. `jest.spyOn()` targets a
-  real, existing seam, observing calls while letting the real thing run.
+  `jest.fn()` was plugged inline is not restored, becoming a source of
+  **cross-test contamination**.
+- **It isn't tied to a real seam**: `jest.fn()` is a fake not tied to
+  anything real, so it hides whether the actual collaborator works.
+  `jest.spyOn()` targets a real, existing seam, observing calls while letting
+  the real thing run.
 
 See [mocks.md](./mocks.md) for the concrete techniques
 (`jest.spyOn(args, key)` / `constructorSpy` / spying on global functions) and

@@ -29,7 +29,7 @@ Conventions for CSS coding style.
 ## Put one blank line between selectors (rules)
 
 - Between one selector (rule) and the next, insert exactly **one blank line**.
-- Even when the next rule is preceded by a comment, do not omit the blank line — put it before the comment.
+- Even when the next rule is preceded by a comment, keep the blank line — put it before the comment.
 
 ```css
 /* NG: no blank line between rules */

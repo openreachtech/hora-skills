@@ -54,7 +54,7 @@ Write unit tests for the `Payload`, the `Capsule` and the `Launcher` ([testing.m
 
 ## Use from the caller (three steps)
 
-From a resolver or a job, it is these three steps.
+From a resolver or a job, there are three steps.
 
 1. Build the launcher with `Launcher.create()` (the connection settings are assembled from
    `clientConfig`).
@@ -147,6 +147,6 @@ as `create<Service>Launcher()` as the default. A test can then inject a stub lau
 
 ## Hooks (optional): run something before or after sending
 
-To run something before or after sending, use
-`launchRequest({ payload, hooks: { beforeRequest, afterRequest } })`. When `beforeRequest(payload)`
-returns `true`, sending is abandoned and the aborted-by-hooks `Capsule` is returned.
+Use `launchRequest({ payload, hooks: { beforeRequest, afterRequest } })`. When
+`beforeRequest(payload)` returns `true`, sending is stopped and the aborted-by-hooks `Capsule` is
+returned.

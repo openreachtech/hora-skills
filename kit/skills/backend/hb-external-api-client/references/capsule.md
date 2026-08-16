@@ -120,7 +120,7 @@ export default class FindDocumentsCapsule extends BaseCapsule {
 ```
 
 - The `map` **reshapes to only the keys the application needs**. Extra keys and nesting the external
-  API returns are not handed to the caller as they are — that is the confinement. Iterate with `map`,
+  API returns are not passed to the caller unchanged — that is the confinement. Iterate with `map`,
   not `for` or `forEach` ([conventions.md](./conventions.md)).
 
 ## Normalize response values with `bodySchema` (optional)

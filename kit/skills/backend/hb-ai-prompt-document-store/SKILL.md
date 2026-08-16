@@ -19,7 +19,7 @@ final prompt; edits are ordinary data changes, versioned by backup tables.
 Nothing agent-facing is a string constant in code. The agent's `instruction` and `role` are DB columns; its
 documents are `Document` rows linked by an assignment; its tools are JSON stored in `AiTool.payload`. A
 `DocumentInstructionComposer` assembles the runtime prompt from these rows; every editable text has a `*Bk`
-backup twin so history is preserved.
+backup copy so history is preserved.
 
 - **Why store prompts in the DB**: instruction/role wording changes constantly and per-agent — making it
   data means editing it is a mutation (with history), not a deploy. Seeders provide the baseline text from
@@ -209,7 +209,7 @@ mutations `addAiAgent` / `updateAiAgent` / `updateAiAgentStatus` / `exportAiAgen
   comes from seeders.
 - **Write editable text with `.save()` on the backup-mixin model**, never `.update()`, so history is
   captured; wrap multi-table writes in one transaction.
-- **Compose the prompt at runtime from the three parts** — do not concatenate a prompt ad hoc in a resolver.
+- **Compose the prompt at runtime from the three parts** — do not concatenate a prompt by hand in a resolver.
 - Return `null` for missing values, not `undefined`; one class per file; migrations use snake_case `field:`
   names (see the `hb-sequelize-migration` skill).
 

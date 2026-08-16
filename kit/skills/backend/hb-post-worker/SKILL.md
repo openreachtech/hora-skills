@@ -30,10 +30,10 @@ no external API calls, no DB updates, no heavy loops.
 - **Why only dispatch**: a post-worker fires **after** the HTTP response has been fully sent (Express's
   `res.on('finish')`). Throwing an exception here **never reaches the caller, and neither retry,
   progress notification, nor monitoring apply**. Put real work here and logic accumulates in a place
-  where failures get swallowed. Keep it to dispatch and the real work rides on the worker's machinery
+  where failures get swallowed. Keep it to dispatch and the real work runs on the worker's machinery
   (retries, observability, scaling), while the post-worker stays predictably thin — "just enqueuing".
-- **Why interpose a post-worker layer at all**: for something like "I don't want to make the signup
-  response wait, but I do want to send a welcome email" — writing a **side effect unrelated to the main
+- **Why add a post-worker layer at all**: for something like "I don't want to make the signup response
+  wait, but I do want to send a welcome email" — writing a **side effect unrelated to the main
   processing** into the resolver itself bloats the resolver's responsibility and lets a side-effect
   failure drag down the main processing's response. Push it out to a post-worker and the resolver can
   focus on returning its proper result.
@@ -86,10 +86,10 @@ real `*PostWorker.js` code) follow the **codebase** language — English — to 
 A post-worker is a hook **per operation (query / mutation)**. The framework (renchan) fires it in the
 following flow.
 
-1. When the resolver resolves (or throws), the framework stashes
+1. When the resolver resolves (or throws), the framework stores
    `{ variables, context, information, response }` bound to the request (`response` is
    `{ output, error: null }` on success, `{ output: null, error }` on failure).
-2. **After the HTTP response has been fully sent** (`res.on('finish')`), using the stashed content, it
+2. **After the HTTP response has been fully sent** (`res.on('finish')`), using the stored content, it
    fires in this order:
    - first the engine-wide `defineOnResolved()` (a noop by default, **common to all operations**),
    - then the `onResolved()` of **the post-worker whose name matches that operation**.
@@ -136,7 +136,7 @@ await context.share.jobDispatcherProvider.dispatchJob({
   body" to enqueue.
 - What's in `share` is app-dependent. Confirm the name of the dispatch entry point
   (`jobDispatcherProvider`, etc.) in that app's Share implementation. **If it's missing, the right move
-  is to add it to share** — don't create a connection ad hoc inside the post-worker.
+  is to add it to share** — don't create a connection on the fly inside the post-worker.
 
 ## 3. Implementation steps
 

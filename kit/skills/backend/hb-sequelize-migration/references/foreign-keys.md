@@ -48,8 +48,8 @@ CustomerId: {
 Do not add the constraint, but **do create the column** that holds another table's id (`BIGINT`,
 uppercase-starting, `// ForeignKey must start with upper case.`; see [notation.md](./notation.md)).
 Declaring the relation that uses that column is the job of the model's `associate()`
-(`hb-sequelize-model`). The migration goes as far as "column + lookup
-index"; the meaning of the relation belongs to the model. This splits the roles cleanly.
+(`hb-sequelize-model`). The migration goes as far as "column + lookup index"; the meaning of the
+relation belongs to the model.
 
 ## Enforce 1:1 with a UNIQUE index, not an FK
 

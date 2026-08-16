@@ -12,7 +12,7 @@ but the `#editor` slot can host any other atom (number field, select,
 checkbox, file input) for cases where the edited value isn't plain text.
 Unlike the single-line/multi-line text controls, it owns its own
 preview-vs-edit lifecycle and does not use `v-model:value` — the parent is
-responsible for updating `parcel.value` after a `commit-value` event.
+required to update `parcel.value` after a `commit-value` event.
 
 - Layer: molecule
 - Import: `import { FuroEditableField } from '@openreachtech/furo-vue'`

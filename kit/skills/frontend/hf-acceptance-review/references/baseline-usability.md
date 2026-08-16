@@ -1,12 +1,12 @@
 # Baseline Usability
 
-The floor, not the ceiling. Each item here is something whose absence makes an application unusable or
-untrustworthy regardless of how it looks — so each is a finding, not a suggestion.
+The floor, not the ceiling. Each item's absence makes an application unusable or untrustworthy
+regardless of how it looks — so each is a finding, not a suggestion.
 
 Craft above this floor — hierarchy, spacing, contrast, motion, tone — belongs to the interface-audit
 convention. Do not duplicate it here.
 
-Every item carries **how** it is checked, because an item with no method is an item that never gets run.
+Every item carries **how** it is checked, because an item with no method never gets run.
 
 ## Input shape
 

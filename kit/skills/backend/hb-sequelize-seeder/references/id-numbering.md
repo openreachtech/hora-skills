@@ -15,7 +15,7 @@ is 10,000.** Bases are multiples of 10,000 **at or above `100000`** (6 digits): 
   id is larger than `SMALLINT`'s maximum (32,767 signed / 65,535 unsigned), so if a column was
   mistakenly declared `SMALLINT` in the migration, the seed insert **overflows and fails at seed
   time** — you catch the schema mistake while running the seeders, not later in production. This is
-  the reason to allocate ids in the 100,000+ range rather than smaller blocks.
+  why ids go in the 100,000+ range rather than smaller blocks.
 - **The step is 10,000.** Allocate the next free multiple of 10,000 (at or above 100,000) as a new
   seeder / table's base; never let two blocks overlap in a way that could collide within a single
   table.

@@ -12,8 +12,8 @@ changed; skipping it is how a test ends up edited to match a defect.
 | Environment or fixture problem | Neither is wrong; the run was not set up as the test requires | The setup, the fixture or the command |
 | Order-dependent or racing | The test passes and fails depending on what ran before it or on timing | Whichever of the two owns the shared state or the missing wait |
 
-**Default to implementation defect.** Move off that default only with the evidence each of the
-other classes requires below.
+**Default to implementation defect** — leave it only with the evidence each other class requires
+below.
 
 ## Confirming each class
 
@@ -38,7 +38,7 @@ Confirm by quoting the acceptance criterion. There is no other confirmation.
 | :-- | :-- |
 | The criterion says X, the test asserts Y, the code does X | Test defect — fix the test, cite the criterion id |
 | The criterion says X, the test asserts X, the code does Y | Implementation defect |
-| No criterion covers the point | **Not a test defect.** The specification is silent; go and get it decided before changing either side |
+| No criterion covers the point | **Not a test defect.** The specification is silent; get it decided before changing either side |
 | The criterion is ambiguous between the two readings | Not a test defect. Raise the ambiguity as an open question against the requirement |
 
 A test defect also covers tests that are wrong in a way unrelated to the expectation: a fixture
@@ -81,7 +81,7 @@ Then find the actual owner of the problem:
 | A test leaves data behind that another test reads | The test that leaves it — clean up what it created |
 | Two tests write the same record, row or key | The tests — give each its own identifiers |
 | A test depends on running after another | The dependency itself — make each test set up what it needs |
-| The assertion runs before the effect completes | The test — wait for the actual condition, never for a duration |
+| The assertion runs before the effect completes | The test — wait for the actual condition, not for a set amount of time |
 | The implementation races with itself | The implementation — this is a real defect that the suite happened to expose |
 
 **A test that fails intermittently has found something.** The only wrong response is to re-run
@@ -107,4 +107,4 @@ For each failure, record before changing anything:
 ```
 
 The confirmation line is what makes the change afterwards defensible. A change made without it
-cannot be distinguished, later, from having edited the test until it passed.
+looks, later, exactly like editing the test until it passed.

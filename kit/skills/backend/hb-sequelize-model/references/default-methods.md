@@ -22,11 +22,11 @@ keep them with the template (below).
 - **Why**: fixing the order across every model puts the same responsibility in the same position
   in every file. The reader never has to hunt for "where does this model wire relations, where
   does it add a scope". A JSDoc that records the purpose, `@param`, and `@returns` on each method
-  makes each extension point's responsibility legible even in a declaration-only layer, and the
+  makes each extension point's responsibility readable even in a declaration-only layer, and the
   `@param` type annotation prevents mixing up `DataTypes` / `Op` / `sequelizeClient`.
 - `createAttributes` is **abstract** — the base `throw`s. Always implement it (if unimplemented,
-  it dies in `initWithSequelizeClient`). The other five have a default implementation on the base;
-  overriding them is for "adding this model's own declarations".
+  it fails in `initWithSequelizeClient`). The other five have a default implementation on the
+  base; overriding them is for "adding this model's own declarations".
 
 ```js
 // Good example (the skeleton; unused extension points are kept as noop)
@@ -149,7 +149,7 @@ own options. The base `RenchanModel` returns
 - **Why**: `timestamps:true` ([timestamps.md](./timestamps.md)) and `underscored:true` (mapping
   camelCase attributes → snake columns;
   [SKILL.md](../SKILL.md#keep-a-one-to-one-correspondence-with-the-migration)) are shared
-  assumptions for every model. Do not rewrite them per model; ride on the base defaults. The two
+  assumptions for every model. Do not rewrite them per model; use the base defaults. The two
   below are the typical additions.
 - If you add nothing else, finish in the three lines of the spread alone (most models do this).
 
@@ -170,12 +170,12 @@ static createOptions (sequelizeClient) {
 
 ### When to add tableName
 
-Add an explicit `tableName` only for a table that departs from the "physical name = plural /
+Add an explicit `tableName` only for a table that differs from the "physical name = plural /
 model name = singular" rule. A backup table (`*Bk`) is the typical case.
 
-- **Why**: normally Sequelize infers the (plural) table name from the (singular) model name, so
-  no `tableName` is needed. But a backup table is named **`<original table name>_bk`** (original
-  table `customer_orders` → `customer_orders_bk`), so its tail is `_bk` (singular), departing from
+- **Why**: normally Sequelize infers the (plural) table name from the (singular) model name, so no
+  `tableName` is needed. But a backup table is named **`<original table name>_bk`** (original
+  table `customer_orders` → `customer_orders_bk`), so its tail is `_bk` (singular), differing from
   the rule. Sequelize would infer `customer_orders_bks` from the model `CustomerOrdersBk`, which
   clashes with the real table `customer_orders_bk`. Left alone it queries a nonexistent table, so
   declare `tableName`. Conversely, do not write it for a model whose inference is already correct
@@ -203,10 +203,9 @@ static createOptions (sequelizeClient) {
 Add `paranoid: true` only for a table that uses `deleted_at` soft delete.
 
 - **Why**: with `paranoid` on, Sequelize stamps `deleted_at` on delete and excludes such rows
-  from default finds. This works in tandem with the migration creating a `deleted_at` column via
-  `...factory.TIMESTAMPS_WITH_DELETED_AT`
-  (`hb-sequelize-migration`).
-  Adding `paranoid` without the column makes queries fail.
+  from default finds. This works together with the migration creating a `deleted_at` column via
+  `...factory.TIMESTAMPS_WITH_DELETED_AT` (`hb-sequelize-migration`). Adding `paranoid` without
+  the column makes queries fail.
 
 ```js
 // Good example (a join table that soft-deletes)

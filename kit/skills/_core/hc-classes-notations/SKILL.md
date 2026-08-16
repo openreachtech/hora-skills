@@ -25,7 +25,10 @@ Item 3 means the class's own factory methods that are published as API. The conv
 ### Why `static` fields go at the top
 
 - This follows the Java convention.
-- **The order is arranged to evoke the order in which memory is secured.** `static` fields are secured and initialized at class-definition time, and an instance's properties are secured afterwards in the `constructor`. Matching the source order to that order makes the order of allocation readable by simply reading the source from top to bottom.
+- **The order is arranged to mirror the order in which memory is secured.** `static` fields are secured and
+  initialized at class-definition time, and an instance's properties are secured afterwards in the `constructor`.
+  Matching the source order to that order makes the order of allocation readable by simply reading the source from top
+  to bottom.
 - The conditions for using `static` fields, and what belongs in them (do not use `static #X`; put accumulating associations, pools, and caches in `static` + `WeakMap`, etc.), are governed by the class design principles convention.
 
 ### Order among getters

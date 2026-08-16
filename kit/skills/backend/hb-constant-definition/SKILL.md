@@ -35,7 +35,7 @@ create **both** of these, with the **same base name**:
 - **Why always both (no per-constant decision).** Master data — ids + names that both **seed rows**
   and **app logic** must agree on — is one source of truth read from two module systems: seeders
   `require` the `.cjs` directly; ESM app code reaches it through the bridge. Predicting up front which
-  constants a seeder will *eventually* need is fiddly and gets it wrong, so define the pair every
+  constants a seeder will *eventually* need is tricky and gets it wrong, so define the pair every
   time. The cost is one trivial six-line bridge; the payoff is any consumer can read any constant.
 - **The `.cjs` is the only copy of the values.** The `.js` bridge never restates them — it just
   crosses the module boundary. Two hand-maintained copies drift; keep exactly one.

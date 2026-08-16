@@ -1,17 +1,17 @@
 # The runner and the environment's lifecycle
 
 The one command that builds the environment, loads it, starts everything and hands it to the
-operator — its step order, the reason each step sits where it does, and how the environment is
-disposed of. Referenced from §6 and §7 of [SKILL.md](../SKILL.md). Commands are the recommended shape
-and the script names are **illustrative examples**; adapt them to your project. `<stack-env>` stands
-for the E2E stack's own environment name — `live-local` is the recommended name.
+operator — its step order, the reason each step sits where it does, and how the environment is torn
+down. Referenced from §6 and §7 of [SKILL.md](../SKILL.md). Commands are the recommended shape and
+the script names are **illustrative examples**; adapt them to your project. `<stack-env>` stands for
+the E2E stack's own environment name — `live-local` is the recommended name.
 
 > **The steps are named after roles, illustrated by one example stack.** "Create the search index"
-> means *bring the read model into existence*; "create the change-log topics" means *create the
-> transport's channels*; "register the capture connector" means *start change propagation, however
-> your project propagates*. A role the project does not have deletes its step and every step that
-> depended on it; a role the example does not name (a mail catcher, an identity stub) adds one. What
-> does **not** change is the **order** — and the reason column is why.
+> means *create the read model*; "create the change-log topics" means *create the transport's
+> channels*; "register the capture connector" means *start change propagation, however your project
+> propagates*. A role the project does not have deletes its step and every step that depended on it;
+> a role the example does not name (a mail catcher, an identity stub) adds one. What does **not**
+> change is the **order** — and the reason column is why.
 
 ## The interface
 
@@ -70,8 +70,7 @@ decides every borderline case, including the ones that look like infrastructure:
   it is provisioning and moves to `start.sh`.
 - The backfill belongs to `seed.sh`: it is the step that puts *this load's* rows into the read model.
 - Put a data-derived step in `start.sh` and `up.sh --start-only` on an empty environment fails for a
-  reason that has nothing to do with starting — the exact class of confusion this skill exists to
-  prevent.
+  reason that has nothing to do with starting — exactly the confusion this skill exists to prevent.
 
 ## The step order
 
@@ -81,7 +80,7 @@ is written for a single application to an empty schema and is not re-runnable, b
 
 ### `start.sh` — the stack, the provisioning, the processes
 
-| # | Step (role) | Example instantiation | Why here |
+| # | Step (role) | Example | Why here |
 | --- | --- | --- | --- |
 | 1 | start every service | `docker compose -f e2e/docker/compose.yaml up -d --build` | — |
 | 2 | wait for **every** service's healthcheck | compose's own health status | a later step against a half-started service fails in a way that reads like a code bug |
@@ -97,14 +96,14 @@ just been cleaned, or may hold a full session's data. It never learns which — 
 
 ### `seed.sh` — the schema and everything that depends on it
 
-| # | Step (role) | Example instantiation | Why here |
+| # | Step (role) | Example | Why here |
 | --- | --- | --- | --- |
 | 1 | verify the stack is up and healthy | the same health wait | seeding against a half-started store fails in a way that reads like a code bug. `seed.sh` **starts nothing**: if the stack is down it says to run `start.sh` |
 | 2 | create the schema, with the **same collation settings as production** | create database | a different collation changes string comparison, and the environment then behaves unlike every other one |
 | 3 | apply migrations | `sequelize-cli db:migrate` | before rows exist, and it is also what lets a long-lived environment follow the code |
 | 4 | seed the **E2E master** set | `db:seed:<stack-env>-master` | the metadata is what later steps derive from: which tables are propagated, which fields are in the read model |
 | 5 | seed the **E2E fixture** set | `db:seed:<stack-env>` | after master, because fixtures reference master ids |
-| 6 | generate the binary artifacts the seeds promise | write stand-in files under the storage path | after seeding, because it reads the seeded rows |
+| 6 | generate the binary files the seeds refer to | write stand-in files under the storage path | after seeding, because it reads the seeded rows |
 | 7 | register **change propagation** when its configuration is **derived from data** | register the capture connector, whose table list comes from the master rows | after the master seeds, or it watches nothing |
 | 8 | backfill the read model | reindex every row | propagation only carries changes made **after** it was wired up, so the rows just seeded are missing from the read model without this |
 
@@ -147,7 +146,7 @@ e2e/seed.sh
 
 ## Cleaning: every store, in one command, processes first
 
-`clean.sh` exists so that destruction is something the operator *asks for*. What makes it hard is that
+`clean.sh` exists so that deleting is something the operator *asks for*. What makes it hard is that
 the data is not in one place:
 
 | Role | What `clean.sh` has to remove | What is left behind if it is forgotten |
@@ -247,8 +246,8 @@ echo $! >> "${PID_FILE}"
 
 ## Hand over at the end
 
-The last thing `start.sh` prints — and therefore the last thing `up.sh` prints — is what the operator
-needs in order to start:
+The last thing `start.sh` prints — and therefore the last thing `up.sh` prints — is what the
+operator needs to start:
 
 ```bash
 cat <<EOF
@@ -264,7 +263,7 @@ cat <<EOF
 EOF
 ```
 
-- **An environment nobody can find the entrance to was not finished.** The URL, the logs and the exits
+- **An environment nobody can find their way into is not finished.** The URL, the logs and the exits
   are the minimum; add whatever else a first-time operator would otherwise have to ask someone for.
 - **Print the exits side by side, labelled by consequence.** `down.sh` and `clean.sh` differ only in
   whether the afternoon's work survives; a hand-over that lists one command called "tear down" invites
@@ -297,7 +296,7 @@ trap - EXIT   # it succeeded: leave everything running
 
 - **Trap while starting, clear the trap at the end.** A run that died at the provisioning step must
   not leave containers and Node processes behind for the next attempt to inherit — but a run that
-  succeeded must leave exactly that, because it is the deliverable.
+  succeeded must leave exactly that, because that is the result.
 - **The abort path stops; it does not wipe.** A failed run that also deleted the data would turn a
   recoverable problem into a lost afternoon. If `seed.sh` is what failed, the schema is left
   half-loaded and the operator is told so — `clean.sh` then `up.sh` is the way out, and it is their

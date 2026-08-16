@@ -8,7 +8,8 @@ The README should describe only the functionality and API exposed to package use
 
 ## Section order
 
-Write sections in the following order, from top to bottom. `*if needed*` marks a section that is not mandatory, and should be written at the corresponding position depending on the content.
+Write sections in the following order, from top to bottom. `*if needed*` marks an optional section, and should be
+written at the corresponding position depending on the content.
 
 1. Title + overview (one-line description)
 2. Table of contents *if needed* (when there are many sections)

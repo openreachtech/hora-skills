@@ -20,7 +20,7 @@ as `field:` — so a seeder is coupled to the migration, not to the model's came
 
 > A concise overview. Each numbered section links to a detail file under `references/` for depth.
 
-## Grand principle: a seeder is a filled-in template
+## Core principle: a seeder is a filled-in template
 
 Every seeder has the **same skeleton**: `'use strict'` → `require` `TimestampSeedsSupplier` (+ any
 domain constants) → an intent comment → `TABLE_NAME` → one or more `seeds` arrays → `module.exports
@@ -88,7 +88,7 @@ Seeders live under `sequelize/seeders/` in three kinds of directory, each seeded
   master data introduced or changed in that release; `db:seed:prod` applies the `master-*`
   directories in ascending order, so later releases build on earlier ones and each release's master
   additions are isolated and traceable. (The repo currently has a single pre-split `master/`; the
-  release split is the going-forward convention.)
+  release split is the convention from here on.)
 - **dev-master vs development.** `dev-master` is the *same kind of canonical / config data as
   production master*, just loaded for dev / CI. `development` is *operationally-created data* (users,
   payments, …) that production never seeds — it exists only to give unit tests (local + CI)

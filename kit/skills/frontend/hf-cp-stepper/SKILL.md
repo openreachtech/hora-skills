@@ -8,10 +8,9 @@ description: Use when building a multi-step flow indicator in a repo that consum
 Multi-step progress organism for form sequences. It renders a step rail
 (horizontal or vertical) driven by a declarative `steps` array, with an
 optional panel per step exposed through named slots keyed by each step's
-value. It can run controlled (`parcel.value` + `v-model:value`,
-1-based) or self-managed, and can be reduced to an indicator-strip-only
-mode (`showPanels: false`) when the actual step content lives outside the
-component.
+value. It can run controlled (`parcel.value` + `v-model:value`, 1-based)
+or self-managed, and can be reduced to an indicator-strip-only mode
+(`showPanels: false`) when the step content lives outside the component.
 
 - Layer: organism
 - Import: `import { FuroStepper } from '@openreachtech/furo-vue'`

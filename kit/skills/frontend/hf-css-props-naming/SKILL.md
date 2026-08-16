@@ -19,7 +19,9 @@ The first word right after `--` is the **top prefix**. From the prefix you can t
 | `--value-*` | Unitless scalars. Ratios and base values | `--value-golden-ratio` |
 | `--motion-*` | The time axis of transition / animation. duration, easing, delay | `--motion-duration-base`, `--motion-easing-standard` |
 
-Top prefixes are **added as needed**. The four above are not a fixed set. When a new kind is needed, do not force it into an existing prefix — stand up a new prefix. It is not that the set of prefixes is closed; the convention itself is the framework of "stand up a prefix per kind".
+Top prefixes are **added as needed**. The four above are not a fixed set. When a new kind is needed, do not force it
+into an existing prefix — stand up a new prefix. The set of prefixes stays open; the convention itself is the
+framework of "stand up a prefix per kind".
 
 ## Put the more distinctive word last
 

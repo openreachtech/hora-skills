@@ -5,12 +5,9 @@ the other environments and why, and how host addresses differ from in-network on
 §3 and §4 of [SKILL.md](../SKILL.md). `<stack-env>` stands for the environment name that belongs to
 the E2E stack alone — `live-local` is the recommended name.
 
-> **The variables below name one example stack's components.** `KAFKA_BROKERS`,
-> `ELASTICSEARCH_BASE_URL`, `CDC_DATABASE_NAME` and the rest are **illustrations of the shape** — what
-> matters is that *each role* your project has (the role table in [SKILL.md](../SKILL.md) §1) gets its
-> own address, its own name and its own scratch space for the run. A stack with a message queue instead of a
-> broker, or a materialized view instead of a search cluster, sets its own keys by exactly the
-> same rules. Map each row onto the keys the project actually reads.
+> **One example stack's keys.** `KAFKA_BROKERS`, `ELASTICSEARCH_BASE_URL`, `CDC_DATABASE_NAME` and
+> the rest are **illustrations**: each *role* ([SKILL.md §1](../SKILL.md)) needs its own address,
+> name and scratch space for the run. Map each row onto the keys the project actually reads.
 
 ## A dedicated environment, and a standalone env file
 
@@ -20,8 +17,8 @@ derived from the real-dialect test environment (`live` in the backend testing co
 select the same database engine, but `live` exists for running the unit suite against the real
 dialect, while `<stack-env>` describes a **running full stack**. A dedicated name means every
 command that carries `NODE_ENV=<stack-env>` — the application, the schema tooling, a seeder run by
-hand — resolves to the E2E stack's own values by construction, instead of depending on overrides
-being remembered.
+hand — resolves to the E2E stack's own values automatically, instead of relying on someone
+remembering to set overrides.
 
 Two rules govern the file:
 
@@ -34,8 +31,8 @@ Two rules govern the file:
   `.env.live` and in `.env.<stack-env>` may coincide today; they are still two environments' own
   values, and each file is the source of truth for its own environment. Do not build one env file
   out of another by reference, import or generation. When the stack gains a component or a key,
-  updating every environment's file is part of that change — a key added to only one of them is
-  found by the `null` it reads as in the other.
+  updating every environment's file is part of that change — a key added to only one of them shows
+  up as the `null` the other reads for it.
 
 The **groups of comments** below are what to reproduce in `.env.<stack-env>`; the key names inside
 them belong to the example stack:
@@ -74,8 +71,9 @@ Three things about this file that are not obvious:
   reads the process environment and a `.env` sitting **next to the compose file** — so any `${...}`
   the compose file interpolates has to reach it another way: point compose at the stack's file with
   `--env-file .env.<stack-env>` in the runner, or export those values before invoking compose. A
-  password compose cannot see substitutes as an **empty string**, behind a single warning line, and
-  the service starts with no password set: exactly the quiet half-built stack this skill is about.
+  password compose cannot see substitutes as an **empty string**, with only one warning line shown,
+  and the service starts with no password set: exactly the quiet half-built stack this skill is
+  about.
 - **Anything run by hand against the environment has to carry `NODE_ENV=<stack-env>`.** A seeder or
   migration invoked under the wrong environment name talks to that environment's stack — the
   disaster the dedicated name exists to prevent. Bake the name into the npm scripts (as the seed
@@ -86,7 +84,7 @@ Three things about this file that are not obvious:
   every key and fails somewhere deep. The file holds development-grade fixture values only, so
   committing it is correct.
 
-## Exports still outrank the file
+## Exports still override the file
 
 The environment resolver merges the dotenv file first and the process environment last:
 
@@ -102,10 +100,10 @@ const assignedEnv = {
   the facade** — the application, the schema tooling, the seeders. Useful for a one-off tweak
   (a different port for a single run) without editing the committed file.
 - The same precedence is a **trap**: a stray variable left exported in the shell silently overrides
-  the committed value, and nothing announces it. When the stack behaves as if the file said
-  something else, check the shell's environment first.
-- Ordinary dotenv loaders do the opposite (the file does not overwrite an existing variable, but
-  neither does the variable overwrite a value the file *did* set into the same object). Verify the
+  the committed value, with no warning. When the stack behaves as if the file said something else,
+  check the shell's environment first.
+- Ordinary dotenv loaders do the opposite (the file leaves an existing variable alone, and the
+  variable likewise leaves alone any value the file *did* set into the same object). Verify the
   direction in the resolver you actually have before relying on it; here it is the merge above.
 
 ## The values that must differ, and which of them your project actually needs
@@ -117,7 +115,7 @@ stack *replaces* the developer's stack rather than coexisting with it, and that 
 disposable — the dedicated `.env.<stack-env>` still exists; the answers only decide whether its
 values may coincide with the development environment's.
 
-The left column names **what kind of value** it is; the parenthesised key is what the example stack
+The left column names **what kind of value** it is; the key in parentheses is what the example stack
 calls it.
 
 | Value | What goes wrong when it is left equal to the development environment's |
@@ -172,12 +170,13 @@ One offset applied to every role the project has — the components named here a
   prefix they are reachable from this machine only.
 - **No `ports:` at all for a service the host does not reach.** Container-to-container traffic uses
   the compose network. Add a published port only when a host process — the build script, the
-  application, a developer's browser or inspection command — genuinely connects to it, and note in a comment which one does.
+  application, a developer's browser or inspection command — connects to it, and note in a comment
+  which one does.
 - **A service that advertises its own address is the exception to free remapping**: its published port
   must equal the port it binds and advertises, because the client is redirected to that advertised
   address after connecting. The broker is the example; a clustered queue or a replica set that names
   its own members behaves the same way ([compose-definition.md](./compose-definition.md)).
-- **Passwords stay development-grade and stay out of the repository as anything else.** A fixture
+- **Passwords stay development-grade and never go into the repository in any other form.** A fixture
   password committed beside a loopback-only stack is acceptable; the same value reused for anything
   reachable is not.
 
@@ -198,5 +197,5 @@ get (target, key) {
 
 So a variable the env file never defined does not fail at startup — it becomes `null` and surfaces
 much later, as a request to `null/_search`, a connection to port `null`, or a file written to a path
-built from `null`. When the environment behaves in a way that makes no sense, **check that every key the
-code path reads is actually present** before looking at the wiring.
+built from `null`. When the environment behaves strangely, **check that every key the code path
+reads is actually present** before looking at the wiring.

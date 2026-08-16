@@ -32,8 +32,8 @@ its own identifier — which is also what makes it visible when only one of them
 **`Then also observable` is where a multi-service product is actually specified.** A write that has to reach a
 search index, a derived list, a counter or a notification is not complete when the form closes: the user's
 claim is that it shows up over there too. Stating it here, in user terms — "the record appears in search
-results" — is what makes an asynchronous gap a failed scenario rather than a shrug. It does not create a
-second success condition: it describes what the *same* completed flow must have produced.
+results" — is what turns an asynchronous gap into a failed scenario instead of something quietly ignored. It
+does not create a second success condition: it describes what the *same* completed flow must have produced.
 
 ### Fields deliberately absent
 
@@ -55,7 +55,8 @@ numbers**:
 | `51`–`79` | the provocation catalogue | a flow with nothing in this band has never been specified against failure |
 | `81`–`99` | the role list | a flow with nothing here has no permission boundary written down |
 
-Numbers are allocated in order and never re-packed. Gaps mean retirement, and a gap is information.
+Numbers are allocated in order and never renumbered to close gaps. Gaps mean retirement, and a gap is
+information.
 
 ## The file
 

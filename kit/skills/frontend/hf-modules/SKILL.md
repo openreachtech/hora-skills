@@ -1,6 +1,6 @@
 ---
 name: hf-modules
-description: Utility modules in as classes. Furo follows OOP structure, thus utility classes are prefered over utility functions/composables. Use when we need to reuse a general logic in multiple files.
+description: Utility modules written as classes. Furo follows an OOP structure, so utility classes are preferred over utility functions/composables. Use when reusing general logic across multiple files.
 metadata:
   author: OpenReachTech
   version: "2026.07.24"

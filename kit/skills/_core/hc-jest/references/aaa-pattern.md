@@ -221,21 +221,18 @@ distinction only matters for a single `test()` that writes a literal in the body
   must be broken onto new lines). An object with multiple keys or more is
   always multi-line, so it falls into the bound-variable case.
 - **Why multi-line is bound**: writing a multi-line literal directly into
-  `.toEqual({ ... })` mixes the matcher's `)` with the object's `}`, erasing
-  the outline of the Assert phase ([Use blank lines only to separate the
-  three phases](#use-blank-lines-only-to-separate-the-three-phases)). Escaping it into
-  `const expected` keeps the matcher line contained as `.toEqual(expected)`,
-  which also aligns with the ethos of [Pass a variable to
+  `.toEqual({ ... })` mixes the matcher's `)` with the object's `}`, erasing the
+  outline of the Assert phase ([Use blank lines only to separate the three
+  phases](#use-blank-lines-only-to-separate-the-three-phases)). Escaping it into
+  `const expected` keeps the matcher line contained as `.toEqual(expected)`, which also
+  aligns with the spirit of [Pass a variable to
   `expect()`](#pass-a-variable-to-expect-not-an-expression). The bound `const expected`
-  belongs to the Arrange phase, so separate it from Act (`received`) with a
-  blank line.
-- **A literal `const expected` binding is different from binding a
-  runtime-generated value**. A multi-line object literal
-  (`const expected = { ... }`) is instantly recognizable as static, and is
-  distinguishable at the binding point from a memoized
-  `const expected = someCall()`
+  belongs to the Arrange phase, so separate it from Act (`received`) with a blank line.
+- **A literal `const expected` binding is different from binding a runtime-generated value**. A
+  multi-line object literal (`const expected = { ... }`) is instantly recognizable as static, and is
+  distinguishable at the binding point from a memoized `const expected = someCall()`
   ([structure.md](./structure.md#methods-that-memoize-and-return-the-same-reference-should-be-memoized)),
-  so the meaning of `const expected` doesn't get muddled.
+  so the meaning of `const expected` doesn't get confused.
 - **When the expected value can't be compared as a literal** (`WeakMap` /
   `Set` / a memoized instance, etc. — something whose reference is unique and
   opaque), this falls back, before this branch, to `toBeInstanceOf(<type>)` or

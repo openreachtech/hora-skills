@@ -8,7 +8,10 @@ metadata:
 
 # UI Animation
 
-Motion in this app exists to serve the interface, never to decorate it. Before adding a transition, decide whether the element should animate at all and why; then reach for the technique that fits. Every animation is built from design tokens and `.unit-*` scoped styles — the same rules as [[hf-css]] apply, and animate only `transform`/`opacity` so the compositor does the work.
+Motion in this app exists to serve the interface, never to decorate it. Before adding a transition, decide whether the
+element should animate at all and why; then pick the technique that fits. Every animation is built from design tokens
+and `.unit-*` scoped styles — the same rules as [[hf-css]] apply, and animate only `transform`/`opacity` so the
+compositor does the work.
 
 > Priorities: responsiveness, clear purpose, GPU-friendly properties, motion that goes unnoticed because it feels right.
 

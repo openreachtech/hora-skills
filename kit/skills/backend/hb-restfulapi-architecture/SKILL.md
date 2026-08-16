@@ -12,10 +12,10 @@ description: >
 
 A skill for understanding the **REST API layer** of a renchan-style backend — the code under
 `server/restfulapi/`. Structurally it **mirrors the GraphQL layer**: there is a per-request
-**context**, a per-process **share**, an **engine** that wires everything to the server, and an
-error hash declared up front. The difference is the surface: instead of a resolver returning a
-plain object, a **renderer** returns a **`RestfulApiResponse`** carrying an HTTP **status code** plus
-`content` or `error`, and a **flusher** writes it to the wire.
+**context**, a per-process **share**, an **engine** that wires everything to the server, and an error
+hash declared up front. The difference is the surface: instead of a resolver returning a plain
+object, a **renderer** returns a **`RestfulApiResponse`** carrying an HTTP **status code** plus
+`content` or `error`, and a **flusher** writes it to the response.
 
 > This skill is self-contained. Support classes (`BaseRestfulApiServerEngine`,
 > `BaseGetRenderer` / `BasePostRenderer`, `RestfulApiResponse`, `BaseRestfulApiContext` /
@@ -24,7 +24,7 @@ plain object, a **renderer** returns a **`RestfulApiResponse`** carrying an HTTP
 > substitute your own. Some conventions below are the **target** shape — where the current repo
 > diverges (notably input validation, §5), the improved form is described.
 
-## Grand principle: a renderer is a resolver with an HTTP envelope
+## Core principle: a renderer is a resolver with an HTTP envelope
 
 One request → one **renderer**. A renderer does the same job a GraphQL resolver does — validate,
 touch the DB / an external system, shape a result — but it speaks HTTP:
@@ -37,7 +37,7 @@ touch the DB / an external system, shape a result — but it speaks HTTP:
   the **error hash** declared up front, an optional **DI factory** — is the same idea as the
   GraphQL side.
 
-Three rules carry the weight:
+Three rules matter most:
 
 1. **Return responses, never throw.** Every exit is a `RestfulApiResponse` — success via
    `RestfulApiResponse.create({ statusCode, content })`, failure via
@@ -47,7 +47,7 @@ Three rules carry the weight:
    filter), middleware, versioning, and the standard error envelopes live on the engine (§3). The
    renderer only knows its route, its errors, and its `render()` (§2).
 3. **Validate at the boundary, then delegate.** REST input arrives split across `body` / `query` /
-   path params and is all string-ish; normalize and validate it before touching the DB (§5).
+   path params and is all string-like; normalize and validate it before touching the DB (§5).
 
 - **Comments: English for code, the surrounding language for domain notes.** Match the neighbors.
 

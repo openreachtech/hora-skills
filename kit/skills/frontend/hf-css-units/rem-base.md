@@ -16,9 +16,13 @@ Decide CSS dimensions in rem. Do not build layout, spacing, or font sizes on a p
 
 ### Why rem (accessibility)
 
-- CSS that fixes dimensions in px nullifies the user's font-size setting and forces one and the same default font size on all of humanity. This is a plain accessibility violation: it strips users of the right to adjust text to their own eyesight and environment.
+- CSS that fixes dimensions in px nullifies the user's font-size setting and forces the same default font size on
+  everyone. This is a plain accessibility violation: it strips users of the right to adjust text to their own eyesight
+  and environment.
 - It is the habit of print design — where relative values never change — carried over to the web by people who do not know how web design works. It is a contemptible practice born of a lack of skill as a web designer, and we refuse to follow it.
-- The "rem vs px" debate is noisy, but the conclusion is plainly a victory for rem. With accessibility as the judge, a px basis is a thing that only holds up by presupposing pinch-zoom and trampling usability underfoot; there is not a shred of justification for adopting it.
+- The "rem vs px" debate is noisy, but the conclusion is plainly a victory for rem. With accessibility as the judge, a
+  px basis is a thing that only holds up by presupposing pinch-zoom and trampling usability; there is no justification
+  for adopting it.
 - With rem as the base, the whole design scales along with the font size the user has chosen.
 - Specify padding / margin in rem as well. If a `<button>`'s padding is fixed in px, the padding becomes relatively cramped when the font size is enlarged and slack when it is reduced — either way the design breaks. With rem, the ratio to the font size is preserved.
 - Decide layout spacing and responsive breakpoints in rem as far as possible too. When breakpoints are in rem, the number of characters that fit within a width stays roughly constant.
@@ -39,7 +43,8 @@ Limit the values used for rem to the following 12 steps. The table shows the ran
 - In effect the rule is: "round to one decimal place, but `0.25` / `0.75` (and `1.25`, `1.75`, … quarter steps) are allowed as exceptions."
 - Examples: `0.4rem`, `0.75rem`, `1.5rem`, `2rem`, `1.25rem` are fine. `1.35rem` is not.
 - Do not use values carried out to four decimal places such as `0.0625rem`. There are two reasons.
-  1. It is a number that merely flaunts, with a knowing air, the mistaken premise that "since `1rem = 16px`, `1px = 1/16rem`." Since `1rem` does not mean 16px, that conversion is meaningless.
+  1. It is a number that merely shows off the mistaken premise that "since `1rem = 16px`, `1px = 1/16rem`." Since
+     `1rem` does not mean 16px, that conversion is meaningless.
   2. A difference on the order of 0.0005rem — the least significant digit of 0.0625rem — cannot be distinguished by the human eye, and on any screen it falls below the dip resolution and does not even appear on the display. Fine precision has no meaning.
 
 ### Why one quarter / three quarters are allowed as exceptions

@@ -9,7 +9,8 @@ This summarizes conventions related to class method definitions.
 
 ## Arguments should be a single named-argument object
 
-- Except for exceptions, the arguments of a defined method should in principle be received as a single object, using named arguments (destructuring assignment).
+- With some exceptions, the arguments of a defined method should in principle be received as a single object, using
+  named arguments (destructuring assignment).
 - Break each argument onto its own line and chop it down (one property per line).
 
 ```javascript
@@ -67,7 +68,8 @@ static from (Ctors) {
 
 ## Do not pass properties directly to private methods
 
-- Unless there is a specific reason, do not implement code that passes an (instance) property directly as an argument to a private / internal method.
+- Unless there is a specific reason, do not pass an (instance) property directly as an argument to a private /
+  internal method.
 - Internal methods should reference the properties they need directly from `this`. This avoids passing arguments around and preserves encapsulation.
 - If a piece of logic needs a property passed as an argument, that is a sign that "it should be a static method rather than an instance method."
 - However, making it static would remove the point of instantiation, so the correct approach is for instance methods to reference `this` with no arguments.
@@ -96,7 +98,8 @@ formatName () {
 - Unless a class is inheriting, every class definition must define `static create (...)`.
   (When inheriting, the parent class's `create` is inherited, so it doesn't need to be redefined.)
 - The parameters of `static create (...)` should define what is needed to construct the arguments passed to the constructor.
-- Factory methods should, unless there is a specific reason not to, basically be implemented as **static methods** (`static create (...)`).
+- Factory methods should, unless there is a specific reason not to, be implemented as **static methods**
+  (`static create (...)`).
 
 ### Division of responsibility between the constructor and `static create (...)`
 

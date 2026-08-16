@@ -2,7 +2,7 @@
 name: hc-test-execution
 description: >
   Run a project's test cases and drive them to green without weakening them — no test skipped,
-  deleted, loosened or waited out to make the suite pass. Use this skill whenever tests are run,
+  deleted, loosened, or padded with waits to make the suite pass. Use this skill whenever tests are run,
   whenever a test still fails after an implementation was believed finished, when the user asks to
   run or fix failing tests, and before claiming an implementation is complete. Writing new tests
   belongs to the project's test-writing convention.
@@ -12,15 +12,15 @@ description: >
 
 A skill for **running the test cases and resolving what they report**.
 
-The failure this skill exists to prevent is not "the tests fail". It is the reflex that follows:
-changing the test until it stops failing. A suite that was adjusted until it passed reports
-nothing, and the next defect ships behind a green run.
+The failure this skill exists to prevent is not "the tests fail". It is what usually happens next:
+changing the test until it stops failing. A suite that was changed until it passed reports nothing,
+and the next defect ships behind a green run.
 
 ## Core principle: a failing test is a result, not an obstacle
 
-The test is a statement about required behavior. When it fails, exactly one of two things is
-true: the behavior is wrong, or the statement is wrong. **Deciding which one — with evidence —
-is the work.** Everything else is bookkeeping.
+The test is a statement about required behavior. When it fails, exactly one of two things is true:
+the behavior is wrong, or the statement is wrong. **Deciding which one — with evidence — is the
+work.** Everything else is just routine detail.
 
 - The default assumption is that the **implementation** is wrong. A test written before the
   implementation encodes what was required; the implementation is the newer, less-reviewed
@@ -78,13 +78,25 @@ re-run the whole suite ──▶ back to the top
    defects.
 4. **Run the suite once before changing anything**, to establish which failures were already
    there. A pre-existing failure attributed to the current change wastes the whole session.
+5. **Size the run to the machine, not to its listed specifications.** Most runners execute test
+   files in **parallel workers** — one per core by default — and each worker is a full process using
+   its own memory. That default assumes an idle machine; a real one is running an editor, a browser,
+   a local database, and sometimes a full E2E stack, all using memory before the suite starts.
+   Before a full run, account for what else is resident and how much memory and CPU are **actually
+   free** — not how much is installed. **When the machine is constrained, dial the parallelism
+   down** (the runner's max-workers lever, halved and re-run) **or run serially** (the runner's
+   in-band / single- worker mode) rather than letting the operating system kill a worker — or
+   another process — under the load. A serial run that finishes beats a parallel one that dies
+   halfway. The concrete flags and the way to weigh workers against available memory belong to the
+   project's test-running convention; the principle here is to **look at the machine before choosing
+   the parallelism**, not after it dies.
 
 ## Read the actual output
 
 - Read the failure message, the expected-versus-received diff, the failing assertion and the
   stack frame in the project's own code. All four.
-- **Never infer a cause from the test's name.** The name says what it was supposed to check; the
-  output says what happened.
+- **Infer the cause from the output, not from the test's name.** The name says what it was supposed
+  to check; the output says what happened.
 - **Never act on remembered output.** If the output has scrolled away, run the single test again
   and read it.
 - When the message is unclear, get more signal before changing code: run the one test in
@@ -120,8 +132,8 @@ These are never acceptable, including "temporarily". See
 - Adding a branch to the implementation that exists only to satisfy the test.
 - Marking a test as expected-to-fail.
 
-**Violating the letter of these rules is violating the spirit of them.** A suite whose failures
-were silenced is worse than no suite, because it is believed.
+**Breaking the letter of these rules breaks their spirit too.** A suite whose failures were silenced
+is worse than no suite, because it is believed.
 
 ## Rationalization table
 
@@ -138,7 +150,7 @@ Every one of these appears when a suite will not go green. Each one means: stop 
 | "I'll widen the timeout, the machine is slow" | Timeouts hide races. Find what is not being waited for |
 | "Just this one test, the rest pass" | The rest passing is what makes the one failure informative |
 | "It's a pre-existing failure, not mine" | Say so in the report, with the run that proves it. Do not silence it |
-| "Nobody will notice" | The next defect behind this test will not be noticed either. That is the cost |
+| "Nobody will notice" | The next defect behind this test will slip by too. That is the cost |
 
 ## Red flags — stop and triage
 
@@ -153,7 +165,7 @@ Every one of these appears when a suite will not go green. Each one means: stop 
 
 ## Reporting the run
 
-The report is built from the run's own output, never from recollection.
+Build the report from the run's own output, not from memory.
 
 1. **The command that was run**, exactly as executed, and which suite it covers.
 2. **The run's own summary line** — the suite and test counts as the runner printed them.
@@ -164,9 +176,9 @@ The report is built from the run's own output, never from recollection.
 4. **Failures still open**, with their classification and what is needed. Never omit these.
 5. **Pre-existing failures**, separated from the ones this work caused.
 
-Never state that the suite passes without the run's summary in the report. **A claim of green
-without the output is an unverified claim**, and the whole point of running the tests was to
-stop making unverified claims.
+State that the suite passes only when the run's summary is in the report. **A claim of green without
+the output is an unverified claim**, and the whole point of running the tests was to stop making
+unverified claims.
 
 ## Detail files
 

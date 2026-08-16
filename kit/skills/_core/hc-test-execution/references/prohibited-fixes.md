@@ -3,8 +3,8 @@
 Each move below makes a red suite green while destroying what the suite was for. For each one:
 what it hides, and the correct handling of the situation that tempts it.
 
-None of these is acceptable "temporarily". A temporary silencing that is never revisited is
-indistinguishable from a permanent one, and it is never revisited.
+None of these is acceptable "temporarily". A temporary silencing that is never revisited is the same
+as a permanent one, and in practice it never gets revisited.
 
 ## Skipping, disabling or deleting a test
 
@@ -17,8 +17,9 @@ cannot be fixed now, the test stays failing and the report says so, with the cla
 what is needed. A visible red test is information; a skipped test is a lie the next reader
 believes.
 
-The only legitimate removal of a test is the removal of the requirement it covers — recorded as
-a withdrawal in the requirement document, not decided at the moment the test is inconvenient.
+The only legitimate removal of a test is the removal of the requirement it covers — recorded as a
+withdrawal in the requirement document, not decided on the spot just because the test is
+inconvenient.
 
 ## Loosening an assertion
 
@@ -31,11 +32,10 @@ count instead of the contents; asserting "it threw" instead of which error.
 **Tempting situation:** the received value is *nearly* right, and the difference looks
 incidental.
 
-**Correct handling:** the difference is the finding. Either the code produces the wrong value —
-an implementation defect — or the acceptance criterion says the expected value is wrong, in
-which case the expectation is corrected to the criterion's value, exactly, and the criterion id
-goes in the report. An assertion is never widened; it is corrected to a different exact
-statement or it stands.
+**Correct handling:** the difference is the finding. Either the code produces the wrong value — an
+implementation defect — or the acceptance criterion says the expected value is wrong, in which case
+the expectation is corrected to the criterion's value, exactly, and the criterion id goes in the
+report. Never widen an assertion; it is corrected to a different exact statement or it stands.
 
 ## Pasting the received value into the expectation
 

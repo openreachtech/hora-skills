@@ -30,12 +30,12 @@ master data introduced or changed in that release.
   builds on the state left by earlier ones. Each release's master additions stay isolated and
   traceable to the release that shipped them.
 - **Current state**: the repo still has a single, pre-split `sequelize/seeders/master/`, and
-  `db:seed:prod` targets it directly. The release split is the **going-forward convention**; the
+  `db:seed:prod` targets it directly. The release split is the **convention from here on**; the
   `db:seed:prod` script is updated to enumerate `master-*` in order when the split lands.
 - Within a release dir, files keep the normal seeder skeleton and the standard seeder filename
   ([naming.md](./naming.md)).
 
-## dev-master vs development — the crucial distinction
+## dev-master vs development — the key distinction
 
 Both run **only in dev / CI** (local machines and CI test runs), never in production. What differs
 is the *kind* of data:

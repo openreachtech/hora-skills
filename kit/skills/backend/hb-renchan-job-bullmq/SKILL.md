@@ -18,11 +18,11 @@ in renchan base classes. A job is a small **template of class files in one direc
 - **Job Daemon** (`scripts/startJobDaemon.js`) — **runs** the workers (consumer) and
   **publishes progress** back over Redis PubSub to the API's GraphQL subscriptions.
 
-This overview maps each topic to a section; the depth lives in the detail files under `references/`.
-The package's own usage samples live in `samples/confirm-01` (dispatch + daemon) and
+This overview maps each topic to a section; the specifics are in the detail files under
+`references/`. The package's own usage samples live in `samples/confirm-01` (dispatch + daemon) and
 `samples/confirm-02` (cron + interval schedulers) of the `hb-renchan-job-bullmq` package.
 
-## Grand principle: a job is a filled-in template of 3–4 files
+## Core principle: a job is a filled-in template of 3–4 files
 
 Each job is a directory `app/jobs/<kebab-job-name>/` holding a fixed set of classes, each extending a
 renchan base, all pointing at one central **Engine**:
@@ -124,7 +124,7 @@ subscription in the API process **subscribes** with the **same channel + scope**
 Redis PubSub broker.
 
 - The Daemon injects the broker (§3, Path B); enqueue-only processes pass none → publish is a no-op.
-- AI workers get this for free from `BaseAgentJobWorker`; the app base
+- AI workers get this automatically from `BaseAgentJobWorker`; the app base
   [BaseContentGenerationJobWorker.js](../../../app/BaseContentGenerationJobWorker.js) sets
   `channel = 'reportProgress'` and `buildScope` (`accessToken` else `jobId`).
 - The subscriber

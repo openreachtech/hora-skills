@@ -1,14 +1,11 @@
 # The compose definition
 
 The compose file that brings the E2E stack up, service by service, and the settings the pipeline
-actually depends on. Referenced from §2 and §4 of [SKILL.md](../SKILL.md).
+depends on. Referenced from §2 and §4 of [SKILL.md](../SKILL.md).
 
-> **This file is written in one example stack.** Each service below is a *role* being filled — system
-> of record, cache and job queue, event transport, change propagation, read model — by one particular
-> component, and the roles are what §1 of [SKILL.md](../SKILL.md) asks you to map your project onto.
-> A project on PostgreSQL logical replication, NATS, an outbox poller, a different search engine or no
-> read model at all keeps the **general rule** stated in each section's bullets and replaces the YAML.
-> Service names, volume names, images, environment variables and ports are **illustrative values**,
+> **One example stack.** Each service fills a *role* you map your project onto
+> ([SKILL.md §1](../SKILL.md)); keep each section's **general rule** and replace the YAML.
+> Service names, volumes, images, environment variables and ports are **illustrative values**,
 > never values to copy.
 
 ## Reading a service block
@@ -20,6 +17,7 @@ Whatever component fills a role, the block for it answers the same four question
 | what does it need to be configured to emit or accept, for the next role to work? | `command:` / `environment:` | yes — a store that feeds change propagation must be told to produce what the propagator reads |
 | does the host need to reach it, and on which port? | `ports:`, always `127.0.0.1`-prefixed | yes — and a service that advertises its own address must publish the port it advertises |
 | how does it say it is ready? | `healthcheck:` | yes — the runner waits on this and nothing else |
+| what is the most memory it may take from the machine? | `mem_limit` | yes — every container gets a hard cap, and the caps are budgeted against physical memory ([§ Memory](#memory-cap-every-container-then-budget-against-physical-memory)) |
 | what must be inside its image, so the stack starts without network access? | `build:` | yes — plugins, extensions and drivers are baked in, never downloaded at start |
 
 ## Why a second compose file
@@ -31,12 +29,73 @@ They want different things:
 | --- | --- | --- |
 | lifetime | days, kept between sessions | kept between sessions too, but destroyable in one command |
 | ports | the conventional ones | a block of its own **if** the two must run at once |
-| memory | generous | as small as the services tolerate, so it can run on a working machine |
+| memory | generous, uncapped | every container hard-capped, all caps budgeted to a conservative slice of physical memory ([§ Memory](#memory-cap-every-container-then-budget-against-physical-memory)) |
 | data | accumulated by hand | loaded once from the seed set, then mutated by the operator |
 | volumes | persistent | persistent **per project**, dropped only by `clean.sh` |
 
 Keeping one file for both means every one of those rows becomes a compromise. Keep two, and put the
 E2E one under `e2e/` where its purpose is obvious.
+
+## Memory: cap every container, then budget against physical memory
+
+The E2E stack is a stack of resident processes — a database, one or two JVM services, a cache, the
+application and its background daemons — that all hold memory for the entire session while no one
+interacts with them. Left uncapped they will grow to whatever the machine has, and on a laptop their
+total pushes the machine into swap or the out-of-memory killer. Two rules keep that from happening,
+and both are requirements.
+
+**Every service gets a hard `mem_limit`.** Not a heap flag — a container-level cap. A container the
+compose file does not cap can use all of physical memory, so a single uncapped service undoes the
+budget no matter how carefully the others are sized. This is the one line that protects the host.
+
+**A JVM heap flag is not a memory cap.** `-Xmx512m` bounds the *heap* only; the JVM's off-heap
+buffers, thread stacks, metaspace and the operating system's page cache for the service all sit on
+top, so a JVM service routinely uses **two to three times its heap** in resident memory. Set the heap
+*and* the `mem_limit`, keep the heap at roughly **half** the `mem_limit`, and read the `mem_limit` —
+never the heap — as the number the machine actually has to find. A store with no heap flag at all (a
+relational database, a cache) still gets a `mem_limit`; it simply grows into it via its own buffers
+and the page cache rather than a `-Xmx`.
+
+**Budget the caps against physical memory, conservatively, assuming two stacks are up at once.** The
+whole point of the port block and the dedicated project name ([§4](../SKILL.md)) is that this stack
+can run *beside* the developer's own — so size it as if it always does. The rule of thumb:
+
+> **The sum of every `mem_limit` in this stack stays around 40% of the machine's physical memory.**
+
+Two stacks at 40% leave 20% for the operating system, the editor and the browser — the margin that
+keeps the machine responsive instead of swapping. This is deliberately conservative because the
+failure it prevents (the whole machine freezing) costs far more than a service running in a slightly
+tighter heap. On a 16 GB laptop that is a ~6 GB budget for the entire stack; the example values
+below sum to well under it, and are scaled down further on a smaller machine rather than letting the
+total drift up.
+
+Expressing the cap in compose:
+
+```yaml
+services:
+  some-service:
+    mem_limit: 1g          # compose v2 short form — the hard ceiling for this container
+    # deploy:               # the Swarm-style long form is only honoured with `--compose-file` under
+    #   resources:          # `docker stack deploy`; for `docker compose up` use `mem_limit` above.
+    #     limits: { memory: 1g }
+```
+
+The example stack's roles, sized to fit inside a ~40% budget with generous headroom, and to leave
+room for the developer's own stack beside it:
+
+| Role (example component) | `mem_limit` | Heap flag (≈ half) | Note |
+| --- | --- | --- | --- |
+| system of record (MariaDB) | `768m` | — (buffer pool, not a heap) | cap the InnoDB buffer pool below this in `command:` if the default is generous |
+| cache and job queue (Redis) | `256m` | `--maxmemory 192mb` | set `--maxmemory` under the cap so Redis evicts instead of being OOM-killed |
+| event transport (Kafka) | `1g` | `-Xmx512m` | JVM: cap is ~2× heap |
+| change propagation (Kafka Connect) | `768m` | `-Xmx384m` | JVM: cap is ~2× heap |
+| read model (Elasticsearch) | `1g` | `-Xms512m -Xmx512m` | JVM: cap is ~2× heap; the heaviest single service |
+
+That sums to ~3.6 GB — comfortably inside 40% of a 16 GB machine and still under 40% of an 8 GB one.
+The point is the **relationship**: pick each `mem_limit` first from what the service tolerates, keep
+each JVM heap near half its cap, and check the total against the physical-memory budget before
+committing — not the reverse. **General rule:** whatever components fill the roles, every one gets a
+`mem_limit`, JVM ones get a heap near half of it, and the sum is held to the conservative slice above.
 
 ## Project name and volumes
 
@@ -45,9 +104,9 @@ E2E one under `e2e/` where its purpose is obvious.
 name: <project>-e2e   # NOT the default (the directory name), and NOT the dev project's
 ```
 
-**The file sits under `e2e/docker/`, with everything it references by relative path beside it** — the
-`build:` contexts under `images/`, the init SQL under `initdb/`, any config a service mounts. Compose
-resolves those paths against this file's directory, so keeping them together is what lets the
+**The file sits under `e2e/docker/`, with everything it references by relative path beside it** —
+the `build:` contexts under `images/`, the init SQL under `initdb/`, any config a service mounts.
+Compose resolves those paths against this file's directory, so keeping them together lets the
 definition move as a unit; the scripts stay at `e2e/` root and pass `-f e2e/docker/compose.yaml`.
 
 - **Declare `name:`.** Without it, compose derives the project name from the directory, and two
@@ -73,10 +132,12 @@ Each heading names the **role** first and the component the example fills it wit
 services:
   mariadb:
     image: mariadb:11.4   # pin the minor: the binlog format the connector reads must not move
+    mem_limit: 768m       # hard container cap (§ Memory); keep the buffer pool below it, next line
     command: >
       --log-bin=mysql-bin
       --binlog-format=ROW
       --binlog-row-image=FULL
+      --innodb-buffer-pool-size=384M
       --expire-logs-days=1
       --server-id=1
     environment:
@@ -103,19 +164,28 @@ services:
   and nothing at all where propagation is an outbox table the application writes itself.
 - **Pin the minor version.** A floating major tag can move the change-log format under the propagator
   on a rebuild, breaking the pipeline for a reason that is not in the repository.
-- **The initdb directory runs once, when the volume is created.** Since the volume now survives every
-  `down.sh`, a changed SQL file there is **not** applied on the next `up.sh` — and will not be until
-  someone runs `clean.sh`. Say so wherever these files are edited, because the symptom (a missing
-  account, an ungranted privilege) looks nothing like its cause.
+- **The initdb directory runs once, when the volume is created.** Since the volume now survives
+  every `down.sh`, a changed SQL file there is applied only after someone runs `clean.sh`, never on
+  the next `up.sh`. Say so wherever these files are edited, because the symptom (a missing account,
+  an ungranted privilege) looks nothing like its cause.
 - **Short log expiry** (`--expire-logs-days=1`) — this environment has no reason to keep a week of
   change log.
+- **`mem_limit` with the buffer pool sized under it.** The container cap alone stops the database
+  from taking the machine, but a database left to size its own buffer pool from *total* RAM will
+  size itself for the host, not the cap, and then keep hitting that limit — so set
+  `--innodb-buffer-pool-size` (the equivalent for another engine: `shared_buffers`, the cache size)
+  to a value comfortably below the `mem_limit`. **General rule:** a store that auto-sizes its cache
+  from host memory must be told the smaller figure explicitly, or the cap and the store disagree
+  about how much memory exists (§ Memory).
 
 ### Cache and job queue — example: Redis
 
 ```yaml
   redis:
     image: redis:7-alpine
-    command: ['redis-server', '--save', '', '--appendonly', 'no']
+    mem_limit: 256m       # hard container cap (§ Memory)
+    # --maxmemory sits under the cap so Redis evicts rather than being OOM-killed at the cap
+    command: ['redis-server', '--save', '', '--appendonly', 'no', '--maxmemory', '192mb', '--maxmemory-policy', 'allkeys-lru']
     ports: ['127.0.0.1:16379:6379']
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
@@ -129,13 +199,19 @@ services:
   means a worker waking up to process a job whose context has moved on. **General rule:** the roles
   that must survive a restart are the ones holding authored state; the queue is not one of them, so
   turn its durability off rather than reasoning about stale jobs later.
+- **`--maxmemory` set below the `mem_limit`, with an eviction policy.** Reach the `mem_limit` and the
+  container is OOM-killed outright; reach `--maxmemory` first and the cache evicts a key instead — a
+  graceful degradation rather than a dead service. Keep `--maxmemory` a margin under the cap so the
+  cache stays inside the container ceiling (§ Memory).
 
 ### Event transport — example: Kafka in single-node mode
 
 ```yaml
   kafka:
     image: <kraft-mode-kafka-image>
+    mem_limit: 1g         # hard container cap (§ Memory); heap below is ~half of it
     environment:
+      KAFKA_HEAP_OPTS: '-Xms512m -Xmx512m'   # heap ≈ half the cap; JVM overhead lives in the rest
       KAFKA_CFG_NODE_ID: '0'
       KAFKA_CFG_PROCESS_ROLES: controller,broker
       KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka:9093
@@ -155,35 +231,41 @@ services:
 ```
 
 - **The published port must equal the external listener's port.** A broker answers the initial
-  connection with cluster metadata containing its *advertised* address, and the client then reconnects
-  to that. Map `127.0.0.1:19092:29092` while advertising `localhost:29092` and the client connects,
-  is told to go to `29092`, finds nothing there, and every produce and consume fails — after a
-  connection that looked fine. Change the listener port and the advertised port together, and publish
-  that same number. **General rule:** this applies to every component that answers with its own
-  address, not just to this broker — a clustered queue redirecting to a node name, a replica set
-  naming its members, a cluster publishing a `publish_address`. Find where the component states its
-  own address and make that the address the host can actually reach.
+  connection with cluster metadata containing its *advertised* address, and the client then
+  reconnects to that. Map `127.0.0.1:19092:29092` while advertising `localhost:29092` and the client
+  connects, is told to go to `29092`, finds nothing there, and every produce and consume fails —
+  after a connection that looked fine. Change the listener port and the advertised port together,
+  and publish that same number. **General rule:** this applies to every component that answers with
+  its own address, not just to this broker — a clustered queue redirecting to a node name, a replica
+  set naming its members, a cluster publishing a `publish_address`. Find where the component states
+  its own address and make that the address the host can reach.
 - **Two listeners because there are two kinds of client.** One listener can advertise only one
   address; a container client needs the service name, the host runner needs `localhost`. Any
   component reached from both sides has the same two-audience problem, however it is configured.
 - **`KAFKA_CFG_CONTROLLER_LISTENER_NAMES` is required whenever `controller` is a role** — without it
   the entrypoint aborts before the broker starts, because it cannot tell which listener the quorum
   speaks on.
-- **Leave auto-creation off.** A topic the broker invents gets one partition, and **a partition count
-  cannot be reduced afterwards** — so a single accidental produce before the create step permanently
-  changes what ordering guarantees the topic has. The runner creates topics explicitly. **General
-  rule:** wherever the transport can invent a channel on first use, turn that off and create the
-  channels in the runner, because an invented channel gets defaults you cannot take back.
+- **Leave auto-creation off.** A topic the broker invents gets one partition, and **a partition
+  count cannot be reduced afterwards** — so a single accidental produce before the create step
+  permanently changes the topic's ordering guarantees. The runner creates topics explicitly.
+  **General rule:** wherever the transport can invent a channel on first use, turn that off and
+  create the channels in the runner, because an invented channel gets defaults you cannot take back.
+- **Heap set to about half the `mem_limit`.** The broker is a JVM, so its `mem_limit` has to cover the
+  heap *plus* the off-heap buffers and page cache it uses to move messages — set `KAFKA_HEAP_OPTS`
+  near half the cap and let the rest absorb that overhead, rather than sizing the heap to the whole
+  container and being OOM-killed under load (§ Memory).
 
 ### Change propagation — example: a CDC connector in Kafka Connect
 
 ```yaml
   kafka-connect:
     build: ./images/connect      # the capture connector plugin, baked in
+    mem_limit: 768m              # hard container cap (§ Memory); heap below is ~half of it
     depends_on:
       kafka: { condition: service_started }
       mariadb: { condition: service_healthy }
     environment:
+      KAFKA_HEAP_OPTS: '-Xms384m -Xmx384m'  # heap ≈ half the cap
       BOOTSTRAP_SERVERS: kafka:9092         # in-network, not the published port
       GROUP_ID: <project>-e2e-connect
       CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect
@@ -205,10 +287,11 @@ services:
 - **Its own storage topics per project.** Connector configuration and offsets live in Kafka, so two
   stacks sharing them means one registers a connector the other did not ask for. A distinct
   `GROUP_ID` (and separate broker, as here) keeps them apart. **General rule:** wherever the
-  propagation mechanism keeps its own state — replication slot, offset table, cursor file, subscription
-  name — that state needs a name of its own per stack, or two stacks steer each other.
+  propagation mechanism keeps its own state — replication slot, offset table, cursor file,
+  subscription name — that state needs a name of its own per stack, or the two stacks interfere with
+  each other.
 - **The connector registration API is published only because the runner is on the host.** It takes
-  no authentication — the `127.0.0.1` prefix is what keeps it off the network.
+  no authentication — the `127.0.0.1` prefix keeps it off the network.
 - **A propagator that is not a service at all needs no block here.** An outbox poller or a dual-write
   path lives inside the application, so it is started as one of the background processes instead
   ([runner-and-lifecycle.md](./runner-and-lifecycle.md)) — and the ordering constraint (propagation
@@ -219,9 +302,11 @@ services:
 ```yaml
   elasticsearch:
     build: ./images/search       # the analyzer plugin the application relies on, baked in
+    mem_limit: 1g                # hard container cap (§ Memory); heap below is ~half of it
     environment:
       discovery.type: single-node
-      ES_JAVA_OPTS: '-Xms512m -Xmx512m'   # a fixture, not a workload
+      # heap ≈ half the mem_limit — the rest is JVM off-heap, Lucene buffers and page cache
+      ES_JAVA_OPTS: '-Xms512m -Xmx512m'   # a fixture, not a workload; NOT the container's total
       xpack.security.enabled: 'true'
       ELASTIC_PASSWORD: ${ELASTICSEARCH_PASSWORD}
     ports: ['127.0.0.1:19200:9200']
@@ -232,8 +317,12 @@ services:
     volumes: ['e2e-search-data:/usr/share/elasticsearch/data']
 ```
 
-- **A much smaller heap than the development stack.** The E2E stack must be able to run *beside* the
-  development one; a multi-gigabyte heap on both is what makes a developer stop bringing it up.
+- **A much smaller heap than the development stack, and a `mem_limit` on top of it.** The E2E stack
+  must be able to run *beside* the development one; a multi-gigabyte heap on both makes a developer
+  stop bringing it up. The heap flag is only half the story: it bounds the JVM heap, but Lucene's
+  off-heap buffers and the OS page cache push the container's real footprint to roughly double it,
+  so the search node is the heaviest single service and the one whose `mem_limit` — set to about
+  twice the heap — matters most to the budget (§ Memory).
 - **Leave authentication on.** Turning it off here means the credential path is never exercised,
   and the first environment that has it enabled is the one that breaks.
 - **The analyzer plugin is baked in for the same reason as the connector plugin** — no network at

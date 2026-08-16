@@ -64,8 +64,8 @@ and each name resolves to a status-bearing response.
 When the default envelope is not enough — a custom body shape, extra headers, a computed status —
 subclass `RestfulApiResponse` in the app and return that subclass. Override what you need (e.g. a
 fixed `statusCode` getter, or an added factory) while keeping the `{ statusCode, content, error }`
-contract the flusher relies on. Prefer extending over hand-building ad-hoc response objects, so every
-endpoint returns the same recognizable shape.
+contract the flusher relies on. Prefer extending over hand-building one-off response objects, so
+every endpoint returns the same recognizable shape.
 
 ## Flushers
 

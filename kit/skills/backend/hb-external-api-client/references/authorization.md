@@ -21,8 +21,8 @@ For an operation authenticated with an API token from `env`, implement two gette
 builder assembles the header string (`Bearer xxx`), so do not write `headers` by hand.
 
 - **Why**: turning the generation scheme (Bearer / Basic) and the key into declarations confines the
-  header-assembly difference to the payload. Written by hand, a missing `Bearer ` prefix or a
-  forgotten Base64 encoding is what happens.
+  header-assembly difference to the payload. Written by hand, you risk a missing `Bearer ` prefix or
+  a forgotten Base64 encoding.
 
 ```js
 import {

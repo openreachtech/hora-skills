@@ -18,8 +18,8 @@ follows the project's jest rules unchanged.
   file directly. `_orders` tests run against the **seeded DB** and mutate shared rows — their outcome
   depends on running in a fixed sequence. So jest matches **only** each category's `_.test.js`, and
   that file `import`s the write tests in order. The individual write files are named `<Resolver>.js`
-  (not `*.test.js`) precisely so jest does **not** pick them up on their own — they run only when
-  `_.test.js` imports them.
+  (not `*.test.js`) so jest does **not** pick them up on their own — they run only when `_.test.js`
+  imports them.
 
 ## What goes in `tests/__tests__/` (no writes)
 

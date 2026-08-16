@@ -9,11 +9,11 @@ description: >
 
 # Sequelize Migration
 
-A skill for writing the `sequelize/migrations/*.cjs` files. What it defines is the **physical
-schema** (tables, columns, indexes); the **logical declarations** layered on top (attributes /
-association / scope / hook) are written by `hb-sequelize-model`. Keep the
-two in one-to-one correspondence — when you add a column in the migration, add the matching
-attribute in the model (and vice versa). The conventions are split across the detail files below.
+A skill for writing the `sequelize/migrations/*.cjs` files. It defines the **physical schema**
+(tables, columns, indexes); the **logical declarations** layered on top (attributes / association
+/ scope / hook) are written by `hb-sequelize-model`. Keep the two in one-to-one correspondence —
+when you add a column in the migration, add the matching attribute in the model (and vice versa).
+The conventions are split across the detail files below.
 
 This repo does **not** `sync`. The schema is **built entirely by migrations** (dev = SQLite /
 staging = MySQL / live = MariaDB — the dialects differ). A model's `unique: true` and the like are
@@ -276,7 +276,7 @@ Add a column to an existing table with `addColumn`, and drop the same column sym
 - Put a `/* ... */` block at the top of the file describing the **intent** (ticket number, spec
   reference, backward-compat notes).
 - When adding a column to a table that already has rows, give it `allowNull: true` or a
-  `defaultValue` (do not bolt on a NOT NULL column after the fact).
+  `defaultValue` (do not add a NOT NULL column after the fact).
 
 ```js
 // Good example (intent comment + symmetric up/down; the drop uses raw SQL DROP COLUMN)

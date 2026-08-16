@@ -20,10 +20,11 @@ Every test file lives in exactly one of two places, chosen by **whether it write
   writes to the DB directly or transitively (calls `create` / `update` / `destroy` /
   `beginTransaction`, or orchestrates sub-methods that do) belongs in `_orders` **even if the test
   stubs the persist call** — mocking the write does not move it to `__tests__`.
-- **Placement is per-method, so one class usually splits across both trees.** A DB-writing class keeps
-  its writing methods in `_orders` and its non-writing methods (`find~`, getters, builders, validators,
-  `format~`) in the sibling `__tests__` file. Do not dump a read-only method into `_orders` just to
-  keep it beside the class's other tests — co-location is not a placement reason.
+- **Placement is per-method, so one class usually splits across both trees.** A DB-writing class
+  keeps its writing methods in `_orders` and its non-writing methods (`find~`, getters, builders,
+  validators, `format~`) in the sibling `__tests__` file. Do not dump a read-only method into
+  `_orders` just to keep it beside the class's other tests — keeping tests together is not a reason
+  to place it there.
 
 ## Why DB-writing tests need ordering
 
@@ -31,9 +32,8 @@ A DB-writing test mutates the **shared seed fixtures** (`development` / `dev-mas
 database was seeded with. Because the database is shared across the tests in a run, a test that runs
 **after** a mutation observes the changed state.
 
-- Read-only tests can't change what others see, so they never need ordering — that is exactly why they
-  are separated into `tests/__tests__/`.
-- DB-writing tests *can* change what others see, so their run order must be **deterministic**, not left
+- Read-only tests can't change what others see, so they never need ordering (hence
+  `tests/__tests__/`); DB-writing tests can, so their run order must be **deterministic**, not left
   to file-discovery order.
 
 ## The `_.test.js` order barrel

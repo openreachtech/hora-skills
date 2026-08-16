@@ -18,7 +18,7 @@ Every rule here comes from one of two tests. Apply them to each sentence you wri
   without anyone being able to say which half failed.
 - **Skip the navigation the product will change anyway.** "Open the programme from the programme list" is the
   claim; "click Programmes in the sidebar, then the third card, then the Details tab" is a description of
-  today's information architecture.
+  today's navigation structure.
 - **Describe a value by what makes it interesting, not by its literal**, unless the literal is the point: "a
   quantity larger than the remaining stock", "a name that already belongs to another programme". A literal
   copied into a step is a fact that has to be maintained; a description stays true when the seed set changes.
@@ -65,7 +65,7 @@ and the scenario cites it.
 | Explicit waits and durations | A property of the machine, not the product | The state that must be observed, per the table above |
 | Assertions on the database, an API response, or component state | Not observable by the actor; passes while the screen shows nothing | What the actor sees as a result |
 | Endpoint, table, component or class names | Turn a claim into a comment on the implementation | What the user did and got |
-| "Displays correctly", "works as expected", "no errors" | Unfalsifiable — nothing distinguishes a pass from a skip | The specific thing on screen |
+| "Displays correctly", "works as expected", "no errors" | Cannot be proven false — nothing distinguishes a pass from a skip | The specific thing on screen |
 | Conditional steps — "if a dialog appears, dismiss it" | A scenario that branches was under-specified: the condition is either a precondition or another scenario | Fix the preconditions, or split |
 | "Repeat for each…" | Unbounded, and nobody knows how many were done | Enumerate the cases that matter, or write one scenario about the set with a counted expectation |
 | Another scenario's steps by reference | A scenario nobody can run without reading four others | Spell them out. The single exception is a failure variant citing its own normal path |

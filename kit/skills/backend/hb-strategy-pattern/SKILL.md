@@ -28,7 +28,7 @@ lookup hash is enough there.
 ## Grand principle: adding a variant means adding a file, never editing a dispatch chain
 
 Every rule in this skill serves one point: **the set of variants is discovered from the
-filesystem, not enumerated in code**. A new variant is one new subclass file dropped into the
+filesystem, not listed in code**. A new variant is one new subclass file dropped into the
 processor directory; no existing file changes.
 
 - **Why not a switch**: an `else if` / `switch` chain concentrates every variant's wiring in one

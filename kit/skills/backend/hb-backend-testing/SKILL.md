@@ -17,16 +17,15 @@ DB-writing tests are ordered so they do not corrupt each other, **how** to run t
 the *writing style* of an individual test (describe/test structure, case data, naming) follows the
 project's own Jest conventions and is out of scope here.
 
-> This skill states a **general, project-independent rule** — a refined best practice for horizontal
-> reuse, not a description of one repo's current tree. The directory names (`tests/__tests__`,
-> `tests/_orders`, `tests/mocks`, `tests/tools`) are the **recommended layout**; map them onto your
-> project and keep no domain specifics in the rule. Sample code follows the project's lint style (no
-> semicolons, 2-space indent, trailing commas).
+> This skill states a **general, project-independent rule**, not one repo's current tree. The
+> directory names (`tests/__tests__`, `tests/_orders`, `tests/mocks`, `tests/tools`) are the
+> **recommended layout** — map them onto your project. Sample code follows the project's lint style
+> (no semicolons, 2-space indent, trailing commas).
 
-## Grand principle: a test fails only when the code under test is wrong
+## Core principle: a test fails only when the code under test is wrong
 
-A test must fail **only** because the code it exercises is wrong — never because another test ran
-first, and never because the test itself contains untested logic. Two rules enforce that, and
+A test must fail **only** because the code it exercises is wrong — not because another test ran
+first, and not because the test itself contains untested logic. Two rules enforce that, and
 everything below follows from them:
 
 1. **Isolate database state.** A test that **writes to the DB** mutates shared seed data that other
@@ -73,11 +72,11 @@ Details, the barrel example, and the per-category workflow snippet are in
   convention.
 - **Parallelism × per-worker heap must fit in real memory.** Jest runs one worker per core by
   default, and `--max-old-space-size` is **not a reservation — it is how far the GC may be
-  deferred**, so a value the machine cannot actually give licenses every worker to grow until the
-  machine itself dies (one worker alone can do it). Derive the cap from a **measured peak**, check
-  that workers × cap fits in the memory actually free, and re-check as the project grows: per-worker
-  usage rises with every model and seeder added, so the pair that fit at the start is the one that
-  kills the machine later.
+  deferred**, so a value the machine cannot actually give lets every worker grow until it crashes
+  the machine (one worker alone can do it). Derive the cap from a **measured peak**, check that
+  workers × cap fits in the memory actually free, and re-check as the project grows: per-worker
+  usage rises with every model and seeder added, so a pair that fit at the start can later crash the
+  machine.
 
 The exact commands, the suite runner's steps, the fast single-test loop with the piecemeal DB
 reset, and how to size the worker/heap budget are in

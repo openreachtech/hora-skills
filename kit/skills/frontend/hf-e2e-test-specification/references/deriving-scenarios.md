@@ -4,13 +4,13 @@ Where scenarios come from, how many there should be, and what makes the set comp
 of [SKILL.md](../SKILL.md).
 
 **The inventory is produced before any scenario is written.** Writing and deriving at the same time produces
-the scenarios that were easy to think of, in the order they occurred to someone, and no way to tell what is
+the scenarios that were easy to think of, in whatever order they came to mind, and no way to tell what is
 missing. Derive the list, agree it, then write.
 
 ## Source 1 — the capability inventory
 
 Start from what the product exposes, because that list was written by someone who intended each operation to
-be used, and because it is the only one that can contain something nobody has remembered.
+be used, and because it is the only list that can include something everyone else has forgotten.
 
 **Group the operations into flows, then write scenarios per flow — not per operation.** A user does not
 "invoke `updateApplication`"; they change their application and check it took. One scenario covers several
@@ -21,9 +21,9 @@ Two ways operations cluster into flows, and both are usually present:
 
 - **By the life of an entity** — created, read back, changed, read back, removed, restored. This produces the
   backbone scenarios of the flow.
-- **By the journey a person is on** — everything they touch between arriving with an intention and leaving
-  with it satisfied. This produces the scenarios that cross entities, which are the ones that find the gaps
-  between two teams' work.
+- **By the journey a person is on** — everything they touch between arriving with a goal and leaving with it
+  satisfied. This produces the scenarios that cross entities, which are the ones that find the gaps between
+  two teams' work.
 
 ### What makes an entity's coverage complete
 
@@ -40,7 +40,7 @@ rather than a feeling:
 | A verb reachable by a role is reachable *only* by that role | Belongs to the permission band, below |
 
 An entity that legitimately lacks a verb needs no scenario for it — but it needs a line in the flow file's
-exclusion table saying so, because "no scenario" and "no capability" are indistinguishable otherwise.
+exclusion table saying so, because "no scenario" and "no capability" otherwise look the same.
 
 ## Source 2 — the provocation catalogue
 
@@ -50,8 +50,8 @@ step is the **selection rule**, because not every possible error deserves a numb
 - **Write a scenario for a failure the product promises to survive.** A dependency it retries, an input it
   validates, a conflict it detects.
 - **Write a scenario for a failure whose silent version would read as a product bug.** A screen that shows
-  nothing after a failed save is indistinguishable from a broken button, and that indistinguishability is the
-  defect worth specifying against.
+  nothing after a failed save looks exactly like a broken button, and that confusion is the defect worth
+  specifying against.
 - **Do not write a scenario for a failure with no user-visible contract.** If the product makes no promise
   about what happens when the machine loses power mid-write, a scenario asserting one is inventing
   requirements.
@@ -70,7 +70,7 @@ For every role in the declaration, two kinds of scenario:
   submitting anyway is refused. Hiding a control is not a guard, and guarding without hiding is an
   invitation.
 
-Where the product has many roles and many restricted operations, the product of the two is too large to
+Where the product has many roles and many restricted operations, the number of combinations is too large to
 specify exhaustively. Cover **the boundary that would hurt most if it were open** per role, name that choice
 in the index, and let the rest be a documented gap rather than an unstated one.
 
@@ -81,8 +81,8 @@ in the index, and let the rest be a documented gap rather than an unstated one.
 | This flow will never cover this operation | The flow file's exclusion table | A decision, with its reason |
 | No scenario for this yet | The index's coverage-gaps table | An acknowledged debt, with what it is waiting for |
 
-- **A reason is mandatory on an exclusion.** Without one it is an oversight that has been written down, and
-  it reads as a reviewed decision while permitting exactly the gap the coverage check exists to find.
+- **A reason is mandatory on an exclusion.** Without one it is an oversight that has been written down, and it
+  looks like a reviewed decision while allowing the very gap the coverage check exists to find.
 - **Exclusions are checked in both directions.** An exclusion naming an operation that no longer exists is
   reported, not ignored: an exception that has quietly stopped applying is how a real gap hides behind an old
   decision.
@@ -91,10 +91,10 @@ in the index, and let the rest be a documented gap rather than an unstated one.
 
 There is no ratio to hit, but there are two shapes that mean the derivation went wrong:
 
-- **One scenario per operation.** The specification has become a list of API calls wearing a UI costume; the
+- **One scenario per operation.** The specification has become a list of API calls dressed up as a UI; the
   scenarios will be short, numerous, and none of them will exercise a journey. Merge them into flows.
 - **A flow with thirty normal-path scenarios.** It is several flows. Split it before writing, because the
-  identifiers are permanent and re-cutting later means a migration recorded in the index.
+  identifiers are permanent and splitting them again later means a migration recorded in the index.
 
 As a rough shape: a flow holds a handful of normal-path scenarios, at least one failure scenario, and a
 permission scenario for each role that the flow distinguishes between.

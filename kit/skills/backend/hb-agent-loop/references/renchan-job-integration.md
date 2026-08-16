@@ -171,7 +171,7 @@ static get additionalConfig () {
 ```
 
 - **Why set it**: if the loop hits an AI / external API, unbounded parallelism causes rate overruns and
-  memory blowups. For loops with external I/O, keep `concurrency` finite and add a `limiter` when
+  memory exhaustion. For loops with external I/O, keep `concurrency` finite and add a `limiter` when
   needed. Scale horizontally (number of Worker processes) on the operations side.
 
 ## Dispatcher: `BaseAgentJobDispatcher`
