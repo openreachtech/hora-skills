@@ -12,7 +12,6 @@ export default [
       './dist/**',
 
       './kit/**',
-      './playground/**',
     ],
   },
 
