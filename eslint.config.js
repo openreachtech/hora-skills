@@ -17,14 +17,6 @@ export default [
   },
 
   {
-    languageOptions: {
-      globals: {
-        constructorSpy: 'readonly',
-      },
-    },
-  },
-
-  {
     files: [
       'tests/**/*.js',
     ],
