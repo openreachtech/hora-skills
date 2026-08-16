@@ -108,9 +108,8 @@ corresponding getter. All of them are exported from `@openreachtech/mentsu-rocke
 
 - The scalars used in `querySchema` / `bodySchema` (`TextScalar` / `KeywordScalar` / `IntegerScalar` /
   `DatetimeScalar`, …) are `import`ed from **`@openreachtech/mentsu-schema`**, not from rocket-client.
-- **Installing**: this module is distributed as a Git repository. Add
-  `"@openreachtech/mentsu-rocket-client": "git+https://github.com/openreachtech/mentsu-rocket-client.git"`
-  to `dependencies` in `package.json` and run `npm install`.
+- **Installing**: `npm install @openreachtech/mentsu-rocket-client` — it is published to npmjs.com,
+  so no registry configuration or authentication is required.
 
 ## The two transport patterns
 

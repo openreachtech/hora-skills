@@ -31,7 +31,7 @@ For sections whose content is fixed boilerplate, copy the following templates in
 
 ### Installation
 
-Almost entirely fixed text. Use the template below, replacing `<node-version>` (e.g., `20.x`) and `<package-name>`. The default is via npmjs.com (no extra setup). Only when the package is published via GitHub Packages (the `@openreachtech` scope) should the two-item block about appending to `.npmrc` and authenticating with `npm login` be kept; remove it if published via npmjs.com.
+Almost entirely fixed text. Use the template below, replacing `<node-version>` (e.g., `20.x`) and `<package-name>`. Packages are published to npmjs.com, so `npm install` is all a consumer needs — do not add registry configuration or an authentication step to this section.
 
 `README.md` (English):
 
@@ -43,21 +43,6 @@ Requires Node.js <node-version> (the version the CI builds against).
 ```sh
 npm install @openreachtech/<package-name>
 ```
-
-When using GitHub Packages (the `@openreachtech` scope), the following two items are
-required:
-
-1. Add the registry to your project's `.npmrc`:
-
-   ```
-   @openreachtech:registry=https://npm.pkg.github.com
-   ```
-
-2. Authenticate with `npm login`:
-
-   ```sh
-   npm login --registry https://npm.pkg.github.com
-   ```
 
 It is an ES module (`"type": "module"`); import it with ESM `import` syntax.
 `````
@@ -72,20 +57,6 @@ Node.js <node-version> が必要です（CI がビルド対象とするバージ
 ```sh
 npm install @openreachtech/<package-name>
 ```
-
-GitHub Packages（`@openreachtech` スコープ）を利用する場合、以下の二項目が必要です。
-
-1. `.npmrc` にレジストリを追記する:
-
-   ```
-   @openreachtech:registry=https://npm.pkg.github.com
-   ```
-
-2. `npm login` で認証する:
-
-   ```sh
-   npm login --registry https://npm.pkg.github.com
-   ```
 
 ES モジュール（`"type": "module"`）です。ESM の `import` 構文でインポートしてください。
 `````
