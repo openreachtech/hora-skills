@@ -5,7 +5,7 @@ The testing approach for actions / loops / composition / Worker / Dispatcher / R
 [core.md](./core.md) / [renchan-job-integration.md](./renchan-job-integration.md) /
 [graphql-integration.md](./graphql-integration.md).
 
-These follow the **`hc-jest` skill** (`_core/jest`) — read it for the general rules; this file only
+These follow the **`hc-jest` skill** — read it for the general rules; this file only
 applies them to the agent-loop classes. In short: one file per class; nest
 `describe(ClassName) > describe('#member()' / '.get:member') > describe('should …') > test.each(cases)`;
 write each test as **Arrange / Act / Assert** separated by blank lines, taking the Act result into a
