@@ -4,7 +4,7 @@ A distribution package of Claude Code skills for developing with Hora Kit.
 
 ## Concept
 
-This package ships **skills only** — it contains no runtime code to call. A skill is a directory holding a `SKILL.md`, plus optional `references/` and `scripts/`, that Claude Code loads and invokes as `/<name>`. Installing this package into a repository puts the conventions and procedures Open Reach Tech develops with in front of the agent working on that repository.
+This package ships **skills only** — there is no library to `import`, and the one executable it carries exists to install those skills. A skill is a directory holding a `SKILL.md`, plus optional `references/` and `scripts/`, that Claude Code loads and invokes as `/<name>`. Installing this package into a repository puts the conventions and procedures Open Reach Tech develops with in front of the agent working on that repository.
 
 107 skills are distributed across three domains. The two-character prefix on every name is the domain, so a reader looking at one flat list of skills can tell at a glance which came from this package and where each belongs:
 
@@ -23,20 +23,84 @@ The source is organized by domain at `kit/skills/<domain>/<name>/`, and `dist/` 
 Requires Node.js LTS (the version the CI builds against).
 
 ```sh
-npm install @openreachtech/hora-skills
+npm install -D @openreachtech/hora-skills
 ```
 
-This package has no JavaScript entry point. It ships static content under `dist/`, meant to be copied into your own repository (see Usage below), not `import`ed.
+Installing this package is the request to equip the repository with its skills, so its `postinstall` places them into `.claude/skills/` for you.
+
+npm turns install scripts off by default from v12 on, and warns about them before that, so the hook only runs where you have allowed it. Add this package to the whitelist in your package.json:
+
+```json
+{
+  "allowScripts": {
+    "@openreachtech/hora-skills": true
+  }
+}
+```
+
+`npm install-scripts approve @openreachtech/hora-skills` writes the same entry, and `npm install-scripts ls` lists what is still waiting for a decision.
+
+Where you would rather not allow the hook, run the command yourself instead — it does exactly what the hook does:
+
+```sh
+npx hora-skills install
+```
 
 ## Usage
 
-Copy the skills into your repository's `.claude/skills/`. `dist/skills/` is already flat, so its contents transfer as they are, with no directory to strip:
+The skills land in your repository's `.claude/skills/`. Claude Code discovers them from there, and each becomes invocable by its own name — `/hc-naming`, `/hb-query-resolver`, `/hf-cp-table`. Installed skills sit side by side with your repository's own, in one flat list, which is what the `hc-`/`hb-`/`hf-` prefix is for.
+
+### Selecting domains
+
+Every domain installs by default. A repository with only a backend then pays for the 45 frontend skills on every turn, because Claude Code keeps the name and description of each installed skill in context. Narrow the selection by domain:
 
 ```sh
-cp -r node_modules/@openreachtech/hora-skills/dist/skills/* .claude/skills/
+npx hora-skills install --domains core,backend
 ```
 
-Claude Code discovers them from there, and each becomes invocable by its own name — `/hc-naming`, `/hb-query-resolver`, `/hf-cp-table`. Installed skills sit side by side with your repository's own, in one flat list, which is what the `hc-`/`hb-`/`hf-` prefix is for.
+Or declare it once in your package.json, so a plain `hora-skills install` obeys it:
+
+```json
+{
+  "horaSkills": {
+    "domains": ["core", "backend"]
+  }
+}
+```
+
+The command line wins over package.json, and both fall back to every domain.
+
+### Keeping the installation current
+
+The installed skills are this package's build output rather than source of your repository, so ignore them:
+
+```gitignore
+.claude/skills/hc-*/
+.claude/skills/hb-*/
+.claude/skills/hf-*/
+.hora/
+```
+
+Updating this package re-runs the hook, so the skills follow along. Without the hook, run the command again yourself:
+
+```sh
+npx hora-skills install
+```
+
+`install` is repeatable: it removes what the previous run installed — recorded in `.hora/equip-skills.json` — along with any folder named after a skill this package distributes, before copying the current selection. A renamed or deselected skill therefore leaves nothing behind, and a repository that had copied `dist/skills/` by hand is tidied up on its first run.
+
+A skill your own repository authored is left alone, as long as its name is not one this package distributes. Carrying the `hc-`/`hb-`/`hf-` prefix is not enough to put it at risk — `hc-own-skill` is untouched — but naming it exactly after a distributed skill hands that name over to this package.
+
+### Commands
+
+| Command | What it does |
+| :-- | :-- |
+| `hora-skills install` | Install the selected skills, replacing the previously installed ones |
+| `hora-skills list` | Print the skills the current selection installs, installing nothing |
+| `hora-skills uninstall` | Remove every skill this package installed, along with the manifest |
+| `hora-skills help` | Print the usage text |
+
+`--dir <path>` installs into a directory other than `.claude/skills`.
 
 ## Contribution
 
