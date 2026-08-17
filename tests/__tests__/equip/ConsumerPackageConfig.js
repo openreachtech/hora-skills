@@ -191,6 +191,74 @@ describe('ConsumerPackageConfig', () => {
 })
 
 describe('ConsumerPackageConfig', () => {
+  describe('#extractName()', () => {
+    describe('should be the declared package name', () => {
+      const cases = [
+        {
+          override: {
+            packageHash: {
+              name: 'alpha-app',
+            },
+          },
+          expected: 'alpha-app',
+        },
+        {
+          override: {
+            packageHash: {
+              name: '@openreachtech/hora-skills',
+            },
+          },
+          expected: '@openreachtech/hora-skills',
+        },
+      ]
+
+      test.each(cases)('name: $override.packageHash.name', ({ override, expected }) => {
+        const config = ConsumerPackageConfig.create({
+          directoryPath: '/tmp/consumer',
+        })
+
+        jest.spyOn(config, 'load')
+          .mockReturnValue(override.packageHash)
+
+        const received = config.extractName()
+
+        expect(received)
+          .toBe(expected)
+      })
+    })
+
+    describe('should be null when nothing is declared', () => {
+      const cases = [
+        {
+          override: {
+            packageHash: null,
+          },
+        },
+        {
+          override: {
+            packageHash: {},
+          },
+        },
+      ]
+
+      test.each(cases)('packageHash: $override.packageHash', ({ override }) => {
+        const config = ConsumerPackageConfig.create({
+          directoryPath: '/tmp/consumer',
+        })
+
+        jest.spyOn(config, 'load')
+          .mockReturnValue(override.packageHash)
+
+        const received = config.extractName()
+
+        expect(received)
+          .toBeNull()
+      })
+    })
+  })
+})
+
+describe('ConsumerPackageConfig', () => {
   describe('#load()', () => {
     describe('should parse the package.json', () => {
       const cases = [

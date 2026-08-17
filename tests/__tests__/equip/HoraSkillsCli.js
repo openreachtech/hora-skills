@@ -231,6 +231,259 @@ describe('HoraSkillsCli', () => {
 })
 
 describe('HoraSkillsCli', () => {
+  describe('.runPostinstall()', () => {
+    describe('should equip a consuming repository', () => {
+      test('when the repository is not this package', () => {
+        jest.spyOn(HoraSkillsCli, 'isOwnRepository')
+          .mockReturnValue(false)
+
+        const runSpy = jest.spyOn(HoraSkillsCli.prototype, 'run')
+          .mockReturnValue(0)
+
+        const received = HoraSkillsCli.runPostinstall({
+          env: {
+            npm_config_local_prefix: '/consumer',
+          },
+          logger: {
+            log: () => {},
+            error: () => {},
+          },
+        })
+
+        expect(runSpy)
+          .toHaveBeenCalledWith()
+        expect(received)
+          .toBe(0)
+      })
+    })
+
+    describe('should equip nothing in this package itself', () => {
+      test('when the repository is this package', () => {
+        jest.spyOn(HoraSkillsCli, 'isOwnRepository')
+          .mockReturnValue(true)
+
+        const runSpy = jest.spyOn(HoraSkillsCli.prototype, 'run')
+          .mockReturnValue(0)
+
+        const received = HoraSkillsCli.runPostinstall({
+          env: {
+            npm_config_local_prefix: '/consumer',
+          },
+          logger: {
+            log: () => {},
+            error: () => {},
+          },
+        })
+
+        expect(runSpy)
+          .not
+          .toHaveBeenCalled()
+        expect(received)
+          .toBe(0)
+      })
+    })
+
+    describe('should end successfully on a failed install', () => {
+      const cases = [
+        {
+          override: {
+            exitCode: 1,
+          },
+        },
+      ]
+
+      test.each(cases)('exitCode: $override.exitCode', ({ override }) => {
+        jest.spyOn(HoraSkillsCli, 'isOwnRepository')
+          .mockReturnValue(false)
+        jest.spyOn(HoraSkillsCli.prototype, 'run')
+          .mockReturnValue(override.exitCode)
+
+        const errorSpy = jest.fn()
+
+        const received = HoraSkillsCli.runPostinstall({
+          env: {
+            npm_config_local_prefix: '/consumer',
+          },
+          logger: {
+            log: () => {},
+            error: errorSpy,
+          },
+        })
+
+        expect(received)
+          .toBe(0)
+        expect(errorSpy)
+          .toHaveBeenCalledWith('The skills were not installed. Run `npx hora-skills install` once the above is settled.')
+      })
+    })
+  })
+})
+
+describe('HoraSkillsCli', () => {
+  describe('.createForPostinstall()', () => {
+    describe('should install into the repository npm exports', () => {
+      const cases = [
+        {
+          input: {
+            env: {
+              npm_config_local_prefix: '/consumer',
+            },
+          },
+          expected: '/consumer',
+        },
+        {
+          input: {
+            env: {
+              INIT_CWD: '/elsewhere',
+            },
+          },
+          expected: '/elsewhere',
+        },
+      ]
+
+      test.each(cases)('env: $input.env', ({ input, expected }) => {
+        const cli = HoraSkillsCli.createForPostinstall({
+          env: input.env,
+          logger: {
+            log: () => {},
+            error: () => {},
+          },
+        })
+
+        expect(cli)
+          .toHaveProperty('workingDirectoryPath', expected)
+      })
+    })
+
+    describe('should run the install command', () => {
+      test('when created as is', () => {
+        const cli = HoraSkillsCli.createForPostinstall({
+          env: {
+            npm_config_local_prefix: '/consumer',
+          },
+          logger: {
+            log: () => {},
+            error: () => {},
+          },
+        })
+
+        const received = cli.commandLineArguments.extractCommand()
+
+        expect(received)
+          .toBe('install')
+      })
+    })
+  })
+})
+
+describe('HoraSkillsCli', () => {
+  describe('.extractConsumerDirectoryPath()', () => {
+    describe('should prefer the local prefix over the initial directory', () => {
+      const cases = [
+        {
+          input: {
+            env: {
+              npm_config_local_prefix: '/consumer',
+              INIT_CWD: '/elsewhere',
+            },
+          },
+          expected: '/consumer',
+        },
+        {
+          input: {
+            env: {
+              INIT_CWD: '/elsewhere',
+            },
+          },
+          expected: '/elsewhere',
+        },
+        {
+          input: {
+            env: {
+              npm_config_local_prefix: '',
+              INIT_CWD: '/elsewhere',
+            },
+          },
+          expected: '/elsewhere',
+        },
+      ]
+
+      test.each(cases)('env: $input.env', ({ input, expected }) => {
+        const received = HoraSkillsCli.extractConsumerDirectoryPath(input)
+
+        expect(received)
+          .toBe(expected)
+      })
+    })
+
+    describe('should fall back to the working directory', () => {
+      test('when npm exported neither', () => {
+        const received = HoraSkillsCli.extractConsumerDirectoryPath({
+          env: {},
+        })
+
+        expect(received)
+          .toBe(process.cwd())
+      })
+    })
+  })
+})
+
+describe('HoraSkillsCli', () => {
+  describe('.get:ownPackageName', () => {
+    describe('when called as is', () => {
+      test('should be fixed value', () => {
+        const received = HoraSkillsCli.ownPackageName
+
+        expect(received)
+          .toBe('@openreachtech/hora-skills')
+      })
+    })
+  })
+})
+
+describe('HoraSkillsCli', () => {
+  describe('.isOwnRepository()', () => {
+    describe('should tell this package apart from a consuming repository', () => {
+      const cases = [
+        {
+          override: {
+            name: '@openreachtech/hora-skills',
+          },
+          expected: true,
+        },
+        {
+          override: {
+            name: 'alpha-app',
+          },
+          expected: false,
+        },
+        {
+          override: {
+            name: null,
+          },
+          expected: false,
+        },
+      ]
+
+      test.each(cases)('name: $override.name', ({ override, expected }) => {
+        jest.spyOn(ConsumerPackageConfig.prototype, 'extractName')
+          .mockReturnValue(override.name)
+
+        const received = HoraSkillsCli.isOwnRepository({
+          env: {
+            npm_config_local_prefix: '/consumer',
+          },
+        })
+
+        expect(received)
+          .toBe(expected)
+      })
+    })
+  })
+})
+
+describe('HoraSkillsCli', () => {
   describe('.get:CommandLineArgumentsCtor', () => {
     describe('when called as is', () => {
       test('should be fixed value', () => {
