@@ -15,7 +15,7 @@ This gathers the conventions for creating new skills (`SKILL.md`) or updating ex
 skill's own folder name and the folder name it installs as. **One string, three places.** Choose it
 for the reader who sees a flat list of skills and never sees this repository.
 
-- **The name begins with its domain's prefix**: `hc-` for a skill under `_core/`, `hb-` under
+- **The name begins with its domain's prefix**: `hc-` for a skill under `core/`, `hb-` under
   `backend/`, `hf-` under `frontend/`. The prefix is what tells a reader of that flat list which
   skills came from this library, and which domain each belongs to.
 - **`name:` and the folder name must be the same string.** They are not two facts to keep in sync
@@ -31,7 +31,7 @@ for the reader who sees a flat list of skills and never sees this repository.
 After the prefix, name the subject, not the source tree:
 
 - **Leave out words that only place the skill within its domain.** A backend skill does not repeat
-  the framework it is for, and a `_core` skill does not carry a classifying word like
+  the framework it is for, and a `core` skill does not carry a classifying word like
   `declarations`, `shared` or `members` — `hc-async`, `hc-accessors`, `hb-agent-loop`.
 - **Keep a classifying word when it is what a reader would search for**: `hc-classes-constructor`,
   `hc-modules-exports`, `hf-css-units`.
@@ -68,7 +68,7 @@ After the prefix, name the subject, not the source tree:
 
 ```
 lib/skills/
-├── _core/     hc-*   Common/foundational (conventions applied across backend/frontend)
+├── core/      hc-*   Common/foundational (conventions applied across backend/frontend)
 ├── backend/   hb-*   Backend-specific
 └── frontend/  hf-*   Frontend-specific
 ```
@@ -79,7 +79,7 @@ have said belongs in the name instead, where the reader of an installed skill ca
 
 ## Placement of skills
 
-- Common conventions that do not depend on a specific domain go under `_core/`.
+- Common conventions that do not depend on a specific domain go under `core/`.
 - Conventions specific to a particular domain go under that domain's directory.
 - The prefix must match the directory. Deciding the domain and deciding the first three characters
   of the name are the same decision.
