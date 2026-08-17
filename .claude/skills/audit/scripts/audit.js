@@ -7,7 +7,7 @@ const sourceRoot = join(repoRoot, 'kit/skills')
 const namePattern = /^h[cbf]-[a-z0-9-]{1,61}$/u
 
 const DOMAIN_PREFIX = {
-  _core: 'hc',
+  core: 'hc',
   backend: 'hb',
   frontend: 'hf',
 }
@@ -71,7 +71,7 @@ function findNestedSkillMds (
 /**
  * Read one entry of a domain directory.
  *
- * @param {string} domain - Domain directory name directly under kit/skills/ (e.g. '_core').
+ * @param {string} domain - Domain directory name directly under kit/skills/ (e.g. 'core').
  * @param {import('node:fs').Dirent} dirent - Child of the domain directory.
  * @returns {{domain: string, folderName: string, path: string, isDirectory: boolean, hasSkillMd: boolean, name: string | null, nestedSkillMds: Array<string>}} The entry.
  */
@@ -113,7 +113,7 @@ function readDomainEntry (
 /**
  * Read every entry of one domain directory.
  *
- * @param {string} domain - Domain directory name directly under kit/skills/ (e.g. '_core').
+ * @param {string} domain - Domain directory name directly under kit/skills/ (e.g. 'core').
  * @returns {Array<{domain: string, folderName: string, path: string, isDirectory: boolean, hasSkillMd: boolean, name: string | null, nestedSkillMds: Array<string>}>} One entry per child of the domain directory.
  */
 function readDomainEntries (domain) {
