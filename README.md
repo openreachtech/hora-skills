@@ -10,7 +10,7 @@ This package ships **skills only** — it contains no runtime code to call. A sk
 
 | Prefix | Domain | Skills | What it holds |
 | :-- | :-- | --: | :-- |
-| `hc-` | `_core` | 33 | Conventions and procedures that apply to any project, regardless of stack |
+| `hc-` | `core` | 33 | Conventions and procedures that apply to any project, regardless of stack |
 | `hb-` | `backend` | 29 | renchan-based Node backends |
 | `hf-` | `frontend` | 45 | Furo/Nuxt apps |
 
