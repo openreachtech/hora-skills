@@ -5,8 +5,12 @@
   "type": "module",
   "files": [
     "dist/",
-    "docs/"
+    "docs/",
+    "lib/"
   ],
+  "bin": {
+    "hora-skills": "lib/equip/hora-skills.js"
+  },
   "scripts": {
     "build": "node .claude/skills/flatten/scripts/build.js",
     "l": "npm run lint",
