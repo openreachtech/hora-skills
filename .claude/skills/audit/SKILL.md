@@ -11,7 +11,7 @@ That protection is only as real as the layout. A skill placed one directory deep
 
 ## What is checked
 
-For every entry directly under `kit/skills/_core/`, `kit/skills/backend/` and `kit/skills/frontend/`:
+For every entry directly under `kit/skills/core/`, `kit/skills/backend/` and `kit/skills/frontend/`:
 
 - **A domain directory that is missing, or an entry directly under `kit/skills/` that is not one of the three, is a failure.** There is no fourth domain, and an entry outside the three has no prefix and no place in the output.
 - **An entry under a domain that is not a directory, or a directory with no `SKILL.md` directly inside it, is a failure.** Only skill folders belong there, and a folder with no `SKILL.md` installs nothing.

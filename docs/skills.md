@@ -4,7 +4,7 @@ A catalog of every skill in this repository — 107 in total — with a one- or 
 
 Each skill lives at `kit/skills/<domain>/<name>/`, one level under its domain directory, and that folder name is both the skill's `name:` and the folder name it is installed under. **Skill** below is therefore all you need: it is what you invoke as `/name`, what appears under `.claude/skills/` once installed, and where the source sits. The two-character prefix is the domain — see [the flatten build convention](https://github.com/openreachtech/hora-skills/blob/main/.claude/skills/flatten/SKILL.md) for the layout and the naming rules. Full guidance for any skill is in its own `SKILL.md`.
 
-## `_core` — `hc-*`
+## `core` — `hc-*`
 
 33 skills. Conventions and procedures that apply to any project, regardless of stack.
 
