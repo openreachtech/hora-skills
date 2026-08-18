@@ -8,9 +8,14 @@ The message format used when a project resolves to `conventional`. Referenced fr
 <type>[(<scope>)]: <lowercase summary>
 ```
 
-- **`type`** is lowercase, from the table below, and is required — with one exception: the
-  empty branch-opening `Start …` marker described in `SKILL.md` carries **no prefix**, even in
-  a repository that otherwise uses this format. Write `Start dev`, not `chore: start dev`.
+- **`type`** is lowercase, from the table below, and is required of every commit that carries a
+  change. **A commit that carries none takes no type** — the type describes a change, and there
+  is none to describe.
+  - Two commits are like this, both described in `SKILL.md`: the empty branch-opening `Start …`
+    marker, and the `Merge …` commit that closes a branch. Write `Start dev`, not
+    `chore: start dev`.
+  - A merge that had to resolve a conflict still takes none. What it carries is the adjustment
+    joining the two lines required, not a decision of its own.
 - **`scope`** is optional, lowercase, in parentheses — the area of the codebase affected.
 - A **colon and a single space** separate the prefix from the summary.
 - The **summary is lowercase** (unless it opens with an identifier that is itself capitalized)
