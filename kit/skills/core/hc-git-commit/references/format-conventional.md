@@ -33,7 +33,7 @@ feat(resolver): add unlockClientMemberSignIn mutation
 
 | type | use for |
 | :-- | :-- |
-| `feat` | a new capability visible to a caller or user |
+| `feat` | a new feature added to the application or library |
 | `fix` | corrected behavior |
 | `refactor` | restructuring with no change in behavior |
 | `test` | tests added or changed, with no production-code change |
@@ -42,6 +42,11 @@ feat(resolver): add unlockClientMemberSignIn mutation
 | `style` | formatting only, no code meaning changed |
 | `perf` | a change made for performance |
 
+- **A feature's internal parts take the same type as the feature.** A class only `Alpha` uses
+  is still part of what `Alpha` delivers, so it is `feat`, not `chore`. Judging visibility per
+  commit is the wrong moment for it — a class can become reachable later without any commit
+  changing. Which feature it serves is what the branch and its merge commit say; put it in the
+  summary (`feat: declare Beta for Alpha`) only where that context is missing.
 - The type describes **the change**, not the file it lands in. A bug fixed inside a test
   helper is `fix`, not `test`.
 - `refactor` asserts that behavior did not change. If behavior changed, it is `feat` or `fix`
