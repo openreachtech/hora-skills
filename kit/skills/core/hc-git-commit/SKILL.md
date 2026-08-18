@@ -1,10 +1,11 @@
 ---
 name: hc-git-commit
 description: >
-  Conventions for git commits. Covers the granularity of what belongs in a single commit,
-  and the message format — two formats are supported (imperative and Conventional Commits),
-  selected per project rather than per commit. Use this skill before writing any commit
-  message, and before deciding how to split working-tree changes into commits.
+  Conventions for git commits and the branches they land on. Covers the granularity of what
+  belongs in a single commit, the message format (imperative or Conventional Commits, chosen
+  per project), the verb vocabulary shared by both, and the trunk role with the subjects that
+  open and close a branch. Use before writing a commit message, before splitting a working
+  tree into commits, and before cutting or merging a branch.
 ---
 
 # Git Commit
