@@ -27,7 +27,7 @@ Each skill lives at `kit/skills/<domain>/<name>/`, one level under its domain di
 | `hc-documentation` | Documentation writing conventions, including the `#instanceMember` / `.staticMember` notation used when referring to class members. |
 | `hc-errors` | Error handling — return `null` on failure from value-generating methods, and the throw-message format for abstract members. |
 | `hc-functions` | Function conventions. Parameters follow method parameters: named arguments as a principle. |
-| `hc-git-commit` | Commit conventions — what belongs in a single commit, and the message format (imperative or Conventional Commits, chosen per project). |
+| `hc-git-commit` | Commit conventions — what belongs in a single commit, the message format (imperative or Conventional Commits, chosen per project), the verb vocabulary shared by both, and the branches commits land on: the trunk role, naming, and the subjects that open and close one. |
 | `hc-implementation-progress` | Track an in-flight implementation in a progress document anchored to requirement ids, advancing a status only against recorded evidence. |
 | `hc-jest` | Write Jest unit tests for JavaScript classes. |
 | `hc-jsdoc` | JSDoc writing conventions shared by backend and frontend — type annotations, `@returns`, `@typedef` and type-only imports, with the Vue/Nuxt-specific conventions in its references. |

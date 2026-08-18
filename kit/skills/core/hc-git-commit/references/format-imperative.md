@@ -20,8 +20,8 @@ Export FormElementInspector via main-export
 Add correctness checks reference for code-review skill
 Rename VariablesValidator variable name to ValueHashValidator in BaseFormElementClerk
 Fix JSDoc of BaseRestfulApiLauncher.get:ResponseBodyParser
-Don't disable action button when competition is completed
-Tell git to ignore `.furo-env.development`
+Allow the action button when the competition is completed
+Add `dist/` to .gitignore
 ```
 
 ## Mood
@@ -37,22 +37,8 @@ Good: Add validator for employee sign-in
 
 ## Verbs
 
-Choose the verb that names what actually happened. A precise verb often removes the need for
-a body.
-
-| verb | use for |
-| :-- | :-- |
-| `Add` | a new file, member, case, or capability that did not exist |
-| `Remove` | deletion, with nothing replacing it |
-| `Update` | an existing thing changed, without a change in contract |
-| `Fix` | incorrect behavior corrected |
-| `Rename` | identifier changed, behavior untouched |
-| `Move` | relocation between files or directories, content untouched |
-| `Extract` | logic pulled out into its own member or module |
-| `Use` | switching to a different existing mechanism |
-| `Allow` / `Prevent` | a constraint loosened or tightened |
-| `Export` | public surface changed |
-| `Start` | **empty** branch-opening marker only — see `SKILL.md` |
+The verb comes from the shared table in `SKILL.md`. Choose the one that names what actually
+happened — a precise verb often removes the need for a body.
 
 - Prefer the specific verb over `Update`. `Update BaseFormElementClerk` says almost nothing;
   `Rename VariablesValidator to ValueHashValidator in BaseFormElementClerk` says all of it.
@@ -75,15 +61,6 @@ Good: Use grid layout to make sure children doesn't overflow
 
 Backtick literal file names, flags, and values when they appear in a subject
 (`` `.furo-env.example` ``, `` `.directory-keeper` ``).
-
-## Negative subjects
-
-A subject may state what the code now refrains from doing. Keep it imperative.
-
-```
-Don't disable action button when competition is completed
-Kick out trailing ',' from JSDoc in test for BaseRestfulApiLauncher.createResponseBodyParser()
-```
 
 ## Bodies
 

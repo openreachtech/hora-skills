@@ -93,6 +93,9 @@ git diff              # confirm what is being left for the next commit
   - This does **not** apply to the branch-opening `Start …` marker described in `SKILL.md`.
     That commit is deliberately empty, so it makes no claim about granularity at all — there
     is no change in it to have scoped correctly.
+  - Nor to the `Merge …` commit that closes a branch. It carries no change of its own either.
+    What a reviewer weighs there is the branch it brings in, and that was already scoped commit
+    by commit inside the branch.
 - **End-of-day dumps.** A single commit holding everything touched since morning is the
   default outcome of never deciding granularity. Decide it while working.
 - **Typo-fix follow-ups on unpushed work.** A `Fix typo` commit immediately after the commit
