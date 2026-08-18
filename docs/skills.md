@@ -23,7 +23,7 @@ Each skill lives at `kit/skills/<domain>/<name>/`, one level under its domain di
 | `hc-comments` | Comments within actual code are written in English unless there is a reason otherwise. |
 | `hc-constants` | Constant conventions — uppercase `SNAKE_CASE` naming, chopping down, and the file organization and placement of object-type constants. |
 | `hc-contracts` | Type contracts for function and method arguments and return values, and how contract types are defined. |
-| `hc-dependency-defect` | Work around a defect in code this project depends on and does not own — a subclass overriding only the broken member, referenced by its own name and marked with the condition for its removal. |
+| `hc-dependency-defect` | Work around a bug in code this project uses but does not own — a subclass that overrides only the broken member, called by its own name, with a comment saying when it can be deleted. |
 | `hc-documentation` | Documentation writing conventions, including the `#instanceMember` / `.staticMember` notation used when referring to class members. |
 | `hc-errors` | Error handling — return `null` on failure from value-generating methods, and the throw-message format for abstract members. |
 | `hc-functions` | Function conventions. Parameters follow method parameters: named arguments as a principle. |
