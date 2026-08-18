@@ -29,6 +29,37 @@ The shape of the name settles nothing. `release/x.x.x` is a trunk and
   That is the whole of what the role decides, and it decides it the same way at every level of
   the nesting.
 
+## Naming a general branch
+
+A general branch is named `<verb | category>/xxxx`. Before the slash goes a verb for what the
+branch does, or a category for what kind of work it is; after it, the name is free — an
+identifier may appear verbatim.
+
+```
+declare/AlphaClass
+define/sendMessage-of-AlphaClass
+rename/FormElementClerk
+fix/type-errors-reported-by-the-client-package
+install/date-fns-4.1.0
+```
+
+**The name is written for whoever scans `git branch` while the work is still in flight**, so it
+is deliberately descriptive. Nothing reads it after the branch is gone.
+
+- **The verb is the word the branch's own commits would use, lowercased.** `Declare` names a
+  class and `Define` names a member, a function or a constant, which is why
+  `declare/AlphaClass` and `define/sendMessage-of-AlphaClass` say what they carry without any
+  further explanation. The verbs are listed in `SKILL.md`.
+- **A member is written `<member>-of-<class>`.** The slash is already spent on the verb, so what
+  is left spells the relation out instead of punctuating it.
+- **Work of a scale that will make the branch a trunk takes a category at a higher level of
+  abstraction** — `implement/xxx`, `feature/xxx`, `retake/xxx`, `update/xxx`. A branch that is
+  about to have six branches cut from it cannot be named for one narrow verb without lying
+  about five of them.
+- **A sub-branch cut from a general branch acting as a trunk is named the same way**, and the
+  nesting adds no constraint of its own: `<verb | category>/xxxx`, free. The narrow verbs
+  belong here, where each branch really does carry one thing.
+
 ## Merging back into a trunk
 
 - **Always `--no-ff`, never fast-forward.** A fast-forward leaves no commit a human can point

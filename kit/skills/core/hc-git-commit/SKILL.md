@@ -253,7 +253,7 @@ tree — is in [granularity.md](./references/granularity.md).
 
 ## Detail files
 
-- [branches.md](./references/branches.md) — the trunk role, and merging a branch back into it
+- [branches.md](./references/branches.md) — the trunk role, naming a branch, merging it back
 - [granularity.md](./references/granularity.md) — what belongs in one commit, splitting a mixed working tree
 - [format-imperative.md](./references/format-imperative.md) — capitalized imperative subject, no type prefix
 - [format-conventional.md](./references/format-conventional.md) — Conventional Commits (`type: summary`)
