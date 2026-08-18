@@ -137,6 +137,33 @@ Merge the core/ rename in the repository documents
 Which branch is a trunk, how the merge is made, and what becomes of the branch afterwards are in
 [branches.md](./references/branches.md).
 
+### Verbs
+
+A subject opens with a verb naming what actually happened. The vocabulary is the same in both
+message formats — capitalized on the imperative format, lowercase after the type on
+Conventional Commits.
+
+| verb | use for |
+| :-- | :-- |
+| `Add` | a new file, member, case, or capability that did not exist |
+| `Remove` | deletion, with nothing replacing it |
+| `Update` | an existing thing changed, without a change in contract |
+| `Fix` | incorrect behavior corrected |
+| `Rename` | identifier changed, behavior untouched |
+| `Move` | relocation between files or directories, content untouched |
+| `Extract` | logic pulled out into its own member or module |
+| `Combine` | two members or modules folded into one |
+| `Use` | switching to a different existing mechanism |
+| `Allow` / `Prevent` | a constraint loosened or tightened |
+| `Export` | public surface changed |
+| `Start` | **empty** branch-opening marker only — see above |
+| `Merge` | **merge commits only** — see above |
+
+- **`Start` and `Merge` are reserved** for the two commits that carry no change of their own —
+  the branch-opening marker and the merge commit, both described above. A change that folds two
+  things into one takes `Combine`, never `Merge`, so that a merge commit stays recognizable by
+  its subject alone.
+
 ### Referring to class members
 
 When a subject or body names a class member, use the project's documentation notation.
