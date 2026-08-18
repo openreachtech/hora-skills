@@ -58,6 +58,23 @@ Resolve which one applies, in this order.
   [format-imperative.md](./references/format-imperative.md) or
   [format-conventional.md](./references/format-conventional.md).
 
+### The resolved format governs what to write, never how to read
+
+A history may hold subjects in any other convention — written before the project settled on
+one, or by another team, or by hand in a hurry — and those commits are still the record of what
+happened. So when searching for where something changed, do not filter on the resolved format
+alone.
+
+```bash
+git log --format='%h %s' <range>                                            # no filter
+git log --format='%h %s' <range> | grep -P '^\S+ [a-z-]+(\([^)]*\))?!?: '   # type prefixes
+```
+
+Filter the subject line, as above, rather than reaching for `--grep`: that searches the whole
+message, so it also matches trailers such as `Co-Authored-By:`. And treat any subject filter as
+a shortcut rather than a guarantee — read the range's subjects, or its diff, without one before
+concluding that a change is not in the history.
+
 ## Rules that apply to both formats
 
 ### Subject line
