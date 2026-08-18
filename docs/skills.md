@@ -1,12 +1,12 @@
 # Skills
 
-A catalog of every skill in this repository — 107 in total — with a one- or two-line summary each.
+A catalog of every skill in this repository — 108 in total — with a one- or two-line summary each.
 
 Each skill lives at `kit/skills/<domain>/<name>/`, one level under its domain directory, and that folder name is both the skill's `name:` and the folder name it is installed under. **Skill** below is therefore all you need: it is what you invoke as `/name`, what appears under `.claude/skills/` once installed, and where the source sits. The two-character prefix is the domain — see [the flatten build convention](https://github.com/openreachtech/hora-skills/blob/main/.claude/skills/flatten/SKILL.md) for the layout and the naming rules. Full guidance for any skill is in its own `SKILL.md`.
 
 ## `core` — `hc-*`
 
-33 skills. Conventions and procedures that apply to any project, regardless of stack.
+34 skills. Conventions and procedures that apply to any project, regardless of stack.
 
 | Skill (= Command) | Summary |
 | :-- | :-- |
@@ -23,6 +23,7 @@ Each skill lives at `kit/skills/<domain>/<name>/`, one level under its domain di
 | `hc-comments` | Comments within actual code are written in English unless there is a reason otherwise. |
 | `hc-constants` | Constant conventions — uppercase `SNAKE_CASE` naming, chopping down, and the file organization and placement of object-type constants. |
 | `hc-contracts` | Type contracts for function and method arguments and return values, and how contract types are defined. |
+| `hc-dependency-defect` | Work around a defect in code this project depends on and does not own — a subclass overriding only the broken member, referenced by its own name and marked with the condition for its removal. |
 | `hc-documentation` | Documentation writing conventions, including the `#instanceMember` / `.staticMember` notation used when referring to class members. |
 | `hc-errors` | Error handling — return `null` on failure from value-generating methods, and the throw-message format for abstract members. |
 | `hc-functions` | Function conventions. Parameters follow method parameters: named arguments as a principle. |
