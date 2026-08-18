@@ -82,32 +82,35 @@ Resolve which one applies, in this order.
 
 ### The branch-opening marker commit
 
-A new branch opens with an **empty commit** whose subject begins with `Start`. This is a
-deliberate convention, not a checkpoint or a placeholder.
+A branch that will act as a trunk opens with an **empty commit** whose subject begins with
+`Start`. This is a deliberate convention, not a checkpoint or a placeholder.
 
 ```bash
 # opening a long-lived dev branch
 git switch -c dev
 git commit --allow-empty -m 'Start dev'
 
-# opening a topic branch
-git switch -c rename/FormElementClerk
-git commit --allow-empty -m 'Start renaming FormElementClerk to FormElementInspector'
+# opening a general branch that will carry sub-branches
+git switch -c feature/equip-tools-for-each-application
+git commit --allow-empty -m 'Start adding the skills installer'
 ```
 
 - It must be **empty** (`--allow-empty`). Its purpose is to give a fresh branch a commit so a
   pull request can be opened before any code exists. A `Start …` subject on a commit that
   actually contains changes is not this convention — it is a mislabelled change.
 - It is the **first commit on the branch**, made immediately after branching.
-- The subject names **what is being started**, which depends on the kind of branch.
-  - A **long-lived integration branch** is named directly: a `dev` branch opens with
-    `Start dev`. Here `dev` is the branch, not a placeholder word.
-  - A **topic branch** states the work it will carry — `Start renaming FormElementClerk to
-    FormElementInspector`, `Start fixing type errors reported by the client package`. A later
-    reader scanning the log gets the branch's purpose for free.
+- **One per trunk, and none on a sub-branch.** The marker belongs to the branch the work will
+  travel through as a pull request. A branch cut from that one merges back locally instead, so
+  there is no pull request to open early and nothing for the marker to do. `Start` is not a
+  verb for resuming work mid-branch either.
+- The subject names **what is being started**, which depends on the kind of trunk.
+  - A **trunk that is one by name** is named directly: a `dev` branch opens with `Start dev`.
+    Here `dev` is the branch, not a placeholder word.
+  - A **general branch acting as a trunk** states the work it will carry — `Start adding the
+    skills installer`, `Start renaming kit/skills/_core/ to core/`. A later reader scanning the
+    log gets the branch's purpose for free.
 - **The marker takes no type prefix, in either message format.** Repositories on Conventional
   Commits write `Start dev`, not `chore: start dev`. The marker sits outside the format.
-- One per branch. `Start` is not a verb for resuming work mid-branch.
 
 ### The merge commit
 
