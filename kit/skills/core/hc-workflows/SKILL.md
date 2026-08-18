@@ -21,10 +21,19 @@ Procedural rules related to the development workflow.
 
 ## Before committing
 
-- Before committing, pass `npm run lint`, then pass `npm test`.
+- Before committing, pass `npm run lint`. Every commit leaves the tree lint-clean.
+- **`npm test` is not a gate on every commit.** Step 5 commits a class's tests before step 6
+  commits its implementation, so that commit fails the suite when it is checked out on its own.
+  That failure is the assertion the test commit makes. Staging the implementation alongside the
+  tests to keep the suite green destroys both the assertion and the split.
+- Run `npm test` on a test commit all the same, and **read the failure**: it must fail on the
+  behavior the tests assert, not on a typo, a bad import or a missing fixture. A test commit
+  that is red for the wrong reason is a defect; a test commit that is green asserts nothing.
 - Follow the git commit convention before writing a commit message, and before deciding how to split working-tree changes into commits. It resolves which message format the project uses and defines what belongs in a single commit.
 - Decide commit granularity **while working**, not once the tree is already dirty with several unrelated changes.
 
 ## Before completing implementation
 
-- Run `npm run lint` before completing the implementation. Do not consider the implementation complete while lint is failing.
+- Pass `npm run lint` and `npm test` before completing the implementation. This is where the
+  suite must be green — step 6 is the commit that turns the tests of step 5 green. Do not
+  consider the implementation complete while either one is failing.
