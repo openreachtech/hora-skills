@@ -148,7 +148,8 @@ Conventional Commits.
 | `Add` | a new file, member, case, or capability that did not exist |
 | `Declare` | a class written for the first time |
 | `Define` | a class member, function, or constant written for the first time |
-| `Remove` | deletion, with nothing replacing it |
+| `Purge` | a whole file deleted, with nothing replacing it |
+| `Kick out` | a part deleted from a file that stays — an entry, a rule, a field |
 | `Update` | an existing thing changed, without a change in contract |
 | `Fix` | incorrect behavior corrected |
 | `Rename` | identifier changed, behavior untouched |
@@ -174,6 +175,13 @@ Conventional Commits.
   Add tests for SkillsInstaller
   ```
 
+- **`Purge` and `Kick out` split on what survives.** `Purge` is for a file that is gone —
+  `Purge tests/legacy/OldValidator.js`. `Kick out` takes the shape `Kick out <what> from
+  <where>`, because the point is that `<where>` is still there without `<what>` —
+  `Kick out main: from package.json`. The pair mirrors `Declare` and `Define`.
+- **The table carries no `Remove` or `Delete`** for that reason: both read the same whether a
+  whole file went or one line inside it did, so the subject alone leaves the reader guessing.
+  Splitting the word is what makes the difference visible in `git log`.
 - **`Start` and `Merge` are reserved** for the two commits that carry no change of their own —
   the branch-opening marker and the merge commit, both described above. A change that folds two
   things into one takes `Combine`, never `Merge`, so that a merge commit stays recognizable by
