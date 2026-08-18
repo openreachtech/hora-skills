@@ -54,6 +54,10 @@ feat(resolver): add unlockClientMemberSignIn mutation
 The summary follows the same substance rules as any other format: name the concrete thing that
 changed, in the imperative mood, using the class-member notation given in `SKILL.md`.
 
+**Its verb comes from the shared table in `SKILL.md`**, lowercased to sit after the type:
+`feat: declare AlphaClass`, `refactor: extract the retry loop`. The vocabulary does not change
+between the two formats — only the capitalization and what precedes it do.
+
 The characteristic failure of this format is a **redundant trailing clause** that restates the
 identifier already named:
 
