@@ -146,6 +146,8 @@ Conventional Commits.
 | verb | use for |
 | :-- | :-- |
 | `Add` | a new file, member, case, or capability that did not exist |
+| `Declare` | a class written for the first time |
+| `Define` | a class member, function, or constant written for the first time |
 | `Remove` | deletion, with nothing replacing it |
 | `Update` | an existing thing changed, without a change in contract |
 | `Fix` | incorrect behavior corrected |
@@ -153,11 +155,24 @@ Conventional Commits.
 | `Move` | relocation between files or directories, content untouched |
 | `Extract` | logic pulled out into its own member or module |
 | `Combine` | two members or modules folded into one |
+| `Optimize` | a change made for speed, behavior untouched |
 | `Use` | switching to a different existing mechanism |
 | `Allow` / `Prevent` | a constraint loosened or tightened |
 | `Export` | public surface changed |
 | `Start` | **empty** branch-opening marker only — see above |
 | `Merge` | **merge commits only** — see above |
+
+- **`Declare` is for the class itself; `Define` is for what is written inside or beside it** —
+  a member, a function, a constant. Both are the specific forms of `Add`, and where they apply,
+  `Add` is the vaguer choice. `Add` remains correct for everything else that did not exist
+  before — a test file, a case, a reference document.
+
+  ```
+  Declare SkillsInstaller to replace the installed skills
+  Define SkillsInstaller#replaceInstalledSkills() to swap the tree in one pass
+  Define SKILL_DOMAIN naming the domains a repository can select
+  Add tests for SkillsInstaller
+  ```
 
 - **`Start` and `Merge` are reserved** for the two commits that carry no change of their own —
   the branch-opening marker and the merge commit, both described above. A change that folds two
