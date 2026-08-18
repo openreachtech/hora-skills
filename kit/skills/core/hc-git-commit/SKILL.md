@@ -182,6 +182,10 @@ Conventional Commits.
 - **The table carries no `Remove` or `Delete`** for that reason: both read the same whether a
   whole file went or one line inside it did, so the subject alone leaves the reader guessing.
   Splitting the word is what makes the difference visible in `git log`.
+- **A restriction lifted is `Allow`, never a negative.** `Don't disable the action button when
+  the competition is completed` describes a state the code should hold; a subject describes a
+  transition. `Allow the action button when the competition is completed` says the same change,
+  and it completes *"Applying this commit will …"*, which a negative cannot.
 - **`Start` and `Merge` are reserved** for the two commits that carry no change of their own —
   the branch-opening marker and the merge commit, both described above. A change that folds two
   things into one takes `Combine`, never `Merge`, so that a merge commit stays recognizable by

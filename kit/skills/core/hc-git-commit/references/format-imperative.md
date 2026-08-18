@@ -20,7 +20,7 @@ Export FormElementInspector via main-export
 Add correctness checks reference for code-review skill
 Rename VariablesValidator variable name to ValueHashValidator in BaseFormElementClerk
 Fix JSDoc of BaseRestfulApiLauncher.get:ResponseBodyParser
-Don't disable action button when competition is completed
+Allow the action button when the competition is completed
 Tell git to ignore `.furo-env.development`
 ```
 
@@ -61,15 +61,6 @@ Good: Use grid layout to make sure children doesn't overflow
 
 Backtick literal file names, flags, and values when they appear in a subject
 (`` `.furo-env.example` ``, `` `.directory-keeper` ``).
-
-## Negative subjects
-
-A subject may state what the code now refrains from doing. Keep it imperative.
-
-```
-Don't disable action button when competition is completed
-Kick out trailing ',' from JSDoc in test for BaseRestfulApiLauncher.createResponseBodyParser()
-```
 
 ## Bodies
 
