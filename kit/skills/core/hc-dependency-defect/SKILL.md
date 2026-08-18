@@ -1,81 +1,76 @@
 ---
 name: hc-dependency-defect
-description: "How a defect in code this project depends on and does not own — a framework, an in-house package, anything under `node_modules/` — is worked around from this project's own code, and where that workaround is placed, named and marked. Use when a package behaves wrongly and the correction has to live here. A defect in code this project writes is fixed in place instead. Choosing what to depend on, upgrading it and reporting the defect are decided outside the code."
+description: "How to deal with a bug in code this project uses but does not own — a framework, an in-house package, anything inside `node_modules/`. Covers where to put the workaround, what to name it, and how to mark it so it can be deleted later. Use when a package behaves wrongly and the correction has to live in this project. A bug in code this project owns is fixed directly instead."
 ---
 
 # Dependency Defect
 
-**Code this project depends on and does not own is worked around, never edited.**
+**Never edit code this project uses but does not own. Work around it instead.**
 
-A framework, an in-house package, anything resolved under `node_modules/`. What follows is how the
-workaround is written and where it lives. **It says nothing about who decides, which branch it lands
-on, or what gets recorded outside the code** — those belong to whatever process runs the work.
+Code this project does not own means a framework, an in-house package, or anything inside
+`node_modules/`. This skill explains how to write that workaround and where to put it. **It does not
+decide who approves the work, which branch it goes on, or what gets written down outside the code.**
+The team's process decides those.
 
-**Code this project does write is not this.** A defect there is fixed in place.
+**A bug in code this project owns is a different thing.** Fix that code directly.
 
-## The default
+## The steps
 
-```
-0. Is it already fixed upstream?
-     read the package's own history at the version in use, and above it
-     it is  -> the answer is a version bump. Nothing below applies
-1. Extend the class at fault — a new class in this project, deriving from it
-2. Override only the member that is broken
-3. Swap the reference at the point of use
-4. Mark it, so it can be found and removed when upstream fixes it
-```
+0. **Check whether the package already fixed it.** Read the package's own history: the version in
+   use, and every version after it. If the fix is already there, upgrade the package and stop.
+1. **Add a class in this project that extends the broken class.**
+2. **Override only the member that is broken.**
+3. **Use the new class at every call site.**
+4. **Write a comment saying why the class exists**, so someone can delete it later.
 
-**Step 0 is the one that gets skipped**, and skipping it produces a subclass that exists to reproduce
-a fix somebody already published. It costs one read.
+**Step 0 is the one people skip.** Then they write a subclass that repeats a fix the package already
+shipped. Reading the history takes a few minutes.
 
-## Why extension, and not any of the others
+## Why a subclass, and not something else
 
-| What is done instead | What happens |
+| What people do instead | What goes wrong |
 | :-- | :-- |
-| Editing the package under `node_modules/` | The next install erases it. Nothing records that it was ever there, so the bug returns as a mystery. |
-| Forking the package | Every later upgrade becomes a merge, forever, for one defect. |
-| Reimplementing what it does | A fork without the history. It also stops receiving the fixes that were never the defect. |
-| Reassigning the class's prototype at runtime | The behaviour has no site a reader can reach from the call. Two of these in one process, and the order they load in decides the result. |
-| Shipping a copy of the class with the fix applied | The same as a fork, one file smaller. |
+| Edit the package inside `node_modules/` | The next install wipes the edit. Nothing shows that it was ever there, so the bug comes back and nobody knows why. |
+| Fork the package | Every future upgrade turns into a merge. Forever, for one bug. |
+| Rewrite what the package does | As much work as a fork, and now this project owns all of it. Fixes to the parts that were never broken stop arriving. |
+| Replace the class's methods at runtime | The call site looks normal, so a reader cannot tell that the behavior changed, and has no file to open. If two of these run in one process, whichever one loads last wins. |
+| Copy the class into this project and fix the copy | The same problems as a fork, in one file. |
 
-**The size of the defect decides none of this.** What decides it is that the code belongs to somebody
-else and will move again.
+**A small bug is not an excuse to pick one of these.** The rule holds because the code belongs to
+someone else, and they will change it again.
 
-## Step 1 — a class of this project's own, deriving from the one at fault
+## Step 1 — add a subclass of the broken class
 
-The subclass is ordinary code of this project's, and being a workaround changes nothing about how it
-is placed or named.
+The subclass is normal code in this project. It follows the same rules as every other class here.
 
-- **It lives where this project keeps its own classes of that kind**, decided by the placement
-  convention of the surface it belongs to — never in a directory named after the package, and never
-  beside the package's own files.
-- **It is named for the behaviour it corrects**, a singular UpperCamelCase noun in this project's own
-  vocabulary, like any other class. Not `PatchedXxxx`, `FixedXxxx` or `XxxxWorkaround`: those name the
-  file's history rather than what it does, and they read as false the day the class survives for
-  another reason. The reason it exists belongs in the marker of step 4.
-- **The original is imported as the package publishes it** (default or named export), grouped with the
-  other third-party imports at the top of the file per the import convention.
-- **A subclass that only overrides may hold no property.** The prohibition on classes without
-  properties does not reach a class that has `extends` — the state is the base class's
-  responsibility, and so is the argument list its constructor already declares.
+- **Put it where this project keeps its other classes of that kind.** Never create a folder named
+  after the package, and never put the file next to the package's own files.
+- **Name it after what it does**, as a singular UpperCamelCase noun, like any other class here. Do
+  not use names like `PatchedXxxx`, `FixedXxxx` or `XxxxWorkaround`. Those names describe how the
+  file was born, not what it does, and they become wrong if the class is kept for another reason.
+  The reason belongs in the comment of step 4.
+- **Import the broken class the way the package exports it** (default or named). Put that import with
+  the other package imports at the top of the file, as the import convention says.
+- **This subclass does not need a property of its own.** A class here normally has to hold state, but
+  that rule does not apply once a class has `extends`. The parent holds the state, and the parent
+  already decides the constructor arguments.
 
-## Step 2 — override the member, not the class
+## Step 2 — override one member, not the whole class
 
-**A subclass that overrides one member keeps receiving everything the package does afterwards.** One
-that restates the class stops receiving it the moment it is written, and nothing announces that it
-has.
+**Override one member, and the subclass keeps getting every later improvement from the package.**
+Rewrite the whole class, and it stops getting them the moment you write it. Nothing warns you.
 
-- Override the one method whose behaviour is wrong, and call `super` for everything else.
-- Override a getter to correct a value the parent computes wrongly.
-- Do not copy the parent's body into the child and edit two lines.
-- Do not override a member that is fine, to keep the class "consistent".
-- Annotate every override with `/** @override */`.
+- Override the one method that behaves wrongly, and call `super` for everything else.
+- Override a getter when the parent computes a value wrongly.
+- Do not copy the parent's code into the child and change two lines.
+- Do not override a member that already works, just to keep the class tidy.
+- Put `/** @override */` above every override.
 
-**Where the correct behaviour needs part of the parent's, call the parent and correct its result**
-rather than restating what it does.
+**When the correct answer needs part of the parent's work, call the parent and correct its result.**
+Do not rewrite what it does.
 
 ```javascript
-// NG: the parent's body is restated, so its later fixes never arrive here
+// NG: the parent's code is copied here, so the package's later fixes never reach this class
 export default class SingleDayDateRangeFormatter extends DateRangeFormatter {
   /** @override */
   formatRange ({
@@ -86,11 +81,11 @@ export default class SingleDayDateRangeFormatter extends DateRangeFormatter {
       return startedOn
     }
 
-    return `${startedOn} - ${endedOn}` // copied out of the package, minus the defect
+    return `${startedOn} - ${endedOn}` // copied out of the package, minus the bug
   }
 }
 
-// OK: the defect is corrected, everything else stays the parent's
+// OK: only the broken case is handled here, and the rest stays with the parent
 export default class SingleDayDateRangeFormatter extends DateRangeFormatter {
   /** @override */
   formatRange ({
@@ -109,65 +104,49 @@ export default class SingleDayDateRangeFormatter extends DateRangeFormatter {
 }
 ```
 
-**An identifier whose name begins with `Base` is already an extension point.** Deriving from one of
-those is ordinary use of the library, not a workaround: nothing in this convention applies to it, and
-it carries no marker and no removal condition.
+**A class whose name starts with `Base` is meant to be extended.** Extending it is normal use of the
+library, not a workaround. Nothing in this skill applies to it: no comment, and no deletion
+condition.
 
-## Step 3 — swap the reference, do not shadow the name
+## Step 3 — call the new class by its own name
 
-**The call site names the new class.** A reader who follows the import arrives at the class that
-actually runs.
+**Every call site names the new class.** A reader who follows the import then lands on the class that
+really runs.
 
-- Import this project's own class, by its own name, at each call site.
+- Import this project's class by its own name at each call site.
 - Do not re-export the subclass under the original's name.
-- Do not alias the import so the original's name resolves to the subclass.
-- Do not assign over the original's prototype or its export.
+- Do not rename the import so that the original's name points at the subclass.
+- Do not overwrite the original's prototype or its export.
 
 ```javascript
-// NG: re-exported under the original's name — the import reads as the package's class, and it is not
+// NG: exported under the package's name, so the import lies about what it loads
 export {
   default as DateRangeFormatter,
 } from './SingleDayDateRangeFormatter.js'
 
-// NG: aliased at the call site, with the same result
+// NG: renamed at the call site, with the same result
 import {
   default as DateRangeFormatter,
 } from '../modules/SingleDayDateRangeFormatter.js'
 
-// OK: the call site imports this project's class, by its own name
+// OK: the call site imports this project's class by its own name
 import SingleDayDateRangeFormatter from '../modules/SingleDayDateRangeFormatter.js'
 ```
 
-Each of the rejected forms leaves the next person debugging the package's source for behaviour that is
-no longer the package's.
+Hide the swap, and the next person opens the package's source looking for behavior that is not there
+any more.
 
-**Where the call sites are many, that is not a reason to shadow.** It is a reason to say so to whoever
-is running the work, because a change reaching files this piece of work does not own is not this piece
-of work's to make.
+**Many call sites is not a reason to hide the swap.** It is a reason to report how big the change is,
+because files outside the current task are not this task's to change.
 
-## When the fault is not in a class
+## Step 4 — write the reason above the class
 
-**Wrap it.** A class of this project's that calls the exported function and corrects its result, with
-the call sites using the wrapper. Everything above holds: correct the result, do not restate the
-function. The wrapper is a class rather than a re-exported function, for the same reason every other
-single responsibility here is a class.
+**Without a comment, the workaround stays forever.** Nobody deletes a class when nobody knows why it
+is there.
 
-## When the member cannot be reached from a subclass
-
-Private, module-scoped, or decided before the class is constructed. **Stop and report it.** Do not
-fall back to a row from the table above because extension did not reach.
-
-What to state: the package and its version, the class or function, what it does, what it should do,
-and what specifically blocks the extension.
-
-## Step 4 — mark it so it can be removed
-
-**A workaround with nothing marking it becomes permanent.** Nobody deletes a class whose reason nobody
-wrote down.
-
-Put the reason where a reader of the code will hit it — immediately above the class, in English like
-any other comment — naming the member in the `#instanceMember` / `.staticMember` notation of the
-documentation convention, and make it say what would let the file be deleted:
+Write the reason right above the class, in English, like any other comment. Name members in the
+`#instanceMember` / `.staticMember` style of the documentation convention. Say what has to happen
+before someone can delete the file:
 
 ```javascript
 /*
@@ -177,17 +156,34 @@ documentation convention, and make it say what would let the file be deleted:
  */
 ```
 
-**"Remove once upstream fixes it" is not a condition.** A version number, an issue link, or "not
-reported yet" is. The last one is honest and still useful; the first is a note that reads like a plan.
+**"Remove this once the package fixes it" is not a condition**, because nobody can check it. A
+version number or an issue link can be checked. If nobody has told the package authors yet, write
+"not reported yet". That is honest, and it tells the next reader what is still missing.
+
+## When the broken thing is a function, not a class
+
+**Wrap it.** Add a class in this project that calls the function and corrects its result, and have
+the call sites use that class. The same rules apply: correct the result, do not rewrite the function.
+It is a class rather than another function, because this project writes one class per job (see
+`hc-modules-exports`).
+
+## When a subclass cannot reach the broken part
+
+Some parts cannot be overridden: private members, values kept inside the module, or behavior decided
+before the class is created. **Stop and report it.** Do not fall back to a row from the table above
+just because the subclass did not work.
+
+Report the package and its version, the class or function, what it does now, what it should do, and
+what exactly blocks the subclass.
 
 ## Rules
 
-- The package is never edited, forked, copied, reimplemented or patched at runtime
-- Before anything is written, the package's own history is read at the version in use and above it
-- The correction is a class of this project's, deriving from the class at fault, overriding only the
-  member that is broken and calling the parent for the rest
-- A fault in an exported function is corrected by a wrapping class of this project's
-- The call sites name this project's class; the original's name is never made to resolve to it
-- A member that cannot be reached from a subclass is reported, not worked around another way
-- Every workaround carries a marker stating the package, the version, the defect, and the condition
-  under which the file is deleted
+- Never edit, fork, copy, rewrite, or patch the package while it runs
+- Read the package's history first: the version in use, and every version after it
+- Correct the bug with a class in this project that extends the broken class, overrides only the
+  broken member, and calls the parent for the rest
+- Correct a broken function with a class in this project that wraps it
+- Call this project's class by its own name, and never let the original's name point at it
+- Report a broken part that a subclass cannot reach, instead of working around it some other way
+- Give every workaround a comment stating the package, the version, the bug, and what has to happen
+  before the file can be deleted
