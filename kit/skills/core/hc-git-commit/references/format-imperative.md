@@ -49,11 +49,17 @@ a body.
 | `Rename` | identifier changed, behavior untouched |
 | `Move` | relocation between files or directories, content untouched |
 | `Extract` | logic pulled out into its own member or module |
+| `Combine` | two members or modules folded into one |
 | `Use` | switching to a different existing mechanism |
 | `Allow` / `Prevent` | a constraint loosened or tightened |
 | `Export` | public surface changed |
 | `Start` | **empty** branch-opening marker only — see `SKILL.md` |
+| `Merge` | **merge commits only** — see `SKILL.md` |
 
+- **`Start` and `Merge` are reserved** for the two commits that carry no change of their own —
+  the branch-opening marker and the merge commit, both described in `SKILL.md`. A change that
+  folds two things into one takes `Combine`, never `Merge`, so that a merge commit stays
+  recognizable by its subject alone.
 - Prefer the specific verb over `Update`. `Update BaseFormElementClerk` says almost nothing;
   `Rename VariablesValidator to ValueHashValidator in BaseFormElementClerk` says all of it.
 - `Change` and `Modify` are almost always the wrong verb — some more precise verb applies.
