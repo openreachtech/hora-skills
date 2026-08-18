@@ -21,7 +21,7 @@ Add correctness checks reference for code-review skill
 Rename VariablesValidator variable name to ValueHashValidator in BaseFormElementClerk
 Fix JSDoc of BaseRestfulApiLauncher.get:ResponseBodyParser
 Allow the action button when the competition is completed
-Tell git to ignore `.furo-env.development`
+Add `dist/` to .gitignore
 ```
 
 ## Mood
