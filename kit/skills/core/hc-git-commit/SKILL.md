@@ -109,6 +109,28 @@ git commit --allow-empty -m 'Start renaming FormElementClerk to FormElementInspe
   Commits write `Start dev`, not `chore: start dev`. The marker sits outside the format.
 - One per branch. `Start` is not a verb for resuming work mid-branch.
 
+### The merge commit
+
+A branch merges back into its trunk with `--no-ff`, and the merge commit that results carries a
+subject of its own.
+
+```
+Merge the classes of the skills installer
+Merge the core/ rename in the repository documents
+```
+
+- **It names the work, never the branch.** `Merge rename/FormElementClerk` says only what
+  `git log --graph` already shows, and the branch is deleted moments later. What it carried is
+  the part that has to survive it.
+- **It stands in for the message a host would have written.** A merge that goes through a pull
+  request is described for free — `Merge pull request #53 from …`. A merge made locally has no
+  such author, and this subject fills the gap.
+- **It takes no type prefix, in either message format**, for the same reason the branch-opening
+  marker takes none: it carries no change of its own. Repositories on Conventional Commits
+  write `Merge …`, not `chore: merge …`.
+- **A merge made through a pull request is left alone.** The host writes it, and no one here
+  chooses its wording.
+
 ### Referring to class members
 
 When a subject or body names a class member, use the project's documentation notation.
