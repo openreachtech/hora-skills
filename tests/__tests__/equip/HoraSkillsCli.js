@@ -317,6 +317,43 @@ describe('HoraSkillsCli', () => {
           .toHaveBeenCalledWith('The skills were not installed. Run `npx hora-skills install` once the above is settled.')
       })
     })
+
+    describe('should end successfully on a raised failure', () => {
+      const cases = [
+        {
+          override: {
+            error: new Error('ENOTDIR: not a directory, scandir \'/consumer/.claude/skills\''),
+          },
+          expected: 'The skills were not installed. Run `npx hora-skills install` once the above is settled.',
+        },
+      ]
+
+      test.each(cases)('error: $override.error.message', ({ override, expected }) => {
+        jest.spyOn(HoraSkillsCli, 'isOwnRepository')
+          .mockReturnValue(false)
+        jest.spyOn(HoraSkillsCli.prototype, 'run')
+          .mockImplementation(() => {
+            throw override.error
+          })
+
+        const errorSpy = jest.fn()
+
+        const received = HoraSkillsCli.runPostinstall({
+          env: {
+            npm_config_local_prefix: '/consumer',
+          },
+          logger: {
+            log: () => {},
+            error: errorSpy,
+          },
+        })
+
+        expect(received)
+          .toBe(0)
+        expect(errorSpy)
+          .toHaveBeenCalledWith(expected)
+      })
+    })
   })
 })
 
@@ -597,7 +634,7 @@ describe('HoraSkillsCli', () => {
 })
 
 describe('HoraSkillsCli', () => {
-  describe('#run()', () => {
+  describe('#dispatch()', () => {
     describe('should dispatch to the command', () => {
       const cases = [
         {
@@ -653,7 +690,7 @@ describe('HoraSkillsCli', () => {
         const commandSpy = jest.spyOn(cli, expected)
           .mockReturnValue(0)
 
-        cli.run()
+        cli.dispatch()
 
         expect(commandSpy)
           .toHaveBeenCalledWith()
@@ -691,7 +728,7 @@ describe('HoraSkillsCli', () => {
           logger,
         })
 
-        const received = cli.run()
+        const received = cli.dispatch()
 
         expect(logger.error)
           .toHaveBeenCalledWith(expected)
@@ -834,6 +871,333 @@ describe('HoraSkillsCli', () => {
   })
 })
 
+describe('HoraSkillsCli', () => {
+  describe('#run()', () => {
+    describe('should report what a command raises, instead of letting it escape', () => {
+      const cases = [
+        {
+          override: {
+            error: new Error('ENOTDIR: not a directory, scandir \'/consumer/.claude/skills\''),
+          },
+          expected: 'ENOTDIR: not a directory, scandir \'/consumer/.claude/skills\'',
+        },
+        {
+          override: {
+            error: new Error('EACCES: permission denied, mkdir \'/consumer/.claude/skills\''),
+          },
+          expected: 'EACCES: permission denied, mkdir \'/consumer/.claude/skills\'',
+        },
+      ]
+
+      test.each(cases)('error: $override.error.message', ({ override, expected }) => {
+        const logger = {
+          log: jest.fn(),
+          error: jest.fn(),
+        }
+        const cli = HoraSkillsCli.create({
+          args: [
+            'install',
+          ],
+          workingDirectoryPath: '/consumer',
+          logger,
+        })
+
+        jest.spyOn(cli, 'dispatch')
+          .mockImplementation(() => {
+            throw override.error
+          })
+
+        const received = cli.run()
+
+        expect(received)
+          .toBe(1)
+        expect(logger.error)
+          .toHaveBeenCalledWith(expected)
+      })
+    })
+
+    describe('should be the exit code of the command it dispatched', () => {
+      const cases = [
+        {
+          override: {
+            exitCode: 0,
+          },
+        },
+        {
+          override: {
+            exitCode: 1,
+          },
+        },
+      ]
+
+      test.each(cases)('exitCode: $override.exitCode', ({ override }) => {
+        const cli = HoraSkillsCli.create({
+          args: [
+            'install',
+          ],
+          workingDirectoryPath: '/consumer',
+        })
+
+        jest.spyOn(cli, 'dispatch')
+          .mockReturnValue(override.exitCode)
+
+        const received = cli.run()
+
+        expect(received)
+          .toBe(override.exitCode)
+      })
+    })
+  })
+})
+
+describe('HoraSkillsCli', () => {
+  describe('#reportFailure()', () => {
+    describe('should report the failure and fail', () => {
+      const cases = [
+        {
+          input: {
+            error: new Error('EROFS: read-only file system'),
+          },
+          expected: 'EROFS: read-only file system',
+        },
+      ]
+
+      test.each(cases)('error: $input.error.message', ({ input, expected }) => {
+        const logger = {
+          log: jest.fn(),
+          error: jest.fn(),
+        }
+        const cli = HoraSkillsCli.create({
+          args: [
+            'install',
+          ],
+          workingDirectoryPath: '/consumer',
+          logger,
+        })
+
+        const received = cli.reportFailure(input)
+
+        expect(received)
+          .toBe(1)
+        expect(logger.error)
+          .toHaveBeenCalledWith(expected)
+      })
+    })
+  })
+})
+
+describe('HoraSkillsCli', () => {
+  describe('.buildFailureMessage()', () => {
+    describe('should be the message of the error', () => {
+      const cases = [
+        {
+          input: {
+            error: new Error('EACCES: permission denied'),
+          },
+          expected: 'EACCES: permission denied',
+        },
+        {
+          input: {
+            error: new Error('ENOENT: no such file, open \'/consumer/.claude/スキル\''),
+          },
+          expected: 'ENOENT: no such file, open \'/consumer/.claude/スキル\'',
+        },
+      ]
+
+      test.each(cases)('error: $input.error.message', ({ input, expected }) => {
+        const received = HoraSkillsCli.buildFailureMessage(input)
+
+        expect(received)
+          .toBe(expected)
+      })
+    })
+
+    describe('should drop the characters a terminal acts on', () => {
+      const cases = [
+        {
+          input: {
+            error: new Error('EACCES: denied, rm \'/consumer/.claude/skills/\u001b[2Jhora\''),
+          },
+          expected: 'EACCES: denied, rm \'/consumer/.claude/skills/?[2Jhora\'',
+        },
+        {
+          input: {
+            error: new Error('ENOENT: no such file\u0000\u007f'),
+          },
+          expected: 'ENOENT: no such file??',
+        },
+      ]
+
+      test.each(cases)('error: $input.error.message', ({ input, expected }) => {
+        const received = HoraSkillsCli.buildFailureMessage(input)
+
+        expect(received)
+          .toBe(expected)
+      })
+    })
+
+    describe('should be the value itself when it is not an error', () => {
+      const cases = [
+        {
+          input: {
+            error: 'raised a string',
+          },
+          expected: 'raised a string',
+        },
+        {
+          input: {
+            error: null,
+          },
+          expected: 'null',
+        },
+      ]
+
+      test.each(cases)('error: $input.error', ({ input, expected }) => {
+        const received = HoraSkillsCli.buildFailureMessage(input)
+
+        expect(received)
+          .toBe(expected)
+      })
+    })
+  })
+})
+
+describe('HoraSkillsCli', () => {
+  describe('.buildPrintableCharacter()', () => {
+    describe('should be the character itself when a terminal prints it', () => {
+      const cases = [
+        {
+          input: {
+            character: 'a',
+          },
+        },
+        {
+          input: {
+            character: ' ',
+          },
+        },
+        {
+          input: {
+            character: 'ス',
+          },
+        },
+      ]
+
+      test.each(cases)('character: $input.character', ({ input }) => {
+        const received = HoraSkillsCli.buildPrintableCharacter(input)
+
+        expect(received)
+          .toBe(input.character)
+      })
+    })
+
+    describe('should stand in for the character when a terminal acts on it', () => {
+      const cases = [
+        {
+          input: {
+            character: '\u001b',
+          },
+        },
+        {
+          input: {
+            character: '\u0000',
+          },
+        },
+        {
+          input: {
+            character: '\u007f',
+          },
+        },
+        {
+          input: {
+            character: '\n',
+          },
+        },
+      ]
+
+      test.each(cases)('codePoint: $input.character.codePointAt', ({ input }) => {
+        const received = HoraSkillsCli.buildPrintableCharacter(input)
+
+        expect(received)
+          .toBe('?')
+      })
+    })
+  })
+})
+
+describe('HoraSkillsCli', () => {
+  describe('.runPostinstallCommand()', () => {
+    describe('should report what building or running the command raises', () => {
+      const cases = [
+        {
+          override: {
+            error: new Error('EACCES: permission denied, open \'/consumer/package.json\''),
+          },
+          expected: 'EACCES: permission denied, open \'/consumer/package.json\'',
+        },
+      ]
+
+      test.each(cases)('error: $override.error.message', ({ override, expected }) => {
+        jest.spyOn(HoraSkillsCli, 'isOwnRepository')
+          .mockImplementation(() => {
+            throw override.error
+          })
+
+        const errorSpy = jest.fn()
+
+        const received = HoraSkillsCli.runPostinstallCommand({
+          env: {
+            npm_config_local_prefix: '/consumer',
+          },
+          logger: {
+            log: () => {},
+            error: errorSpy,
+          },
+        })
+
+        expect(received)
+          .toBe(1)
+        expect(errorSpy)
+          .toHaveBeenCalledWith(expected)
+      })
+    })
+
+    describe('should be the exit code of the command', () => {
+      const cases = [
+        {
+          override: {
+            exitCode: 0,
+          },
+        },
+        {
+          override: {
+            exitCode: 1,
+          },
+        },
+      ]
+
+      test.each(cases)('exitCode: $override.exitCode', ({ override }) => {
+        jest.spyOn(HoraSkillsCli, 'isOwnRepository')
+          .mockReturnValue(false)
+        jest.spyOn(HoraSkillsCli.prototype, 'run')
+          .mockReturnValue(override.exitCode)
+
+        const received = HoraSkillsCli.runPostinstallCommand({
+          env: {
+            npm_config_local_prefix: '/consumer',
+          },
+          logger: {
+            log: () => {},
+            error: () => {},
+          },
+        })
+
+        expect(received)
+          .toBe(override.exitCode)
+      })
+    })
+  })
+})
 describe('HoraSkillsCli', () => {
   describe('#resolveDomains()', () => {
     describe('should prefer the command line over the package config', () => {
