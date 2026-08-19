@@ -813,7 +813,7 @@ describe('HoraSkillsCli', () => {
           workingDirectoryPath: '/consumer',
         })
 
-        jest.spyOn(cli, 'verifyTargetDirectoryPaths')
+        jest.spyOn(cli, 'verifyPaths')
           .mockReturnValue(1)
 
         const installSpy = jest.spyOn(SkillsInstaller.prototype, 'install')
@@ -1327,7 +1327,8 @@ describe('HoraSkillsCli', () => {
           .mockImplementation(({ filePath }) => override.linkedPaths.includes(filePath))
 
         const received = cli.isReachedThroughSymbolicLink({
-          targetDirectoryPath: '/consumer/.claude/skills',
+          basePath: '/consumer',
+          targetPath: '/consumer/.claude/skills',
         })
 
         expect(received)
@@ -1372,8 +1373,8 @@ describe('HoraSkillsCli', () => {
         jest.spyOn(cli, 'buildTargetDirectoryPath')
           .mockReturnValue(override.targetDirectoryPath)
         jest.spyOn(cli, 'isReachedThroughSymbolicLink')
-          .mockImplementation(({ targetDirectoryPath }) =>
-            override.linkedTargetDirectoryPaths.includes(targetDirectoryPath)
+          .mockImplementation(({ targetPath }) =>
+            override.linkedTargetDirectoryPaths.includes(targetPath)
           )
 
         const received = cli.collectLinkedTargetDirectoryPaths()
@@ -1386,7 +1387,7 @@ describe('HoraSkillsCli', () => {
 })
 
 describe('HoraSkillsCli', () => {
-  describe('#verifyTargetDirectoryPaths()', () => {
+  describe('#verifyPaths()', () => {
     describe('should refuse an installation directory reached through a symbolic link', () => {
       const cases = [
         {
@@ -1397,7 +1398,7 @@ describe('HoraSkillsCli', () => {
           },
           expected: [
             '/consumer/.claude/skills is reached through a symbolic link.',
-            'Nothing was changed. Give --dir the directory it resolves to, or replace the link with a directory of its own.',
+            'Nothing was changed. An installation carries nothing through a link — replace it, or give --dir the directory it resolves to.',
           ],
         },
       ]
@@ -1417,8 +1418,10 @@ describe('HoraSkillsCli', () => {
 
         jest.spyOn(cli, 'collectLinkedTargetDirectoryPaths')
           .mockReturnValue(override.linkedTargetDirectoryPaths)
+        jest.spyOn(cli, 'collectLinkedManifestFilePaths')
+          .mockReturnValue([])
 
-        const received = cli.verifyTargetDirectoryPaths()
+        const received = cli.verifyPaths()
 
         expect(received)
           .toBe(1)
@@ -1445,14 +1448,150 @@ describe('HoraSkillsCli', () => {
 
         jest.spyOn(cli, 'collectLinkedTargetDirectoryPaths')
           .mockReturnValue([])
+        jest.spyOn(cli, 'collectLinkedManifestFilePaths')
+          .mockReturnValue([])
 
-        const received = cli.verifyTargetDirectoryPaths()
+        const received = cli.verifyPaths()
 
         expect(received)
           .toBe(0)
         expect(logger.error)
           .not
           .toHaveBeenCalled()
+      })
+    })
+  })
+})
+
+describe('HoraSkillsCli', () => {
+  describe('#buildManifestFilePath()', () => {
+    describe('should be the record below the working directory', () => {
+      const cases = [
+        {
+          input: {
+            args: [
+              'install',
+            ],
+          },
+          expected: '/consumer/.hora/equip-skills.json',
+        },
+        {
+          input: {
+            args: [
+              'install',
+              '--dir',
+              'tools/skills',
+            ],
+          },
+          expected: '/consumer/.hora/equip-skills.json',
+        },
+      ]
+
+      test.each(cases)('args: $input.args', ({ input, expected }) => {
+        const cli = HoraSkillsCli.create({
+          args: input.args,
+          workingDirectoryPath: '/consumer',
+        })
+
+        const received = cli.buildManifestFilePath()
+
+        expect(received)
+          .toBe(path.normalize(expected))
+      })
+    })
+  })
+})
+
+describe('HoraSkillsCli', () => {
+  describe('#collectLinkedManifestFilePaths()', () => {
+    describe('should be the record when it is reached through a symbolic link', () => {
+      const cases = [
+        {
+          override: {
+            linkedPaths: [
+              '/consumer/.hora',
+            ],
+          },
+          expected: [
+            '/consumer/.hora/equip-skills.json',
+          ],
+        },
+        {
+          override: {
+            linkedPaths: [
+              '/consumer/.hora/equip-skills.json',
+            ],
+          },
+          expected: [
+            '/consumer/.hora/equip-skills.json',
+          ],
+        },
+        {
+          override: {
+            linkedPaths: [],
+          },
+          expected: [],
+        },
+      ]
+
+      test.each(cases)('linkedPaths: $override.linkedPaths', ({ override, expected }) => {
+        const cli = HoraSkillsCli.create({
+          args: [
+            'install',
+          ],
+          workingDirectoryPath: '/consumer',
+        })
+
+        jest.spyOn(cli, 'isSymbolicLink')
+          .mockImplementation(({ filePath }) => override.linkedPaths.includes(filePath))
+
+        const received = cli.collectLinkedManifestFilePaths()
+
+        expect(received)
+          .toEqual(expected)
+      })
+    })
+  })
+})
+
+describe('HoraSkillsCli', () => {
+  describe('#verifyPaths()', () => {
+    describe('should refuse a record reached through a symbolic link', () => {
+      const cases = [
+        {
+          override: {
+            linkedManifestFilePaths: [
+              '/consumer/.hora/equip-skills.json',
+            ],
+          },
+          expected: '/consumer/.hora/equip-skills.json is reached through a symbolic link.',
+        },
+      ]
+
+      test.each(cases)('linkedManifestFilePaths: $override.linkedManifestFilePaths', ({ override, expected }) => {
+        const logger = {
+          log: jest.fn(),
+          error: jest.fn(),
+        }
+        const cli = HoraSkillsCli.create({
+          args: [
+            'install',
+          ],
+          workingDirectoryPath: '/consumer',
+          logger,
+        })
+
+        jest.spyOn(cli, 'collectLinkedTargetDirectoryPaths')
+          .mockReturnValue([])
+        jest.spyOn(cli, 'collectLinkedManifestFilePaths')
+          .mockReturnValue(override.linkedManifestFilePaths)
+
+        const received = cli.verifyPaths()
+
+        expect(received)
+          .toBe(1)
+        expect(logger.error)
+          .toHaveBeenNthCalledWith(1, expected)
       })
     })
   })
@@ -1612,7 +1751,7 @@ describe('HoraSkillsCli', () => {
           workingDirectoryPath: '/consumer',
         })
 
-        jest.spyOn(cli, 'verifyTargetDirectoryPaths')
+        jest.spyOn(cli, 'verifyPaths')
           .mockReturnValue(1)
 
         const uninstallSpy = jest.spyOn(SkillsInstaller.prototype, 'uninstall')
