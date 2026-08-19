@@ -70,6 +70,14 @@ Or declare it once in your package.json, so a plain `hora-skills install` obeys 
 
 The command line wins over package.json, and both fall back to every domain.
 
+### Directories, not links
+
+`.claude/`, and the `skills/` directory inside it, have to be directories of your repository rather than symbolic links. An installation verifies every step it is reached through, and finding a link at any of them it writes nothing and removes nothing.
+
+A link is content of the repository rather than an instruction of whoever runs the command, so following one would let the repository decide where skills are written and, worse, where the skills of the previous run are removed from.
+
+Where either points at a directory shared between repositories, name that directory instead — `npx hora-skills install --dir <the directory it resolves to>` reaches the same state, and the link still makes the skills visible at `.claude/skills/`. A `--dir` is named by whoever runs the command, so it is taken as given.
+
 ### Keeping the installation current
 
 The installed skills are this package's build output rather than source of your repository, so ignore them:
