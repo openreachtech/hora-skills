@@ -74,6 +74,8 @@ The command line wins over package.json, and both fall back to every domain.
 
 `.claude/`, and the `skills/` directory inside it, have to be directories of your repository rather than symbolic links. An installation verifies every step it is reached through, and finding a link at any of them it writes nothing and removes nothing.
 
+The hook keeps `npm install` successful whether or not the skills arrive, and npm shows nothing a script that succeeded printed. Where the skills are missing, `npx hora-skills install` is what tells you why.
+
 A link is content of the repository rather than an instruction of whoever runs the command, so following one would let the repository decide where skills are written and, worse, where the skills of the previous run are removed from.
 
 Where either points at a directory shared between repositories, name that directory instead — `npx hora-skills install --dir <the directory it resolves to>` reaches the same state, and the link still makes the skills visible at `.claude/skills/`. A `--dir` is named by whoever runs the command, so it is taken as given.
