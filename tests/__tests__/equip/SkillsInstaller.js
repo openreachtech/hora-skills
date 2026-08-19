@@ -410,6 +410,89 @@ describe('SkillsInstaller', () => {
 })
 
 describe('SkillsInstaller', () => {
+  describe('.isPlainSkillName()', () => {
+    describe('should be true for a folder of the installation directory', () => {
+      const cases = [
+        {
+          input: {
+            skillName: 'hc-naming',
+          },
+        },
+        {
+          input: {
+            skillName: 'hf-cp-table',
+          },
+        },
+        {
+          input: {
+            skillName: '.hidden-skill',
+          },
+        },
+        {
+          input: {
+            skillName: 'skill with space',
+          },
+        },
+      ]
+
+      test.each(cases)('skillName: $input.skillName', ({ input }) => {
+        const received = SkillsInstaller.isPlainSkillName(input)
+
+        expect(received)
+          .toBe(true)
+      })
+    })
+
+    describe('should be false for a skill name reaching outside the installation directory', () => {
+      const cases = [
+        {
+          input: {
+            skillName: '..',
+          },
+        },
+        {
+          input: {
+            skillName: '.',
+          },
+        },
+        {
+          input: {
+            skillName: '',
+          },
+        },
+        {
+          input: {
+            skillName: '../../../canary',
+          },
+        },
+        {
+          input: {
+            skillName: 'hc-naming/SKILL.md',
+          },
+        },
+        {
+          input: {
+            skillName: '/etc/hosts',
+          },
+        },
+        {
+          input: {
+            skillName: '..\\..\\canary',
+          },
+        },
+      ]
+
+      test.each(cases)('skillName: $input.skillName', ({ input }) => {
+        const received = SkillsInstaller.isPlainSkillName(input)
+
+        expect(received)
+          .toBe(false)
+      })
+    })
+  })
+})
+
+describe('SkillsInstaller', () => {
   describe('#get:fs', () => {
     describe('when called as is', () => {
       test('should be fixed value', () => {
@@ -716,6 +799,54 @@ describe('SkillsInstaller', () => {
           .toEqual(expected)
       })
     })
+
+    describe('should never remove outside the installation directory', () => {
+      const cases = [
+        {
+          override: {
+            recordedSkillNames: [
+              '../../../canary',
+              'hc-naming',
+            ],
+          },
+          expected: [
+            [
+              '/consumer/.claude/skills/hc-naming',
+              {
+                recursive: true,
+                force: true,
+              },
+            ],
+          ],
+        },
+      ]
+
+      test.each(cases)('recordedSkillNames: $override.recordedSkillNames', ({ override, expected }) => {
+        const installer = SkillsInstaller.create({
+          workingDirectoryPath: '/consumer',
+          targetDirectoryPath: '/consumer/.claude/skills',
+          domainFilter: SkillDomainFilter.create(),
+          sourceDirectoryPath: '/package/dist/skills',
+        })
+
+        jest.spyOn(installer.manifestFile, 'loadSkillNames')
+          .mockReturnValue(override.recordedSkillNames)
+        jest.spyOn(installer, 'collectDistributedSkillNames')
+          .mockReturnValue([])
+        jest.spyOn(installer, 'collectDirectoryNames')
+          .mockReturnValue([])
+
+        const rmSyncSpy = jest.spyOn(fs, 'rmSync')
+          .mockReturnValue()
+
+        installer.removeInstalledSkills()
+
+        expect(rmSyncSpy)
+          .toHaveBeenCalledTimes(1)
+        expect(rmSyncSpy)
+          .toHaveBeenNthCalledWith(1, ...expected[0])
+      })
+    })
   })
 })
 
@@ -765,6 +896,58 @@ describe('SkillsInstaller', () => {
             directoryNames: [
               'hc-own-skill',
             ],
+          },
+          expected: [],
+        },
+      ]
+
+      test.each(cases)('recordedSkillNames: $override.recordedSkillNames', ({ override, expected }) => {
+        const installer = SkillsInstaller.create({
+          workingDirectoryPath: '/consumer',
+          targetDirectoryPath: '/consumer/.claude/skills',
+          domainFilter: SkillDomainFilter.create(),
+          sourceDirectoryPath: '/package/dist/skills',
+        })
+
+        jest.spyOn(installer.manifestFile, 'loadSkillNames')
+          .mockReturnValue(override.recordedSkillNames)
+        jest.spyOn(installer, 'collectDistributedSkillNames')
+          .mockReturnValue(override.distributedSkillNames)
+        jest.spyOn(installer, 'collectDirectoryNames')
+          .mockReturnValue(override.directoryNames)
+
+        const received = installer.collectRemovableSkillNames()
+
+        expect(received)
+          .toEqual(expected)
+      })
+    })
+
+    describe('should drop a recorded skill name that is not a plain skill name', () => {
+      const cases = [
+        {
+          override: {
+            recordedSkillNames: [
+              'hc-naming',
+              '../../../canary',
+            ],
+            distributedSkillNames: [],
+            directoryNames: [],
+          },
+          expected: [
+            'hc-naming',
+          ],
+        },
+        {
+          override: {
+            recordedSkillNames: [
+              '..',
+              '.',
+              '',
+              'hc-naming/SKILL.md',
+            ],
+            distributedSkillNames: [],
+            directoryNames: [],
           },
           expected: [],
         },
