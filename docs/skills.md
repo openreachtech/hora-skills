@@ -1,12 +1,12 @@
 # Skills
 
-A catalog of every skill in this repository — 107 in total — with a one- or two-line summary each.
+A catalog of every skill in this repository — 110 in total — with a one- or two-line summary each.
 
 Each skill lives at `kit/skills/<domain>/<name>/`, one level under its domain directory, and that folder name is both the skill's `name:` and the folder name it is installed under. **Skill** below is therefore all you need: it is what you invoke as `/name`, what appears under `.claude/skills/` once installed, and where the source sits. The two-character prefix is the domain — see [the flatten build convention](https://github.com/openreachtech/hora-skills/blob/main/.claude/skills/flatten/SKILL.md) for the layout and the naming rules. Full guidance for any skill is in its own `SKILL.md`.
 
-## `_core` — `hc-*`
+## `core` — `hc-*`
 
-33 skills. Conventions and procedures that apply to any project, regardless of stack.
+34 skills. Conventions and procedures that apply to any project, regardless of stack.
 
 | Skill (= Command) | Summary |
 | :-- | :-- |
@@ -23,10 +23,11 @@ Each skill lives at `kit/skills/<domain>/<name>/`, one level under its domain di
 | `hc-comments` | Comments within actual code are written in English unless there is a reason otherwise. |
 | `hc-constants` | Constant conventions — uppercase `SNAKE_CASE` naming, chopping down, and the file organization and placement of object-type constants. |
 | `hc-contracts` | Type contracts for function and method arguments and return values, and how contract types are defined. |
+| `hc-dependency-defect` | Work around a bug in code this project uses but does not own — a subclass that overrides only the broken member, called by its own name, with a comment saying when it can be deleted. |
 | `hc-documentation` | Documentation writing conventions, including the `#instanceMember` / `.staticMember` notation used when referring to class members. |
 | `hc-errors` | Error handling — return `null` on failure from value-generating methods, and the throw-message format for abstract members. |
 | `hc-functions` | Function conventions. Parameters follow method parameters: named arguments as a principle. |
-| `hc-git-commit` | Commit conventions — what belongs in a single commit, and the message format (imperative or Conventional Commits, chosen per project). |
+| `hc-git-commit` | Commit conventions — what belongs in a single commit, the message format (imperative or Conventional Commits, chosen per project), the verb vocabulary shared by both, and the branches commits land on: the trunk role, naming, and the subjects that open and close one. |
 | `hc-implementation-progress` | Track an in-flight implementation in a progress document anchored to requirement ids, advancing a status only against recorded evidence. |
 | `hc-jest` | Write Jest unit tests for JavaScript classes. |
 | `hc-jsdoc` | JSDoc writing conventions shared by backend and frontend — type annotations, `@returns`, `@typedef` and type-only imports, with the Vue/Nuxt-specific conventions in its references. |
@@ -46,7 +47,7 @@ Each skill lives at `kit/skills/<domain>/<name>/`, one level under its domain di
 
 ## `backend` — `hb-*`
 
-29 skills, all for renchan-based Node backends.
+30 skills, all for renchan-based Node backends.
 
 | Skill (= Command) | Summary |
 | :-- | :-- |
@@ -56,6 +57,7 @@ Each skill lives at `kit/skills/<domain>/<name>/`, one level under its domain di
 | `hb-backend-testing` | Where a test file goes (`tests/__tests__` vs `tests/_orders`), how run order among DB-writing tests is guaranteed, how to run the suite, and the purity rules for tests and doubles. |
 | `hb-build-e2e-test-environment` | Build, run and debug the hand-operated local E2E stack under `e2e/docker/` — its containers, its seed set, and the `up`/`start`/`seed`/`clean`/`down` scripts. |
 | `hb-constant-definition` | Define an application constant as two files: a CommonJS master under `constants/` (the source of truth) plus an ESM bridge under `app/constants/` that re-exports it. |
+| `hb-cookie-authentication` | Cookie-based authentication for a renchan backend, per actor — the credential and token models, access plus rotating refresh tokens with reuse detection, the HttpOnly refresh cookie, and the signIn / signUp / signOut / renewAccessToken resolvers. |
 | `hb-database-design` | The logical schema decisions made before writing a migration or model — normalization, status/category representation, column types, time storage, read scaling, versioning, history. |
 | `hb-execution-placement-pattern` | Decide where processing belongs: a synchronous GraphQL/REST operation, or a background worker triggered from a handler, from a post-worker, or on a schedule. |
 | `hb-external-api-client` | Implement an external HTTP/REST API client with `@openreachtech/mentsu-rocket-client` — the Launcher / Payload / Capsule trio under `app/<serviceName>Client/`. |
@@ -82,12 +84,13 @@ Each skill lives at `kit/skills/<domain>/<name>/`, one level under its domain di
 
 ## `frontend` — `hf-*`
 
-45 skills for Furo/Nuxt apps, plus the stack-agnostic CSS and UI/UX conventions. The `hf-cp-*` skills are component selection skills for repositories consuming `@openreachtech/furo-vue`: each one routes a plain-language UI need to the right `Furo*` component.
+46 skills for Furo/Nuxt apps, plus the stack-agnostic CSS and UI/UX conventions. The `hf-cp-*` skills are component selection skills for repositories consuming `@openreachtech/furo-vue`: each one routes a plain-language UI need to the right `Furo*` component.
 
 | Skill (= Command) | Summary |
 | :-- | :-- |
 | `hf-acceptance-review` | Post-implementation acceptance review of a whole app — is every backend operation reachable from the UI, is CRUD complete per entity, do affordances act, are failures and waits told truthfully. |
 | `hf-animation` | UI animation conventions — whether and why an element animates, easing from the `--transition-timing-*` tokens, and the entry/popover/tooltip/blur techniques that keep motion responsive. |
+| `hf-cookie-authentication` | Cookie-based authentication for a Furo/Nuxt app — the in-memory session layer (token store, renew, 401/205 self-heal, route gateway, sign-out), the auth GraphQL clients, and serving same-origin so the refresh cookie stays first-party. |
 | `hf-cp-button` | A clickable action trigger — submit, primary, icon or loading button. Routes to `FuroButton`. |
 | `hf-cp-checkbox-toggle` | A boolean control — checkbox, on/off switch, toolbar toggle button. Routes to `FuroCheckbox`, `FuroToggle`. |
 | `hf-cp-collapsible` | A show/hide region, or a stack of expandable sections such as an accordion or FAQ list. Routes to `FuroCollapsible`, `FuroAccordion`. |

@@ -1,10 +1,11 @@
 ---
 name: hc-git-commit
 description: >
-  Conventions for git commits. Covers the granularity of what belongs in a single commit,
-  and the message format — two formats are supported (imperative and Conventional Commits),
-  selected per project rather than per commit. Use this skill before writing any commit
-  message, and before deciding how to split working-tree changes into commits.
+  Conventions for git commits and the branches they land on. Covers the granularity of what
+  belongs in a single commit, the message format (imperative or Conventional Commits, chosen
+  per project), the verb vocabulary shared by both, and the trunk role with the subjects that
+  open and close a branch. Use before writing a commit message, before splitting a working
+  tree into commits, and before cutting or merging a branch.
 ---
 
 # Git Commit
@@ -58,6 +59,23 @@ Resolve which one applies, in this order.
   [format-imperative.md](./references/format-imperative.md) or
   [format-conventional.md](./references/format-conventional.md).
 
+### The resolved format governs what to write, never how to read
+
+A history may hold subjects in any other convention — written before the project settled on
+one, or by another team, or by hand in a hurry — and those commits are still the record of what
+happened. So when searching for where something changed, do not filter on the resolved format
+alone.
+
+```bash
+git log --format='%h %s' <range>                                            # no filter
+git log --format='%h %s' <range> | grep -P '^\S+ [a-z-]+(\([^)]*\))?!?: '   # type prefixes
+```
+
+Filter the subject line, as above, rather than reaching for `--grep`: that searches the whole
+message, so it also matches trailers such as `Co-Authored-By:`. And treat any subject filter as
+a shortcut rather than a guarantee — read the range's subjects, or its diff, without one before
+concluding that a change is not in the history.
+
 ## Rules that apply to both formats
 
 ### Subject line
@@ -82,32 +100,114 @@ Resolve which one applies, in this order.
 
 ### The branch-opening marker commit
 
-A new branch opens with an **empty commit** whose subject begins with `Start`. This is a
-deliberate convention, not a checkpoint or a placeholder.
+A branch that will act as a trunk opens with an **empty commit** whose subject begins with
+`Start`. This is a deliberate convention, not a checkpoint or a placeholder.
 
 ```bash
 # opening a long-lived dev branch
 git switch -c dev
 git commit --allow-empty -m 'Start dev'
 
-# opening a topic branch
-git switch -c rename/FormElementClerk
-git commit --allow-empty -m 'Start renaming FormElementClerk to FormElementInspector'
+# opening a general branch that will carry sub-branches
+git switch -c feature/equip-tools-for-each-application
+git commit --allow-empty -m 'Start adding the skills installer'
 ```
 
 - It must be **empty** (`--allow-empty`). Its purpose is to give a fresh branch a commit so a
   pull request can be opened before any code exists. A `Start …` subject on a commit that
   actually contains changes is not this convention — it is a mislabelled change.
 - It is the **first commit on the branch**, made immediately after branching.
-- The subject names **what is being started**, which depends on the kind of branch.
-  - A **long-lived integration branch** is named directly: a `dev` branch opens with
-    `Start dev`. Here `dev` is the branch, not a placeholder word.
-  - A **topic branch** states the work it will carry — `Start renaming FormElementClerk to
-    FormElementInspector`, `Start fixing type errors reported by the client package`. A later
-    reader scanning the log gets the branch's purpose for free.
+- **One per trunk, and none on a sub-branch.** The marker belongs to the branch the work will
+  travel through as a pull request. A branch cut from that one merges back locally instead, so
+  there is no pull request to open early and nothing for the marker to do. `Start` is not a
+  verb for resuming work mid-branch either.
+- The subject names **what is being started**, which depends on the kind of trunk.
+  - A **trunk that is one by name** is named directly: a `dev` branch opens with `Start dev`.
+    Here `dev` is the branch, not a placeholder word.
+  - A **general branch acting as a trunk** states the work it will carry — `Start adding the
+    skills installer`, `Start renaming kit/skills/_core/ to core/`. A later reader scanning the
+    log gets the branch's purpose for free.
 - **The marker takes no type prefix, in either message format.** Repositories on Conventional
   Commits write `Start dev`, not `chore: start dev`. The marker sits outside the format.
-- One per branch. `Start` is not a verb for resuming work mid-branch.
+
+### The merge commit
+
+A branch merges back into its trunk with `--no-ff`, and the merge commit that results carries a
+subject of its own.
+
+```
+Merge the classes of the skills installer
+Merge the core/ rename in the repository documents
+```
+
+- **It names the work, never the branch.** `Merge rename/FormElementClerk` says only what
+  `git log --graph` already shows, and the branch is deleted moments later. What it carried is
+  the part that has to survive it.
+- **It stands in for the message a host would have written.** A merge that goes through a pull
+  request is described for free — `Merge pull request #53 from …`. A merge made locally has no
+  such author, and this subject fills the gap.
+- **It takes no type prefix, in either message format**, for the same reason the branch-opening
+  marker takes none: it carries no change of its own. Repositories on Conventional Commits
+  write `Merge …`, not `chore: merge …`.
+- **A merge made through a pull request is left alone.** The host writes it, and no one here
+  chooses its wording.
+
+Which branch is a trunk, how the merge is made, and what becomes of the branch afterwards are in
+[branches.md](./references/branches.md).
+
+### Verbs
+
+A subject opens with a verb naming what actually happened. The vocabulary is the same in both
+message formats — capitalized on the imperative format, lowercase after the type on
+Conventional Commits.
+
+| verb | use for |
+| :-- | :-- |
+| `Add` | a new file, member, case, or capability that did not exist |
+| `Declare` | a class written for the first time |
+| `Define` | a class member, function, or constant written for the first time |
+| `Purge` | a whole file deleted, with nothing replacing it |
+| `Kick out` | a part deleted from a file that stays — an entry, a rule, a field |
+| `Update` | an existing thing changed, without a change in contract |
+| `Fix` | incorrect behavior corrected |
+| `Rename` | identifier changed, behavior untouched |
+| `Move` | relocation between files or directories, content untouched |
+| `Extract` | logic pulled out into its own member or module |
+| `Combine` | two members or modules folded into one |
+| `Optimize` | a change made for speed, behavior untouched |
+| `Use` | switching to a different existing mechanism |
+| `Allow` / `Prevent` | a constraint loosened or tightened |
+| `Export` | public surface changed |
+| `Start` | **empty** branch-opening marker only — see above |
+| `Merge` | **merge commits only** — see above |
+
+- **`Declare` is for the class itself; `Define` is for what is written inside or beside it** —
+  a member, a function, a constant. Both are the specific forms of `Add`, and where they apply,
+  `Add` is the vaguer choice. `Add` remains correct for everything else that did not exist
+  before — a test file, a case, a reference document.
+
+  ```
+  Declare SkillsInstaller to replace the installed skills
+  Define SkillsInstaller#replaceInstalledSkills() to swap the tree in one pass
+  Define SKILL_DOMAIN naming the domains a repository can select
+  Add tests for SkillsInstaller
+  ```
+
+- **`Purge` and `Kick out` split on what survives.** `Purge` is for a file that is gone —
+  `Purge tests/legacy/OldValidator.js`. `Kick out` takes the shape `Kick out <what> from
+  <where>`, because the point is that `<where>` is still there without `<what>` —
+  `Kick out main: from package.json`. The pair mirrors `Declare` and `Define`.
+- **The table carries no `Remove` or `Delete`** for that reason: both read the same whether a
+  whole file went or one line inside it did, so the subject alone leaves the reader guessing.
+  Splitting the word is what makes the difference visible in `git log`.
+- **A restriction lifted is `Allow`, never a negative.** `Don't disable the action button when
+  the competition is completed` describes a state the code should hold; a subject describes a
+  transition. `Allow the action button when the competition is completed` says the same change,
+  and it completes *"Applying this commit will …"*, which a negative cannot.
+- **`Start` and `Merge` are reserved** for the two commits that carry no change of their own —
+  the branch-opening marker and the merge commit, both described above. A change that folds two
+  things into one takes `Combine`, never `Merge`, so that a merge commit stays recognizable by
+  its subject alone.
 
 ### Referring to class members
 
@@ -171,6 +271,7 @@ tree — is in [granularity.md](./references/granularity.md).
 
 ## Detail files
 
+- [branches.md](./references/branches.md) — the trunk role, naming a branch, merging it back
 - [granularity.md](./references/granularity.md) — what belongs in one commit, splitting a mixed working tree
 - [format-imperative.md](./references/format-imperative.md) — capitalized imperative subject, no type prefix
 - [format-conventional.md](./references/format-conventional.md) — Conventional Commits (`type: summary`)

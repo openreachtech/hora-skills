@@ -1,6 +1,6 @@
 ---
 name: flatten
-description: "Repository-specific build convention: kit/skills/ holds exactly three domain directories (_core/, backend/, frontend/), each containing one level of skill folders named hc-*, hb-* or hf-*, and the build copies those folders into dist/skills/ unchanged — dropping only the domain level — to produce the flat .claude/skills/ layout that consuming repositories install. Use when rebuilding the dist/ output, or when adding, renaming or placing a skill under kit/skills/."
+description: "Repository-specific build convention: kit/skills/ holds exactly three domain directories (core/, backend/, frontend/), each containing one level of skill folders named hc-*, hb-* or hf-*, and the build copies those folders into dist/skills/ unchanged — dropping only the domain level — to produce the flat .claude/skills/ layout that consuming repositories install. Use when rebuilding the dist/ output, or when adding, renaming or placing a skill under kit/skills/."
 ---
 
 # Flatten
@@ -15,7 +15,7 @@ Consuming repositories install skills as a single flat list directly under `.cla
 
 | Domain directory | Prefix | What it holds |
 |---|---|---|
-| `_core/` | `hc-` | Conventions and procedures that apply to any project, regardless of stack |
+| `core/` | `hc-` | Conventions and procedures that apply to any project, regardless of stack |
 | `backend/` | `hb-` | renchan-based Node backends |
 | `frontend/` | `hf-` | Furo/Nuxt apps |
 
@@ -25,7 +25,7 @@ Each domain directory contains skill folders and nothing else. Every skill is th
 kit/skills/<domain>/<name>/SKILL.md
 ```
 
-A skill folder may hold its own subdirectories (`references/`, `scripts/`), but no `SKILL.md` below its top level — those subdirectories are the skill's own files, never more skills. There are no intermediate grouping directories: no `backend/renchan/`, no `frontend/nuxt-vue/components/`, no `_core/declarations/classes/`.
+A skill folder may hold its own subdirectories (`references/`, `scripts/`), but no `SKILL.md` below its top level — those subdirectories are the skill's own files, never more skills. There are no intermediate grouping directories: no `backend/renchan/`, no `frontend/nuxt-vue/components/`, no `core/declarations/classes/`.
 
 ### The folder name is the skill's name
 
@@ -35,7 +35,7 @@ A skill folder's name is the skill's `name:`, and the folder name it gets under 
 kit/skills/frontend/hf-cp-table/   name: hf-cp-table   →   dist/skills/hf-cp-table/
 ```
 
-The prefix is part of the name: the skill is invoked as `/hf-cp-table`. The `h` stands for **hora**, from Hora Kit — the Open Reach Tech product this skill library is part of — and the second character is the domain: `c` for `_core`, `b` for `backend`, `f` for `frontend`.
+The prefix is part of the name: the skill is invoked as `/hf-cp-table`. The `h` stands for **hora**, from Hora Kit — the Open Reach Tech product this skill library is part of — and the second character is the domain: `c` for `core`, `b` for `backend`, `f` for `frontend`.
 
 Two characters buy two things. A consuming repository installs these skills side by side with its own, in one flat list, and the prefix is what tells a reader at a glance which skills came from this library and which domain each belongs to. And because the three prefixes are mutually exclusive and a filesystem cannot hold two folders of one name in one directory, no two skills in the library can end up with the same name — the flat namespace is protected by the source layout itself, with nothing to check.
 

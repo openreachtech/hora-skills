@@ -1,12 +1,16 @@
 {
   "name": "@openreachtech/hora-skills",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Distributes the implementation skills used to develop with Hora Kit.",
   "type": "module",
   "files": [
     "dist/",
-    "docs/"
+    "docs/",
+    "lib/"
   ],
+  "bin": {
+    "hora-skills": "lib/equip/hora-skills.js"
+  },
   "scripts": {
     "build": "node .claude/skills/flatten/scripts/build.js",
     "l": "npm run lint",
@@ -25,6 +29,9 @@
     "url": "https://github.com/openreachtech/hora-skills/issues"
   },
   "homepage": "https://github.com/openreachtech/hora-skills#readme",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "dependencies": {
   },
   "devDependencies": {

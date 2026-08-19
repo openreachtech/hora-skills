@@ -1,12 +1,12 @@
 # Skills
 
-このリポジトリに収録されている全 107 件のスキルの一覧と、それぞれの概要(1〜2 行)です。
+このリポジトリに収録されている全 110 件のスキルの一覧と、それぞれの概要(1〜2 行)です。
 
 各スキルは `kit/skills/<domain>/<name>/` に置かれ、ドメインディレクトリの直下 1 段に並びます。このフォルダ名がそのスキルの `name:` であり、インストール先のフォルダ名でもあります。したがって下表の**スキル**だけを見れば足ります。`/name` として呼び出す名前であり、インストール後に `.claude/skills/` に現れる名前であり、ソースの置き場所でもあります。先頭 2 文字はドメインを表します。配置と命名の規約は [flatten ビルドの規約](https://github.com/openreachtech/hora-skills/blob/main/.claude/skills/flatten/SKILL.md) を参照してください。各スキルの完全な内容は、それぞれの `SKILL.md` にあります。
 
-## `_core` — `hc-*`
+## `core` — `hc-*`
 
-33 件。スタックを問わず、あらゆるプロジェクトに適用される規約と手順です。
+34 件。スタックを問わず、あらゆるプロジェクトに適用される規約と手順です。
 
 | スキル (= コマンド) | 概要 |
 | :-- | :-- |
@@ -23,10 +23,11 @@
 | `hc-comments` | コメント記述の規約。実コード内のコメントは、理由がない限り英語で書きます。 |
 | `hc-constants` | 定数の規約。命名(大文字 SNAKE_CASE、enum 的オブジェクトは単数形)、chop down、オブジェクト型定数のファイル構成と配置。 |
 | `hc-contracts` | 関数・メソッドの引数と戻り値の型契約、および契約型の定義方法。 |
+| `hc-dependency-defect` | 自分が所有していないコード(パッケージなど)の不具合への対処。壊れているメンバーだけを override するサブクラスを作り、自分の名前で呼び出し、いつ削除できるかをコメントに残します。 |
 | `hc-documentation` | ドキュメント記述の規約。ドキュメント内でクラスメンバーを参照する際の `#instanceMember` / `.staticMember` 記法などを定義します。 |
 | `hc-errors` | エラーハンドリングの規約。値を生成するメソッドは失敗時に `null` を返す、抽象メンバーの throw メッセージ形式など。 |
 | `hc-functions` | 関数の規約。引数はメソッドの引数に準じ、名前付き引数を原則とします。 |
-| `hc-git-commit` | コミットの規約。1 コミットに含める粒度と、メッセージ形式(命令形 / Conventional Commits のいずれかをプロジェクト単位で選択)。 |
+| `hc-git-commit` | コミットの規約。1 コミットに含める粒度、メッセージ形式(命令形 / Conventional Commits をプロジェクト単位で選択)、両者で共通の動詞語彙、そしてコミットが着地するブランチ(トランクの役割、命名、ブランチを開くコミットと閉じるコミットの件名)。 |
 | `hc-implementation-progress` | 進行中の実装状況を、要件 ID に紐づけた進捗ドキュメントで可視化します。ステータスは記録された根拠に基づいてのみ前進させます。 |
 | `hc-jest` | JavaScript クラスの Jest ユニットテストを書きます。 |
 | `hc-jsdoc` | バックエンドとフロントエンドで共通の JSDoc 記述規約。型アノテーション、`@returns`、`@typedef`、型のみインポートを定義し、Vue/Nuxt 固有の規約は参照ファイルにまとめています。 |
@@ -46,7 +47,7 @@
 
 ## `backend` — `hb-*`
 
-29 件。いずれも renchan ベースの Node バックエンド向けです。
+30 件。いずれも renchan ベースの Node バックエンド向けです。
 
 | スキル (= コマンド) | 概要 |
 | :-- | :-- |
@@ -56,6 +57,7 @@
 | `hb-backend-testing` | テストファイルの配置(DB 書き込みなしは `tests/__tests__`、ありは `tests/_orders`)、DB 書き込みテストの実行順の保証、実行方法、テストとダブルの純粋性ルール。 |
 | `hb-build-e2e-test-environment` | `e2e/docker/` 配下の手動操作用ローカル E2E 環境の構築・実行・デバッグ。コンテナ構成、専用シードセット、`up`/`start`/`seed`/`clean`/`down` スクリプト。 |
 | `hb-constant-definition` | アプリ定数は必ず 2 ファイルで定義します。`constants/` の CommonJS マスター(単一の情報源)と、それを再 export する `app/constants/` の ESM ブリッジ。 |
+| `hb-cookie-authentication` | renchan バックエンドのアクター別 Cookie 認証。認証情報とトークンのモデル、アクセストークンとローテーションするリフレッシュトークン(再利用検知つき)、HttpOnly のリフレッシュ Cookie、signIn / signUp / signOut / renewAccessToken の各リゾルバー。 |
 | `hb-database-design` | マイグレーションやモデルを書く前に決めるスキーマの論理設計。正規化の判断、ステータス/カテゴリの表現、カラム型、時刻の保持、読み取りのスケール、履歴とバージョン管理。 |
 | `hb-execution-placement-pattern` | 処理(特に書き込み)をどこに実装するかの判断。同期的な GraphQL/REST 操作か、API ハンドラ・post-worker・スケジュールから起動するバックグラウンドワーカーか。 |
 | `hb-external-api-client` | `@openreachtech/mentsu-rocket-client` で外部 HTTP/REST API クライアントを実装します。`app/<serviceName>Client/` 配下の Launcher / Payload / Capsule の 3 クラス構成。 |
@@ -82,12 +84,13 @@
 
 ## `frontend` — `hf-*`
 
-45 件。Furo/Nuxt アプリ向けのスキルと、スタックに依存しない CSS・UI/UX 規約です。`hf-cp-*` は `@openreachtech/furo-vue` を利用するリポジトリ向けのコンポーネント選定スキル群で、UI 要件の口語表現から適切な `Furo*` コンポーネントへ振り分けます。
+46 件。Furo/Nuxt アプリ向けのスキルと、スタックに依存しない CSS・UI/UX 規約です。`hf-cp-*` は `@openreachtech/furo-vue` を利用するリポジトリ向けのコンポーネント選定スキル群で、UI 要件の口語表現から適切な `Furo*` コンポーネントへ振り分けます。
 
 | スキル (= コマンド) | 概要 |
 | :-- | :-- |
 | `hf-acceptance-review` | 実装後にアプリ全体を受入観点でレビューします。バックエンドの全操作が UI から到達可能か、エンティティごとの CRUD が揃っているか、操作要素が実際に機能するか、失敗と待ちを正直に伝えているか。 |
 | `hf-animation` | UI アニメーションの規約。そもそも動かすべきか、`--transition-timing-*` トークンからのイージング選択、入場・ポップオーバー・ツールチップ・ブラーの手法。 |
+| `hf-cookie-authentication` | Furo/Nuxt アプリの Cookie 認証。メモリ上のセッション層(トークンストア、再取得、401/205 の自己修復、ルートゲートウェイ、サインアウト)、認証用 GraphQL クライアント、リフレッシュ Cookie をファーストパーティに保つための same-origin 配信。 |
 | `hf-cp-button` | クリックで動作するアクショントリガー(送信・プライマリ・アイコン・ローディングボタン)。`FuroButton` へ振り分けます。 |
 | `hf-cp-checkbox-toggle` | 真偽値のコントロール(チェックボックス、オン/オフスイッチ、ツールバーのトグルボタン)。`FuroCheckbox`・`FuroToggle` へ振り分けます。 |
 | `hf-cp-collapsible` | 表示/非表示を切り替える領域、または開閉できるセクションの集合(アコーディオン、FAQ リスト)。`FuroCollapsible`・`FuroAccordion` へ振り分けます。 |
