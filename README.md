@@ -36,6 +36,8 @@ This package ships no install script of its own, so adding it as a dependency in
 }
 ```
 
+Every domain installs by default, which is more than a repository of one stack needs. *Selecting domains* below narrows it, in the same package.json.
+
 A project's own scripts are outside what npm holds back from v12 on, so this asks nothing of whoever clones the repository. `npx` is not needed here either: a lifecycle script runs with `node_modules/.bin` on its PATH.
 
 The hook you just declared takes effect from the next `npm install` on, so run the command by hand for the first placement — and for a one-off, or a repository that is not yours to add a hook to:
