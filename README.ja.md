@@ -89,7 +89,7 @@ package.json に一度書いておけば、引数なしの `hora-skills install`
 .hora/
 ```
 
-このパッケージを更新するとプロジェクトの `postinstall` が再実行され、スキルもそれに追随します。フックを置いていない場合は、同じコマンドを再実行してください。
+引数なしの `npm install` はプロジェクトの `postinstall` を再実行するので、スキルも追随します。パッケージをコマンドラインで名指しする更新(`npm install @openreachtech/hora-skills@latest`)では走りません。フックを置いていないリポジトリも同じです。その場合は、同じコマンドを再実行してください。
 
 ```sh
 npx hora-skills install

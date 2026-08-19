@@ -89,7 +89,7 @@ The installed skills are this package's build output rather than source of your 
 .hora/
 ```
 
-Updating this package re-runs your project's `postinstall`, so the skills follow along. Without a hook, run the command again yourself:
+An `npm install` with no arguments re-runs your project's `postinstall`, so the skills follow along. Naming the package on the command line — `npm install @openreachtech/hora-skills@latest` — does not, and neither does a repository without a hook. Run the command again yourself:
 
 ```sh
 npx hora-skills install
