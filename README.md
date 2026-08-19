@@ -72,7 +72,7 @@ The command line wins over package.json, and both fall back to every domain.
 
 ### Directories, not links
 
-`.claude/`, and the `skills/` directory inside it, have to be directories of your repository rather than symbolic links. An installation verifies every step it is reached through, and finding a link at any of them it writes nothing and removes nothing.
+`.claude/`, and the `skills/` directory inside it, have to be directories of your repository rather than symbolic links. An installation verifies every step it is reached through, and finding a link at any of them it writes nothing and removes nothing. `.hora/equip-skills.json`, the record of what was installed, is verified the same way: a link there would send the write to whatever it stands for and overwrite it.
 
 The hook keeps `npm install` successful whether or not the skills arrive, and npm shows nothing a script that succeeded printed. Where the skills are missing, `npx hora-skills install` is what tells you why.
 
