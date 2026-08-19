@@ -303,6 +303,109 @@ describe('SkillsManifestFile', () => {
           .toEqual([])
       })
     })
+
+    describe('should be empty when the recorded skillNames is not an array', () => {
+      const cases = [
+        {
+          override: {
+            skillNames: 'hc-naming',
+          },
+        },
+        {
+          override: {
+            skillNames: 1,
+          },
+        },
+        {
+          override: {
+            skillNames: null,
+          },
+        },
+        {
+          override: {
+            skillNames: {
+              0: 'hc-naming',
+            },
+          },
+        },
+      ]
+
+      test.each(cases)('skillNames: $override.skillNames', ({ override }) => {
+        const manifestFile = SkillsManifestFile.create({
+          filePath: '/tmp/app/.hora/equip-skills.json',
+          installationPath: '.claude/skills',
+        })
+
+        jest.spyOn(manifestFile, 'load')
+          .mockReturnValue({
+            version: '0.0.1',
+            installations: {
+              '.claude/skills': {
+                skillNames: override.skillNames,
+              },
+            },
+          })
+
+        const received = manifestFile.loadSkillNames()
+
+        expect(received)
+          .toEqual([])
+      })
+    })
+
+    describe('should keep only the recorded skill names that are strings', () => {
+      const cases = [
+        {
+          override: {
+            skillNames: [
+              'hc-naming',
+              1,
+              'hb-query-resolver',
+            ],
+          },
+          expected: [
+            'hc-naming',
+            'hb-query-resolver',
+          ],
+        },
+        {
+          override: {
+            skillNames: [
+              null,
+              {
+                skillName: 'hc-naming',
+              },
+              [
+                'hc-naming',
+              ],
+            ],
+          },
+          expected: [],
+        },
+      ]
+
+      test.each(cases)('skillNames: $override.skillNames', ({ override, expected }) => {
+        const manifestFile = SkillsManifestFile.create({
+          filePath: '/tmp/app/.hora/equip-skills.json',
+          installationPath: '.claude/skills',
+        })
+
+        jest.spyOn(manifestFile, 'load')
+          .mockReturnValue({
+            version: '0.0.1',
+            installations: {
+              '.claude/skills': {
+                skillNames: override.skillNames,
+              },
+            },
+          })
+
+        const received = manifestFile.loadSkillNames()
+
+        expect(received)
+          .toEqual(expected)
+      })
+    })
   })
 })
 
