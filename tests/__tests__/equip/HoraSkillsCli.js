@@ -1,3 +1,4 @@
+import fs from 'node:fs'
 import path from 'node:path'
 
 import HoraSkillsCli from '../../../lib/equip/HoraSkillsCli.js'
@@ -554,6 +555,48 @@ describe('HoraSkillsCli', () => {
 })
 
 describe('HoraSkillsCli', () => {
+  describe('.buildPathSteps()', () => {
+    describe('should be every step from the base path down to the target path', () => {
+      const cases = [
+        {
+          input: {
+            basePath: '/consumer',
+            targetPath: '/consumer/.claude/skills',
+          },
+          expected: [
+            '/consumer/.claude',
+            '/consumer/.claude/skills',
+          ],
+        },
+        {
+          input: {
+            basePath: '/consumer/.claude',
+            targetPath: '/consumer/.claude/skills',
+          },
+          expected: [
+            '/consumer/.claude/skills',
+          ],
+        },
+        {
+          input: {
+            basePath: '/consumer',
+            targetPath: '/consumer',
+          },
+          expected: [],
+        },
+      ]
+
+      test.each(cases)('targetPath: $input.targetPath', ({ input, expected }) => {
+        const received = HoraSkillsCli.buildPathSteps(input)
+
+        expect(received)
+          .toEqual(expected)
+      })
+    })
+  })
+})
+
+describe('HoraSkillsCli', () => {
   describe('#run()', () => {
     describe('should dispatch to the command', () => {
       const cases = [
@@ -758,6 +801,34 @@ describe('HoraSkillsCli', () => {
           .toHaveBeenCalledWith(expected)
         expect(received)
           .toBe(0)
+      })
+    })
+
+    describe('should install nothing when the installation directory is reached through a symbolic link', () => {
+      test('args: install', () => {
+        const cli = HoraSkillsCli.create({
+          args: [
+            'install',
+          ],
+          workingDirectoryPath: '/consumer',
+        })
+
+        jest.spyOn(cli, 'verifyTargetDirectoryPaths')
+          .mockReturnValue(1)
+
+        const installSpy = jest.spyOn(SkillsInstaller.prototype, 'install')
+          .mockReturnValue({
+            installedSkillNames: [],
+            removedSkillNames: [],
+          })
+
+        const received = cli.runInstall()
+
+        expect(received)
+          .toBe(1)
+        expect(installSpy)
+          .not
+          .toHaveBeenCalled()
       })
     })
   })
@@ -1069,6 +1140,325 @@ describe('HoraSkillsCli', () => {
 })
 
 describe('HoraSkillsCli', () => {
+  describe('#buildVerifiedBaseDirectoryPath()', () => {
+    describe('should be the working directory when no directory is given', () => {
+      const cases = [
+        {
+          input: {
+            args: [
+              'install',
+            ],
+          },
+          expected: '/consumer',
+        },
+        {
+          input: {
+            args: [
+              'uninstall',
+            ],
+          },
+          expected: '/consumer',
+        },
+      ]
+
+      test.each(cases)('args: $input.args', ({ input, expected }) => {
+        const cli = HoraSkillsCli.create({
+          args: input.args,
+          workingDirectoryPath: '/consumer',
+        })
+
+        const received = cli.buildVerifiedBaseDirectoryPath()
+
+        expect(received)
+          .toBe(expected)
+      })
+    })
+
+    describe('should be the given directory when one is given', () => {
+      const cases = [
+        {
+          input: {
+            args: [
+              'install',
+              '--dir',
+              'tools/skills',
+            ],
+          },
+          expected: '/consumer/tools/skills',
+        },
+        {
+          input: {
+            args: [
+              'install',
+              '--dir=/opt/skills',
+            ],
+          },
+          expected: '/opt/skills',
+        },
+      ]
+
+      test.each(cases)('args: $input.args', ({ input, expected }) => {
+        const cli = HoraSkillsCli.create({
+          args: input.args,
+          workingDirectoryPath: '/consumer',
+        })
+
+        const received = cli.buildVerifiedBaseDirectoryPath()
+
+        expect(received)
+          .toBe(path.normalize(expected))
+      })
+    })
+  })
+})
+
+describe('HoraSkillsCli', () => {
+  describe('#isSymbolicLink()', () => {
+    describe('should be what lstat tells of the path', () => {
+      const cases = [
+        {
+          override: {
+            isSymbolicLink: true,
+          },
+          expected: true,
+        },
+        {
+          override: {
+            isSymbolicLink: false,
+          },
+          expected: false,
+        },
+      ]
+
+      test.each(cases)('isSymbolicLink: $override.isSymbolicLink', ({ override, expected }) => {
+        const cli = HoraSkillsCli.create({
+          args: [
+            'install',
+          ],
+          workingDirectoryPath: '/consumer',
+        })
+
+        jest.spyOn(fs, 'lstatSync')
+          .mockReturnValue(
+            /** @type {*} */ ({
+              isSymbolicLink: () => override.isSymbolicLink,
+            })
+          )
+
+        const received = cli.isSymbolicLink({
+          filePath: '/consumer/.claude',
+        })
+
+        expect(received)
+          .toBe(expected)
+      })
+    })
+
+    describe('should be false when the path does not exist', () => {
+      test('filePath: /consumer/.claude', () => {
+        const cli = HoraSkillsCli.create({
+          args: [
+            'install',
+          ],
+          workingDirectoryPath: '/consumer',
+        })
+
+        jest.spyOn(fs, 'lstatSync')
+          .mockImplementation(() => {
+            throw new Error('ENOENT')
+          })
+
+        const received = cli.isSymbolicLink({
+          filePath: '/consumer/.claude',
+        })
+
+        expect(received)
+          .toBe(false)
+      })
+    })
+  })
+})
+
+describe('HoraSkillsCli', () => {
+  describe('#isReachedThroughSymbolicLink()', () => {
+    describe('should be true when any step of the path is a symbolic link', () => {
+      const cases = [
+        {
+          override: {
+            linkedPaths: [
+              '/consumer/.claude',
+            ],
+          },
+          expected: true,
+        },
+        {
+          override: {
+            linkedPaths: [
+              '/consumer/.claude/skills',
+            ],
+          },
+          expected: true,
+        },
+        {
+          override: {
+            linkedPaths: [],
+          },
+          expected: false,
+        },
+        {
+          override: {
+            linkedPaths: [
+              '/consumer/tools',
+            ],
+          },
+          expected: false,
+        },
+      ]
+
+      test.each(cases)('linkedPaths: $override.linkedPaths', ({ override, expected }) => {
+        const cli = HoraSkillsCli.create({
+          args: [
+            'install',
+          ],
+          workingDirectoryPath: '/consumer',
+        })
+
+        jest.spyOn(cli, 'isSymbolicLink')
+          .mockImplementation(({ filePath }) => override.linkedPaths.includes(filePath))
+
+        const received = cli.isReachedThroughSymbolicLink({
+          targetDirectoryPath: '/consumer/.claude/skills',
+        })
+
+        expect(received)
+          .toBe(expected)
+      })
+    })
+  })
+})
+
+describe('HoraSkillsCli', () => {
+  describe('#collectLinkedTargetDirectoryPaths()', () => {
+    describe('should be the installation directory when it is reached through a symbolic link', () => {
+      const cases = [
+        {
+          override: {
+            targetDirectoryPath: '/consumer/.claude/skills',
+            linkedTargetDirectoryPaths: [
+              '/consumer/.claude/skills',
+            ],
+          },
+          expected: [
+            '/consumer/.claude/skills',
+          ],
+        },
+        {
+          override: {
+            targetDirectoryPath: '/consumer/.claude/skills',
+            linkedTargetDirectoryPaths: [],
+          },
+          expected: [],
+        },
+      ]
+
+      test.each(cases)('linkedTargetDirectoryPaths: $override.linkedTargetDirectoryPaths', ({ override, expected }) => {
+        const cli = HoraSkillsCli.create({
+          args: [
+            'install',
+          ],
+          workingDirectoryPath: '/consumer',
+        })
+
+        jest.spyOn(cli, 'buildTargetDirectoryPath')
+          .mockReturnValue(override.targetDirectoryPath)
+        jest.spyOn(cli, 'isReachedThroughSymbolicLink')
+          .mockImplementation(({ targetDirectoryPath }) =>
+            override.linkedTargetDirectoryPaths.includes(targetDirectoryPath)
+          )
+
+        const received = cli.collectLinkedTargetDirectoryPaths()
+
+        expect(received)
+          .toEqual(expected)
+      })
+    })
+  })
+})
+
+describe('HoraSkillsCli', () => {
+  describe('#verifyTargetDirectoryPaths()', () => {
+    describe('should refuse an installation directory reached through a symbolic link', () => {
+      const cases = [
+        {
+          override: {
+            linkedTargetDirectoryPaths: [
+              '/consumer/.claude/skills',
+            ],
+          },
+          expected: [
+            '/consumer/.claude/skills is reached through a symbolic link.',
+            'Nothing was changed. Give --dir the directory it resolves to, or replace the link with a directory of its own.',
+          ],
+        },
+      ]
+
+      test.each(cases)('linkedTargetDirectoryPaths: $override.linkedTargetDirectoryPaths', ({ override, expected }) => {
+        const logger = {
+          log: jest.fn(),
+          error: jest.fn(),
+        }
+        const cli = HoraSkillsCli.create({
+          args: [
+            'install',
+          ],
+          workingDirectoryPath: '/consumer',
+          logger,
+        })
+
+        jest.spyOn(cli, 'collectLinkedTargetDirectoryPaths')
+          .mockReturnValue(override.linkedTargetDirectoryPaths)
+
+        const received = cli.verifyTargetDirectoryPaths()
+
+        expect(received)
+          .toBe(1)
+        expect(logger.error)
+          .toHaveBeenNthCalledWith(1, expected[0])
+        expect(logger.error)
+          .toHaveBeenNthCalledWith(2, expected[1])
+      })
+    })
+
+    describe('should pass when the installation directory is reached through none', () => {
+      test('linkedTargetDirectoryPaths: []', () => {
+        const logger = {
+          log: jest.fn(),
+          error: jest.fn(),
+        }
+        const cli = HoraSkillsCli.create({
+          args: [
+            'install',
+          ],
+          workingDirectoryPath: '/consumer',
+          logger,
+        })
+
+        jest.spyOn(cli, 'collectLinkedTargetDirectoryPaths')
+          .mockReturnValue([])
+
+        const received = cli.verifyTargetDirectoryPaths()
+
+        expect(received)
+          .toBe(0)
+        expect(logger.error)
+          .not
+          .toHaveBeenCalled()
+      })
+    })
+  })
+})
+
+describe('HoraSkillsCli', () => {
   describe('#runSelection()', () => {
     describe('should print each selected skill', () => {
       const cases = [
@@ -1210,6 +1600,33 @@ describe('HoraSkillsCli', () => {
           .toHaveBeenCalledWith(expected)
         expect(received)
           .toBe(0)
+      })
+    })
+
+    describe('should remove nothing when the installation directory is reached through a symbolic link', () => {
+      test('args: uninstall', () => {
+        const cli = HoraSkillsCli.create({
+          args: [
+            'uninstall',
+          ],
+          workingDirectoryPath: '/consumer',
+        })
+
+        jest.spyOn(cli, 'verifyTargetDirectoryPaths')
+          .mockReturnValue(1)
+
+        const uninstallSpy = jest.spyOn(SkillsInstaller.prototype, 'uninstall')
+          .mockReturnValue({
+            removedSkillNames: [],
+          })
+
+        const received = cli.runUninstall()
+
+        expect(received)
+          .toBe(1)
+        expect(uninstallSpy)
+          .not
+          .toHaveBeenCalled()
       })
     })
   })
