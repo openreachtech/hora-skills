@@ -30,6 +30,9 @@
     "url": "https://github.com/openreachtech/hora-skills/issues"
   },
   "homepage": "https://github.com/openreachtech/hora-skills#readme",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "dependencies": {
   },
   "devDependencies": {
