@@ -26,21 +26,19 @@ Requires Node.js 20.0.0 or newer, the floor `engines` declares. The CI builds ag
 npm install -D @openreachtech/hora-skills
 ```
 
-Installing this package is the request to equip the repository with its skills, so its `postinstall` places them into `.claude/skills/` for you.
-
-npm turns install scripts off by default from v12 on, and warns about them before that, so the hook only runs where you have allowed it. Add this package to the whitelist in your package.json:
+This package ships no install script of its own, so adding it as a dependency installs the package and places nothing. Declare the command as your own project's `postinstall`, and `npm install` alone equips the repository:
 
 ```json
 {
-  "allowScripts": {
-    "@openreachtech/hora-skills": true
+  "scripts": {
+    "postinstall": "hora-skills install"
   }
 }
 ```
 
-`npm install-scripts approve @openreachtech/hora-skills` writes the same entry, and `npm install-scripts ls` lists what is still waiting for a decision.
+A project's own scripts are outside what npm holds back from v12 on, so this asks nothing of whoever clones the repository. `npx` is not needed here either: a lifecycle script runs with `node_modules/.bin` on its PATH.
 
-Where you would rather not allow the hook, run the command yourself instead — it does exactly what the hook does:
+Where the skills are wanted once, or the repository is not yours to add a hook to, run the command yourself:
 
 ```sh
 npx hora-skills install
@@ -74,7 +72,7 @@ The command line wins over package.json, and both fall back to every domain.
 
 `.claude/`, and the `skills/` directory inside it, have to be directories of your repository rather than symbolic links. An installation verifies every step it is reached through, and finding a link at any of them it writes nothing and removes nothing. `.hora/equip-skills.json`, the record of what was installed, is verified the same way: a link there would send the write to whatever it stands for and overwrite it.
 
-The hook keeps `npm install` successful whether or not the skills arrive, and npm shows nothing a script that succeeded printed. Where the skills are missing, `npx hora-skills install` is what tells you why.
+An installation that carries nothing says why and ends with a failing exit code. Where the command runs as your project's own `postinstall`, that is what `npm install` reports; run on its own, `npx hora-skills install` tells you the same.
 
 A link is content of the repository rather than an instruction of whoever runs the command, so following one would let the repository decide where skills are written and, worse, where the skills of the previous run are removed from.
 
@@ -91,7 +89,7 @@ The installed skills are this package's build output rather than source of your 
 .hora/
 ```
 
-Updating this package re-runs the hook, so the skills follow along. Without the hook, run the command again yourself:
+Updating this package re-runs your project's `postinstall`, so the skills follow along. Without a hook, run the command again yourself:
 
 ```sh
 npx hora-skills install
