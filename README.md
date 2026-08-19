@@ -6,13 +6,13 @@ A distribution package of Claude Code skills for developing with Hora Kit.
 
 This package ships **skills only** — there is no library to `import`, and the one executable it carries exists to install those skills. A skill is a directory holding a `SKILL.md`, plus optional `references/` and `scripts/`, that Claude Code loads and invokes as `/<name>`. Installing this package into a repository puts the conventions and procedures Open Reach Tech develops with in front of the agent working on that repository.
 
-108 skills are distributed across three domains. The two-character prefix on every name is the domain, so a reader looking at one flat list of skills can tell at a glance which came from this package and where each belongs:
+110 skills are distributed across three domains. The two-character prefix on every name is the domain, so a reader looking at one flat list of skills can tell at a glance which came from this package and where each belongs:
 
 | Prefix | Domain | Skills | What it holds |
 | :-- | :-- | --: | :-- |
 | `hc-` | `core` | 34 | Conventions and procedures that apply to any project, regardless of stack |
-| `hb-` | `backend` | 29 | renchan-based Node backends |
-| `hf-` | `frontend` | 45 | Furo/Nuxt apps |
+| `hb-` | `backend` | 30 | renchan-based Node backends |
+| `hf-` | `frontend` | 46 | Furo/Nuxt apps |
 
 [**Skill catalog**](https://github.com/openreachtech/hora-skills/blob/main/docs/skills.md) ([日本語](https://github.com/openreachtech/hora-skills/blob/main/docs/skills.ja.md)) — every skill in this package with a one- or two-line summary, listed by the command name it is invoked by.
 
@@ -52,7 +52,7 @@ The skills land in your repository's `.claude/skills/`. Claude Code discovers th
 
 ### Selecting domains
 
-Every domain installs by default. A repository with only a backend then pays for the 45 frontend skills on every turn, because Claude Code keeps the name and description of each installed skill in context. Narrow the selection by domain:
+Every domain installs by default. A repository with only a backend then pays for the 46 frontend skills on every turn, because Claude Code keeps the name and description of each installed skill in context. Narrow the selection by domain:
 
 ```sh
 npx hora-skills install --domains core,backend
