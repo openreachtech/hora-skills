@@ -96,8 +96,9 @@ concluding that a change is not in the history.
   `Update files`, and `Address feedback` describe a working session; they tell a later reader
   nothing about what the tree now does differently. (The one deliberate exception is the
   branch-opening marker below, which carries no changes at all.)
-- Do not record **process or provenance** in the message: no "as requested", no "per review
-  comment", no tool attribution.
+- Do not record **how the change came to be asked for**: no "as requested", no "per review
+  comment", no tool attribution. Where the content itself came from is a different matter — that
+  belongs in the subject wherever it is part of what the work is.
 
 ### The branch-opening marker commit
 
