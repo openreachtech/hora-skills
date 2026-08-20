@@ -290,7 +290,13 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   - `Remove` reads the same whether a whole file went or one line inside it did — `Purge` and
     `Kick out` split exactly that, and `Delete` is `Remove`'s twin in this.
   - `Create` leaves open whether a class, one of its members, or something else arrived, which
-    `Declare`, `Define` and `Add` settle between them.
+    `Declare`, `Define` and `Add` settle between them. `Make` is `Create`'s twin, and
+    `Make changes to syntax` is what it comes to.
+- **The table carries no `Refine` either.** It claims the thing got better without saying what
+  changed, so the reader is left with the writer's satisfaction and nothing else. Whatever the
+  improvement was, a listed verb names it: the wording redone is `Retake`, the formatting
+  straightened is `Tidy up`, the order put right is `Rearrange`, the thing itself carried
+  forward is `Update`.
 - **The table carries no `Migrate`.** Carrying content in from elsewhere is bracketed by the
   branch, not repeated on every commit: the marker names the origin once — `Start migrating the
   mail templates from lunas-ec-cart-backend` — and each commit inside then says what kind of
@@ -307,10 +313,14 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   does. Reaching instead for `Add`, or for `Kick out`, would describe an edit to `package.json`,
   which is merely where the fact is written down. A version change to a dependency already
   installed is `Update`.
-- **A restriction lifted is `Allow`, never a negative.** `Don't disable the action button when
-  the competition is completed` describes a state the code should hold; a subject describes a
-  transition. `Allow the action button when the competition is completed` says the same change,
-  and it completes *"Applying this commit will …"*, which a negative cannot.
+- **A subject describes a transition, never a state.** `Don't disable the action button when
+  the competition is completed` describes a state the code should hold; `Allow the action button
+  when the competition is completed` says the same change as a transition, and it completes
+  *"Applying this commit will …"*, which a negative cannot. So a restriction lifted is `Allow`,
+  never a negative.
+  - **This is why `Put` is not in the table.** `Put the settings at the bottom` names where
+    things sit once the commit is applied, not what the commit did. What it did was
+    `Rearrange`, or `Move`, or `Add`, and one of those three always fits.
 - **`Turn on` and `Turn off` name the switch, not what it permits.** `Turn off
   jsdoc/require-jsdoc for tests in eslint.config.js` says which setting moved; `Allow` and
   `Prevent` name the behavior that is now open or closed. Where both would be true, the switch
