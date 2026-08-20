@@ -246,8 +246,9 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   subject leaves open whether the logic landed somewhere or went away.
 - **`Install` and `Uninstall` name the dependency, not the file that records it.** `Install
   date-fns 4.1.0` and `Uninstall date-fns` say what the project now depends on, or no longer
-  does. `Add` and `Kick out` would describe editing `package.json`, which is merely where the
-  fact is written down. A version change to a dependency already installed is `Update`.
+  does. Reaching instead for `Add`, or for `Kick out`, would describe an edit to `package.json`,
+  which is merely where the fact is written down. A version change to a dependency already
+  installed is `Update`.
 - **A restriction lifted is `Allow`, never a negative.** `Don't disable the action button when
   the competition is completed` describes a state the code should hold; a subject describes a
   transition. `Allow the action button when the competition is completed` says the same change,
