@@ -23,9 +23,9 @@ Two consequences follow.
 If an accurate subject line needs the word "and", the commit is two commits.
 
 ```
-Bad:  Add LockEmployeeSignInInputValidator and fix unrelated JSDoc typo
+Bad:  Add LockEmployeeSignInInputValidator and tidy up an unrelated JSDoc typo
 Good: Add LockEmployeeSignInInputValidator
-      Fix JSDoc of EmployeeSignInMutationResolver#resolve()
+      Tidy up the JSDoc of EmployeeSignInMutationResolver#resolve()
 ```
 
 The same applies to a subject that reaches for a vague umbrella noun to cover several

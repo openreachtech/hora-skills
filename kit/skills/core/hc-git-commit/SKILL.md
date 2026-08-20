@@ -242,6 +242,10 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
     parameter of every public function renamed to `it` — the tree does the same thing before
     and after, and a reviewer confirms exactly that. One identifier renamed on its own merits
     is `Rename`; a sweep that makes a whole surface uniform is a tidy-up.
+  - **A type that was wrong over code that was right is a tidy-up, never a `Fix`.** The
+    implementation is what the tree runs, and it was doing its job; only the annotation beside
+    it was mistaken. `Fix` would say the behavior had been wrong, and a later reader could not
+    then tell that subject apart from one that repaired a real defect.
   - **Reordering is `Tidy up` only among items of one kind.** Declarations, cases, entries,
     imports — putting a set of peers into order changes nothing. Reordering control flow does:
     two `if` statements swapped is a behavior change wearing the clothes of a tidy-up, and it
@@ -334,7 +338,7 @@ With the class name attached, write it as `SampleClass#extractValue()` or
 
 ```
 Update BaseRestfulApiLauncher#extendRequestHooks() to return fulfilled hooks
-Fix JSDoc of BaseRestfulApiLauncher.get:ResponseBodyParser
+Tidy up the JSDoc of BaseRestfulApiLauncher.get:ResponseBodyParser
 ```
 
 This is the same notation used throughout documentation and error messages; see the
