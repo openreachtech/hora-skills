@@ -194,6 +194,7 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
 | `Kick out` | a part deleted from a file that stays — an entry, a rule, a field |
 | `Tidy up` | a place brought into order, where nothing was removed and no behavior changed |
 | `Update` | an existing thing given something it did not give before, contract untouched |
+| `Retake` | an existing thing redone because what was there was poor, hurried, or a stopgap |
 | `Fix` | incorrect behavior corrected |
 | `Rename` | identifier changed, behavior untouched |
 | `Move` | relocation between files or directories, content untouched |
@@ -228,6 +229,11 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   `Tidy up the environment files` — and covers stale naming, leftover duplication and disorder,
   where naming each micro-change on its own would be noise. When the cleanup *is* a removal, the
   verb is `Purge` or `Kick out`, however the branch that carries it happens to be named.
+- **`Update` and `Retake` split on what was there before.** `Update` carries a sound
+  implementation forward and leaves it giving something it did not give before — the gain is the
+  point. `Retake` replaces what was poor, hurried or a stopgap with what should have been there,
+  and claims no gain beyond that. Neither is `Fix`: that one is for behavior that was wrong,
+  where `Retake` is for an implementation that worked and was not good enough.
 - **The table carries no `Remove` or `Delete`** for that reason: both read the same whether a
   whole file went or one line inside it did, so the subject alone leaves the reader guessing.
   Splitting the word is what makes the difference visible in `git log`.
