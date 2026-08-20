@@ -37,8 +37,9 @@ Good: Add validator for employee sign-in
 
 ## Verbs
 
-The verb comes from the shared table in `SKILL.md`. Choose the one that names what actually
-happened — a precise verb often removes the need for a body.
+Where the shared table in `SKILL.md` fixes a verb's role, the subject uses that verb. Where the
+table fixes none for what happened, any verb that names it accurately will do — a precise verb
+often removes the need for a body.
 
 - Prefer the specific verb over `Update`. `Update BaseFormElementClerk` says almost nothing;
   `Rename VariablesValidator to ValueHashValidator in BaseFormElementClerk` says all of it.

@@ -102,7 +102,8 @@ concluding that a change is not in the history.
 ### The branch-opening marker commit
 
 A branch that will act as a trunk opens with an **empty commit** whose subject begins with
-`Start`. This is a deliberate convention, not a checkpoint or a placeholder.
+`Start` — or with `Release`, on a `release/x.x.x` trunk. This is a deliberate convention, not a
+checkpoint or a placeholder.
 
 ```bash
 # opening a long-lived dev branch
@@ -141,6 +142,8 @@ git commit --allow-empty -m 'Start updating the domains a repository selects'
   - A **general branch acting as a trunk** states the work it will carry — `Start adding the
     skills installer`, `Start renaming kit/skills/_core/ to core/`. A later reader scanning the
     log gets the branch's purpose for free.
+  - A **`release/x.x.x` trunk** is opened by its version alone: `Release 0.2.0`. The word
+    `Start` does not appear, because the version is the whole of what is being started.
 - **The marker takes no type prefix, in either message format.** Repositories on Conventional
   Commits write `Start dev`, not `chore: start dev`. The marker sits outside the format.
 
@@ -175,6 +178,13 @@ A subject opens with a verb naming what actually happened. The vocabulary is the
 message formats — capitalized on the imperative format, lowercase after the type on
 Conventional Commits.
 
+**The table below lists the verbs whose role is fixed, not the verbs a subject may use.** A row
+is there because choosing the wrong verb would lose something a later reader needs — whether a
+file survived, whether a class or one of its members was written, whether a constraint went one
+way or the other. Where a listed verb names what happened, it is the one to use, and no synonym
+substitutes for it. Where nothing listed names it, open the subject with the verb that does:
+`Document`, `Name`, `Point`, `Follow` and their like fix no such distinction and need no row.
+
 | verb | use for |
 | :-- | :-- |
 | `Add` | a new file, member, case, or capability that did not exist |
@@ -182,6 +192,7 @@ Conventional Commits.
 | `Define` | a class member, function, or constant written for the first time |
 | `Purge` | a whole file deleted, with nothing replacing it |
 | `Kick out` | a part deleted from a file that stays — an entry, a rule, a field |
+| `Tidy up` | a place brought into order, where nothing was removed and no behavior changed |
 | `Update` | an existing thing changed, without a change in contract |
 | `Fix` | incorrect behavior corrected |
 | `Rename` | identifier changed, behavior untouched |
@@ -192,7 +203,9 @@ Conventional Commits.
 | `Use` | switching to a different existing mechanism |
 | `Allow` / `Prevent` | a constraint loosened or tightened |
 | `Export` | public surface changed |
+| `Install` / `Uninstall` | a dependency the project takes on, or gives up |
 | `Start` | **empty** branch-opening marker only — see above |
+| `Release` | **empty** marker opening a `release/x.x.x` trunk only — see above |
 | `Merge` | **merge commits only** — see above |
 
 - **`Declare` is for the class itself; `Define` is for what is written inside or beside it** —
@@ -211,9 +224,17 @@ Conventional Commits.
   `Purge tests/legacy/OldValidator.js`. `Kick out` takes the shape `Kick out <what> from
   <where>`, because the point is that `<where>` is still there without `<what>` —
   `Kick out main: from package.json`. The pair mirrors `Declare` and `Define`.
+- **`Tidy up` is the cleanup that is not a removal.** It takes the shape `Tidy up <where>` —
+  `Tidy up the environment files` — and covers stale naming, leftover duplication and disorder,
+  where naming each micro-change on its own would be noise. When the cleanup *is* a removal, the
+  verb is `Purge` or `Kick out`, however the branch that carries it happens to be named.
 - **The table carries no `Remove` or `Delete`** for that reason: both read the same whether a
   whole file went or one line inside it did, so the subject alone leaves the reader guessing.
   Splitting the word is what makes the difference visible in `git log`.
+- **`Install` and `Uninstall` name the dependency, not the file that records it.** `Install
+  date-fns 4.1.0` and `Uninstall date-fns` say what the project now depends on, or no longer
+  does. `Add` and `Kick out` would describe editing `package.json`, which is merely where the
+  fact is written down. A version change to a dependency already installed is `Update`.
 - **A restriction lifted is `Allow`, never a negative.** `Don't disable the action button when
   the competition is completed` describes a state the code should hold; a subject describes a
   transition. `Allow the action button when the competition is completed` says the same change,
