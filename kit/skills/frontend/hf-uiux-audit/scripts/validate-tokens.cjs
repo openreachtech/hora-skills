@@ -58,8 +58,8 @@ const CHECKS = [
   },
 ]
 
-function walk (t
-  arget,
+function walk (
+  target,
   files
 ) {
   const stat = fs.statSync(target)
