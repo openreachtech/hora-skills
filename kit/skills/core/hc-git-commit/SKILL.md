@@ -432,6 +432,15 @@ documentation convention.
 
 - Do not add attribution trailers (`Co-authored-by:`, `Generated-with:`, and similar) unless
   the project explicitly asks for them.
+- **A change that forces callers to follow takes a `BREAKING CHANGE:` trailer**, and there the
+  body stops being optional: name what a caller relied on, and what it has to do instead. The
+  test is whether code that passed against the old surface still passes — a parameter added
+  without a default, a return value narrowed, a member gone. A surface widened compatibly is
+  not this.
+  - **The trailer carries it in either format.** A subject has room for what changed, not for
+    what it costs, and breakage is found with `git log --grep='BREAKING CHANGE'` rather than by
+    scanning subjects. Conventional Commits marks the subject as well, with `!` before the
+    colon; the imperative format adds no mark, and needs none.
 
 ### Each commit stands alone
 
