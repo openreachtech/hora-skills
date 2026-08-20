@@ -194,6 +194,7 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
 | `Add` | a new file, member, case, or capability that did not exist |
 | `Declare` | a class written for the first time |
 | `Define` | a class member, function, or constant written for the first time |
+| `Fulfill` | a gap filled where something was declared but left short — a TODO, an unset option |
 | `Purge` | a whole file or folder deleted, with nothing replacing it |
 | `Kick out` | a part deleted from what stays — a class member, a section, an entry, a field |
 | `Tidy up` | a place brought into order, where nothing was removed and no behavior changed |
@@ -247,11 +248,19 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   its own, such as a test case or a manifest entry. Whether the change breaks a caller is marked
   by the format rather than the verb — Conventional Commits writes `!` with a `BREAKING CHANGE:`
   trailer.
+- **`Fulfill` fills a gap that was already there; `Add` brings something that was not.** A test
+  left as a TODO, a JSDoc block without its `@returns`, an option a rule was never given, a
+  `package.json` field left blank — the place existed and was short, and the commit makes it
+  whole. Where what is covered is itself new, its tests arrive with it and that is `Add`.
+  Nothing is replaced either way, which is what separates `Fulfill` from `Update`, and nothing
+  was wrong, which separates it from `Fix`. An option that was set and then moved is `Adjust`;
+  an option that was never set is `Fulfill`.
 - **`Add` covers a whole new thing and a part added to one that stands.** A test file that did
-  not exist and one more case inside a file that did are both `Add`. Addition is deliberately
-  left unsplit: no pair divides it the way `Purge` and `Kick out` divide deletion, because none
-  is needed — the subject names the thing added either way, and nothing a later reader wants is
-  hidden by the choice. Do not invent a verb for the partial case.
+  not exist and one more case inside a file that did are both `Add`, so long as what they cover
+  is itself new — coverage that was owed is `Fulfill`. Addition is deliberately left unsplit: no
+  pair divides it the way `Purge` and `Kick out` divide deletion, because none is needed — the
+  subject names the thing added either way, and nothing a later reader wants is hidden by the
+  choice. Do not invent a verb for the partial case.
 
   Nor reach for `Update` there. An item added inside something else is still an addition: `Add`
   names what appeared, where `Update` names only the thing it appeared in. The more telling verb
