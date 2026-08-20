@@ -302,6 +302,18 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   mail templates from lunas-ec-cart-backend` — and each commit inside then says what kind of
   thing arrived, `Declare` or `Define` or `Add`. A subject reading `Migrate BaseInputValidator`
   says less than `Declare BaseInputValidator` does, and the origin it gestures at is nowhere.
+- **A verb that names the purpose is not a verb that names the change.** `Keep`, `Tell` and
+  `Point` read as precise and each spans several operations, so a reader is left with the
+  writer's aim and no way to know what was done.
+  - `Keep` covers a requirement the code was short of (`Fulfill`), a rule that had not existed
+    before (`Prevent`), and a passage newly written (`Add`) — one verb over three commits a
+    reader needs to tell apart.
+  - `Tell` covers the ground of `Fulfill`, where the reader was short of something, and of
+    `Add`, where the statement is new.
+  - `Point` covers `Retake` where a passage was replaced, `Update` where it gained, and `Use`
+    where a reference in code moved to another mechanism.
+  - `Optimize` and `Retake` name a motive as well, and keep their rows because the motive
+    settles which operation it was rather than standing in for it.
 - **`Extract` leaves the logic in the tree, in a home of its own.** The call site stays and
   delegates to what was pulled out, which is what separates it from `Purge` and `Kick out` —
   nothing was deleted. Relocating something intact is `Move`; `Extract` makes a new home out of
