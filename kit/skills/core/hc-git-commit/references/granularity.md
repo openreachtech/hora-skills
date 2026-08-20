@@ -63,9 +63,10 @@ consequence.
 - A change and the **type annotations or JSDoc that describe it**. A signature and its
   documented contract are one decision; splitting them leaves a commit whose documentation
   contradicts its code.
-- A change and whatever is **required for the tree to stay lint-clean and coherent** at that
-  commit. If splitting would produce a commit that does not build, the split is in the wrong
-  place — find a different seam rather than committing a broken intermediate state.
+- A change and whatever is **required for the commit to hold together on its own** at that
+  point. If splitting would produce a commit that refers to something that is not there yet —
+  a call to a member the next commit defines, an import of a file it adds — the split is in the
+  wrong place. Find a different seam rather than committing the dangling reference.
   - **A seam is not only a line between files. An order is a seam too.** One breaking order
     proves nothing about the rest: the same change split the other way round often passes
     through every intermediate state intact. Before concluding that no seam exists, reverse the
@@ -123,5 +124,6 @@ git diff              # confirm what is being left for the next commit
 - **Typo-fix follow-ups on unpushed work.** A `Fix typo` commit immediately after the commit
   that introduced the typo is noise. Fold it in with `git commit --amend` — but only while
   the commit is **unpushed**. Once pushed, a separate fix commit is correct.
-- **Splitting past the point of coherence.** A commit that does not build so that the "one
-  decision" rule could be honored more purely has traded a real property for a cosmetic one.
+- **Splitting past the point of coherence.** A commit left referring to what is not there yet,
+  so that the "one decision" rule could be honored more purely, has traded a real property for
+  a cosmetic one.
