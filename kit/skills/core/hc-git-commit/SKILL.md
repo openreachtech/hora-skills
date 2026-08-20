@@ -195,6 +195,7 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
 | `Declare` | a class written for the first time |
 | `Define` | a class member, function, or constant written for the first time |
 | `Author` | an AI element written for the first time — a skill, an agent, a command |
+| `Build` | markup written for the first time — a component, a page, an HTML skeleton |
 | `Fulfill` | a gap filled where something was declared but left short — a TODO, an unset option |
 | `Purge` | a whole file or folder deleted, with nothing replacing it |
 | `Kick out` | a part deleted from what stays — a class member, a section, an entry, a field |
@@ -235,6 +236,13 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   `Author scribe skill`. Like `Declare` and `Define` it is a specific form of `Add`, and where
   it applies `Add` is the vaguer choice. Editing one that already exists is not `Author` — that
   is `Update`, `Fulfill` or `Tidy up`, whichever names what was done.
+- **`Build` is the `Declare` of markup.** A component, a page, the HTML skeleton of one:
+  `Build TalkroomMessage component`, `Build HTML skeleton for pages/settings/security.vue`. It
+  is the fourth of the family — `Declare` for a class, `Define` for a member, `Author` for an
+  AI element, `Build` for markup — and each is a specific form of `Add`. **It never means
+  running a build.** `npm run build` produces output, and output is not what a subject
+  announces; a commit that changed the build's configuration changed a config, and takes the
+  verb for that.
 - **`Purge` and `Kick out` split on what survives.** `Purge` is for a file or a folder that is
   gone whole — `Purge tests/legacy/OldValidator.js`, `Purge tests/legacy/`. `Kick out` takes the
   shape `Kick out <what> from <where>`, because the point is that `<where>` is still there
@@ -288,6 +296,11 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   Nor reach for `Update` there. An item added inside something else is still an addition: `Add`
   names what appeared, where `Update` names only the thing it appeared in. The more telling verb
   wins, as `Declare` and `Define` win over `Add` where they apply.
+- **A word that needs several of these verbs to say what it covered is too vague for a row.**
+  That is the test every exclusion below comes from: name the operations the word spans, and if
+  the answer is more than one, a reader of the subject cannot tell which happened. It is not
+  about how the word feels — `Refine` and `Apply` feel precise and span four verbs each, where
+  `Purge` feels blunt and spans exactly one.
 - **`Change`, `Remove` and `Create` are the ambiguous trio, and the table carries none of
   them.** Each is broad enough to cover whatever happened, so the subject narrows nothing, and
   each has specific verbs here to be narrowed into.
@@ -308,6 +321,22 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   mail templates from lunas-ec-cart-backend` — and each commit inside then says what kind of
   thing arrived, `Declare` or `Define` or `Add`. A subject reading `Migrate BaseInputValidator`
   says less than `Declare BaseInputValidator` does, and the origin it gestures at is nowhere.
+- **The subject names the thing that changed, not the thing that was brought to it.** This is
+  why the table carries no `Apply`. `Apply flex layout to main-container` puts the layout in the
+  object and leaves `main-container` — the thing that is now different — in a trailing phrase.
+  And the word spans four verbs: enabling a module is `Install` or `Turn on`, switching to
+  another mechanism is `Use`, evening out the spacing is `Tidy up`, and
+  `Apply respective change to the branch-number usage` is the umbrella noun that
+  [granularity.md](./references/granularity.md) already turns away.
+- **The table carries no `Replace`.** It spans `Use`, where one mechanism gave way to another,
+  and `Retake` or `Update`, where a passage of prose did. It also invites a subject that names
+  only what was dropped — `Replace SCSS variables` says nothing about what stands there now,
+  where `Use CSS custom properties instead of SCSS variables` says both and puts the surviving
+  mechanism first.
+- **The table carries no `Implement` or `Enhance`.** Both name a whole feature's worth of work,
+  which is the scale of a Conventional Commits type and of a branch, not of one commit. A
+  repository on that format writes `feat`, and a trunk-scale branch is named `implement/xxx`;
+  the commits inside are finer than either, and each takes the verb for what it did.
 - **A verb that names the purpose is not a verb that names the change.** `Keep`, `Tell` and
   `Point` read as precise and each spans several operations, so a reader is left with the
   writer's aim and no way to know what was done.
