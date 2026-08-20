@@ -235,6 +235,11 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   point. `Retake` replaces what was poor, hurried or a stopgap with what should have been there,
   and claims no gain beyond that. Neither is `Fix`: that one is for behavior that was wrong,
   where `Retake` is for an implementation that worked and was not good enough.
+- **`Add` covers a whole new thing and a part added to one that stands.** A test file that did
+  not exist and one more case inside a file that did are both `Add`. Addition is deliberately
+  left unsplit: no pair divides it the way `Purge` and `Kick out` divide deletion, because none
+  is needed — the subject names the thing added either way, and nothing a later reader wants is
+  hidden by the choice. Do not invent a verb for the partial case.
 - **The table carries no `Remove` or `Delete`.** Both read the same whether a whole file went
   or one line inside it did, so the subject alone leaves the reader guessing. Splitting the word
   into two is what makes the difference visible in `git log`.
