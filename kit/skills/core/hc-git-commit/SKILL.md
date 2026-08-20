@@ -237,6 +237,15 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   `Tidy up the environment files` — and covers stale naming, leftover duplication and disorder,
   where naming each micro-change on its own would be noise. When the cleanup *is* a removal, the
   verb is `Purge` or `Kick out`, however the branch that carries it happens to be named.
+  - **The test is that no responsibility moves.** A typo in a comment or a type, a formatting
+    correction, a blank line added or taken out, declarations put into dictionary order, the
+    parameter of every public function renamed to `it` — the tree does the same thing before
+    and after, and a reviewer confirms exactly that. One identifier renamed on its own merits
+    is `Rename`; a sweep that makes a whole surface uniform is a tidy-up.
+  - **Reordering is `Tidy up` only among items of one kind.** Declarations, cases, entries,
+    imports — putting a set of peers into order changes nothing. Reordering control flow does:
+    two `if` statements swapped is a behavior change wearing the clothes of a tidy-up, and it
+    takes the verb its behavior deserves.
 - **`Update` and `Retake` split on what was there before.** `Update` carries a sound
   implementation forward and leaves it giving something it did not give before — the gain is the
   point. `Retake` replaces what was poor, hurried or a stopgap with what should have been there,
