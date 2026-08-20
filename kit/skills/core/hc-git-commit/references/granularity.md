@@ -106,7 +106,6 @@ git diff              # confirm what is being left for the next commit
   scratch files, editor artifacts, and `.env` variants are picked up this way.
 - When hunks for two decisions are interleaved in the same file, stage the first, commit, and
   then stage the second. `git add -p` splits hunks with `s` and edits them with `e`.
-- Verify the split before committing: each commit should pass lint on its own.
 
 ## Anti-patterns
 
