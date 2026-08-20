@@ -102,7 +102,8 @@ concluding that a change is not in the history.
 ### The branch-opening marker commit
 
 A branch that will act as a trunk opens with an **empty commit** whose subject begins with
-`Start`. This is a deliberate convention, not a checkpoint or a placeholder.
+`Start` — or with `Release`, on a `release/x.x.x` trunk. This is a deliberate convention, not a
+checkpoint or a placeholder.
 
 ```bash
 # opening a long-lived dev branch
@@ -141,6 +142,8 @@ git commit --allow-empty -m 'Start updating the domains a repository selects'
   - A **general branch acting as a trunk** states the work it will carry — `Start adding the
     skills installer`, `Start renaming kit/skills/_core/ to core/`. A later reader scanning the
     log gets the branch's purpose for free.
+  - A **`release/x.x.x` trunk** is opened by its version alone: `Release 0.2.0`. The word
+    `Start` does not appear, because the version is the whole of what is being started.
 - **The marker takes no type prefix, in either message format.** Repositories on Conventional
   Commits write `Start dev`, not `chore: start dev`. The marker sits outside the format.
 
@@ -202,6 +205,7 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
 | `Export` | public surface changed |
 | `Install` / `Uninstall` | a dependency the project takes on, or gives up |
 | `Start` | **empty** branch-opening marker only — see above |
+| `Release` | **empty** marker opening a `release/x.x.x` trunk only — see above |
 | `Merge` | **merge commits only** — see above |
 
 - **`Declare` is for the class itself; `Define` is for what is written inside or beside it** —
