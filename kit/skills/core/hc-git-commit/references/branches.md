@@ -34,7 +34,7 @@ The shape of the name settles nothing. `release/x.x.x` is a trunk and
 - **A trunk is where work arrives, not where work is done.** Nothing is committed to a trunk
   directly: cut a branch for the change, commit it there, and merge it back. This holds for a
   general branch from the moment it takes the role, and it holds on a trunk whose only commit so
-  far is its own `Start …` marker — a trunk with nothing on it yet is still not a place to work.
+  far is its own opening marker — a trunk with nothing on it yet is still not a place to work.
   - The exceptions are the two commits a trunk makes about itself rather than about the work:
     the marker that opens it, and the `Merge …` commit that brings a sub-branch in. Both are
     described in `SKILL.md`, and neither carries a change of its own.
