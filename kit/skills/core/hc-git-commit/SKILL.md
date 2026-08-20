@@ -195,6 +195,7 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
 | `Declare` | a class written for the first time |
 | `Define` | a class member, function, or constant written for the first time |
 | `Author` | an AI element written for the first time — a skill, an agent, a command |
+| `Build` | markup written for the first time — a component, a page, an HTML skeleton |
 | `Fulfill` | a gap filled where something was declared but left short — a TODO, an unset option |
 | `Purge` | a whole file or folder deleted, with nothing replacing it |
 | `Kick out` | a part deleted from what stays — a class member, a section, an entry, a field |
@@ -235,6 +236,13 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   `Author scribe skill`. Like `Declare` and `Define` it is a specific form of `Add`, and where
   it applies `Add` is the vaguer choice. Editing one that already exists is not `Author` — that
   is `Update`, `Fulfill` or `Tidy up`, whichever names what was done.
+- **`Build` is the `Declare` of markup.** A component, a page, the HTML skeleton of one:
+  `Build TalkroomMessage component`, `Build HTML skeleton for pages/settings/security.vue`. It
+  is the fourth of the family — `Declare` for a class, `Define` for a member, `Author` for an
+  AI element, `Build` for markup — and each is a specific form of `Add`. **It never means
+  running a build.** `npm run build` produces output, and output is not what a subject
+  announces; a commit that changed the build's configuration changed a config, and takes the
+  verb for that.
 - **`Purge` and `Kick out` split on what survives.** `Purge` is for a file or a folder that is
   gone whole — `Purge tests/legacy/OldValidator.js`, `Purge tests/legacy/`. `Kick out` takes the
   shape `Kick out <what> from <where>`, because the point is that `<where>` is still there
