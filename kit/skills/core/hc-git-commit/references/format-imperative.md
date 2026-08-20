@@ -43,7 +43,8 @@ often removes the need for a body.
 
 - Prefer the specific verb over `Update`. `Update BaseFormElementClerk` says almost nothing;
   `Rename VariablesValidator to ValueHashValidator in BaseFormElementClerk` says all of it.
-- `Change` and `Modify` are almost always the wrong verb — some more precise verb applies.
+- `Modify` is almost always the wrong verb — some more precise verb applies. `Change` is ruled
+  out outright, with the rest of the ambiguous trio, in the table itself.
 
 ## Naming the target
 
