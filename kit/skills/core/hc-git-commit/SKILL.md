@@ -328,6 +328,11 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   another mechanism is `Use`, evening out the spacing is `Tidy up`, and
   `Apply respective change to the branch-number usage` is the umbrella noun that
   [granularity.md](./references/granularity.md) already turns away.
+- **The table carries no `Replace`.** It spans `Use`, where one mechanism gave way to another,
+  and `Retake` or `Update`, where a passage of prose did. It also invites a subject that names
+  only what was dropped — `Replace SCSS variables` says nothing about what stands there now,
+  where `Use CSS custom properties instead of SCSS variables` says both and puts the surviving
+  mechanism first.
 - **A verb that names the purpose is not a verb that names the change.** `Keep`, `Tell` and
   `Point` read as precise and each spans several operations, so a reader is left with the
   writer's aim and no way to know what was done.
