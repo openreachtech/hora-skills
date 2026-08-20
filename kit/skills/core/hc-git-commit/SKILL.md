@@ -321,6 +321,13 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   mail templates from lunas-ec-cart-backend` — and each commit inside then says what kind of
   thing arrived, `Declare` or `Define` or `Add`. A subject reading `Migrate BaseInputValidator`
   says less than `Declare BaseInputValidator` does, and the origin it gestures at is nowhere.
+- **The subject names the thing that changed, not the thing that was brought to it.** This is
+  why the table carries no `Apply`. `Apply flex layout to main-container` puts the layout in the
+  object and leaves `main-container` — the thing that is now different — in a trailing phrase.
+  And the word spans four verbs: enabling a module is `Install` or `Turn on`, switching to
+  another mechanism is `Use`, evening out the spacing is `Tidy up`, and
+  `Apply respective change to the branch-number usage` is the umbrella noun that
+  [granularity.md](./references/granularity.md) already turns away.
 - **A verb that names the purpose is not a verb that names the change.** `Keep`, `Tell` and
   `Point` read as precise and each spans several operations, so a reader is left with the
   writer's aim and no way to know what was done.
