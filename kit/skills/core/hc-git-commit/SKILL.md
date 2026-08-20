@@ -259,6 +259,11 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
 - **The table carries no `Remove` or `Delete`.** Both read the same whether a whole file went
   or one line inside it did, so the subject alone leaves the reader guessing. Splitting the word
   into two is what makes the difference visible in `git log`.
+- **The table carries no `Migrate`.** Carrying content in from elsewhere is bracketed by the
+  branch, not repeated on every commit: the marker names the origin once — `Start migrating the
+  mail templates from lunas-ec-cart-backend` — and each commit inside then says what kind of
+  thing arrived, `Declare` or `Define` or `Add`. A subject reading `Migrate BaseInputValidator`
+  says less than `Declare BaseInputValidator` does, and the origin it gestures at is nowhere.
 - **`Extract` leaves the logic in the tree, in a home of its own.** The call site stays and
   delegates to what was pulled out, which is what separates it from `Purge` and `Kick out` —
   nothing was deleted. Relocating something intact is `Move`; `Extract` makes a new home out of
