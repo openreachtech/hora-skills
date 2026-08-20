@@ -333,6 +333,10 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   only what was dropped — `Replace SCSS variables` says nothing about what stands there now,
   where `Use CSS custom properties instead of SCSS variables` says both and puts the surviving
   mechanism first.
+- **The table carries no `Implement` or `Enhance`.** Both name a whole feature's worth of work,
+  which is the scale of a Conventional Commits type and of a branch, not of one commit. A
+  repository on that format writes `feat`, and a trunk-scale branch is named `implement/xxx`;
+  the commits inside are finer than either, and each takes the verb for what it did.
 - **A verb that names the purpose is not a verb that names the change.** `Keep`, `Tell` and
   `Point` read as precise and each spans several operations, so a reader is left with the
   writer's aim and no way to know what was done.
