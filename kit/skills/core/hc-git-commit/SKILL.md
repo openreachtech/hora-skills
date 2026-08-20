@@ -373,6 +373,11 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   `Prevent` name the behavior that is now open or closed. Where both would be true, the switch
   is the more telling of the two, because a reader can go and find it. A value that moved along
   a scale is neither: that one is `Adjust`.
+  - **`Enable` and `Disable` are not in the table**, and for a different reason than the vague
+    words: each spans exactly one verb, which is `Turn on` and `Turn off`. A synonym of a
+    listed verb costs nothing to write and costs a reader twice — the history splits between
+    two spellings of one event, and whoever searches it for when a rule went off has to know
+    both.
 - **A setting changes in three degrees, and each has its own verb.** `Turn on` and `Turn off`
   flip the switch. `Adjust` moves the dial while the switch stays where it is — `Adjust MaxFiles
   to 20 in <config>`, `Adjust max-len to 120 in eslint.config.js`. `Update` is for the setting
