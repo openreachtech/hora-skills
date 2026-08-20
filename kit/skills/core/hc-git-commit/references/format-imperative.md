@@ -19,7 +19,7 @@ The message format used when a project resolves to `imperative`. Referenced from
 Export FormElementInspector via main-export
 Add correctness checks reference for code-review skill
 Rename VariablesValidator variable name to ValueHashValidator in BaseFormElementClerk
-Fix JSDoc of BaseRestfulApiLauncher.get:ResponseBodyParser
+Tidy up the JSDoc of BaseRestfulApiLauncher.get:ResponseBodyParser
 Allow the action button when the competition is completed
 Add `dist/` to .gitignore
 ```
@@ -37,20 +37,22 @@ Good: Add validator for employee sign-in
 
 ## Verbs
 
-The verb comes from the shared table in `SKILL.md`. Choose the one that names what actually
-happened — a precise verb often removes the need for a body.
+Where the shared table in `SKILL.md` fixes a verb's role, the subject uses that verb. Where the
+table fixes none for what happened, any verb that names it accurately will do — a precise verb
+often removes the need for a body.
 
 - Prefer the specific verb over `Update`. `Update BaseFormElementClerk` says almost nothing;
   `Rename VariablesValidator to ValueHashValidator in BaseFormElementClerk` says all of it.
-- `Change` and `Modify` are almost always the wrong verb — some more precise verb applies.
+- `Modify` is almost always the wrong verb — some more precise verb applies. `Change` is ruled
+  out outright, with the rest of the ambiguous trio, in the table itself.
 
 ## Naming the target
 
 Name the concrete thing that changed, using the class-member notation given in `SKILL.md`.
 
 ```
-Bad:  Fix the launcher
-Good: Fix JSDoc of BaseRestfulApiLauncher.get:ResponseBodyParser
+Bad:  Tidy up the launcher
+Good: Tidy up the JSDoc of BaseRestfulApiLauncher.get:ResponseBodyParser
 
 Bad:  Update tests
 Good: Update test for BaseRestfulApiLauncher#extendRequestHooks()

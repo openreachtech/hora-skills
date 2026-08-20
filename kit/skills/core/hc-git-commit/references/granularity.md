@@ -23,9 +23,9 @@ Two consequences follow.
 If an accurate subject line needs the word "and", the commit is two commits.
 
 ```
-Bad:  Add LockEmployeeSignInInputValidator and fix unrelated JSDoc typo
+Bad:  Add LockEmployeeSignInInputValidator and tidy up an unrelated JSDoc typo
 Good: Add LockEmployeeSignInInputValidator
-      Fix JSDoc of EmployeeSignInMutationResolver#resolve()
+      Tidy up the JSDoc of EmployeeSignInMutationResolver#resolve()
 ```
 
 The same applies to a subject that reaches for a vague umbrella noun to cover several
@@ -58,14 +58,43 @@ Registering a new artifact in an index or export barrel is its own commit as wel
 class and exporting it are two decisions, and the export is the one with a public-surface
 consequence.
 
+**A class's tests are committed before its implementation.** The order is what makes the split
+worth having: the test commit states what the class is expected to do, and the implementation
+commit is the one that makes the statement true. Committed the other way round, the tests only
+confirm what already worked, and there is no commit at which the claim stands on its own to be
+reviewed. This is test-driven development written into the history rather than into the editor.
+
 ## What to keep together
 
 - A change and the **type annotations or JSDoc that describe it**. A signature and its
   documented contract are one decision; splitting them leaves a commit whose documentation
   contradicts its code.
-- A change and whatever is **required for the tree to stay lint-clean and coherent** at that
-  commit. If splitting would produce a commit that does not build, the split is in the wrong
-  place — find a different seam rather than committing a broken intermediate state.
+- A change and whatever is **required for the commit to hold together on its own** at that
+  point. If splitting would produce a commit that refers to something that is not there yet —
+  a call to a member the next commit defines, an import of a file it adds — the split is in the
+  wrong place. Find a different seam rather than committing the dangling reference.
+  - **A seam is not only a line between files. An order is a seam too.** One breaking order
+    proves nothing about the rest: the same change split the other way round often passes
+    through every intermediate state intact. Before concluding that no seam exists, reverse the
+    order and try again.
+  - **Take a removal apart from the outside in** — the callers first, then the registration,
+    then the thing itself. Each step deletes something nothing else points at any more, so no
+    intermediate state refers to what is gone. Going the other way breaks at the first commit,
+    which is what makes a removal look unsplittable when it is not.
+  - Retiring a check that a CI workflow runs, an npm script registers, and a script file
+    implements is three commits, and taken in this order not one of them leaves a dangling
+    reference behind:
+
+    ```
+    Kick out the levers reference check from the CI workflow
+    Kick out check:levers from package.json
+    Purge scripts/check-levers.mjs
+    ```
+
+    The subjects come apart as cleanly as the commits do, because `SKILL.md` gives a removal
+    two verbs instead of one — `Kick out <what> from <where>` for the file that stays without
+    it, and `Purge <path>` for the file that goes. That pair is the tool for splitting one
+    removal across several commits; a single `Remove` would hide the seam it makes visible.
 - A rename and **every call site it touches**. Half a rename is a broken tree.
 
 ## Staging a mixed working tree
@@ -83,7 +112,6 @@ git diff              # confirm what is being left for the next commit
   scratch files, editor artifacts, and `.env` variants are picked up this way.
 - When hunks for two decisions are interleaved in the same file, stage the first, commit, and
   then stage the second. `git add -p` splits hunks with `s` and edits them with `e`.
-- Verify the split before committing: each commit should pass lint on its own.
 
 ## Anti-patterns
 
@@ -101,5 +129,6 @@ git diff              # confirm what is being left for the next commit
 - **Typo-fix follow-ups on unpushed work.** A `Fix typo` commit immediately after the commit
   that introduced the typo is noise. Fold it in with `git commit --amend` — but only while
   the commit is **unpushed**. Once pushed, a separate fix commit is correct.
-- **Splitting past the point of coherence.** A commit that does not build so that the "one
-  decision" rule could be honored more purely has traded a real property for a cosmetic one.
+- **Splitting past the point of coherence.** A commit left referring to what is not there yet,
+  so that the "one decision" rule could be honored more purely, has traded a real property for
+  a cosmetic one.
