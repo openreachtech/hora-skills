@@ -183,6 +183,13 @@ A subject opens with a verb naming what actually happened. The vocabulary is the
 message formats — capitalized on the imperative format, lowercase after the type on
 Conventional Commits.
 
+**A verb of two words joins into one where it sits in a single-token slot, and takes no hyphen
+in its place.** `Kick out`, `Tidy up`, `Turn on` and `Turn off` stay two words in a subject and
+become one before the slash of a branch name — `tidyup/the-environment-files` — and the same
+holds wherever a project puts this vocabulary in the `type:` slot of Conventional Commits rather
+than the types listed in [format-conventional.md](./references/format-conventional.md). The
+slash and the colon already end the token, so a hyphen inside it marks nothing.
+
 **The table below lists the verbs whose role is fixed, not the verbs a subject may use.** A row
 is there because choosing the wrong verb would lose something a later reader needs — whether a
 file survived, whether a class or one of its members was written, whether a constraint went one
