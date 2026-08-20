@@ -96,13 +96,15 @@ concluding that a change is not in the history.
   `Update files`, and `Address feedback` describe a working session; they tell a later reader
   nothing about what the tree now does differently. (The one deliberate exception is the
   branch-opening marker below, which carries no changes at all.)
-- Do not record **process or provenance** in the message: no "as requested", no "per review
-  comment", no tool attribution.
+- Do not record **how the change came to be asked for**: no "as requested", no "per review
+  comment", no tool attribution. Where the content itself came from is a different matter — that
+  belongs in the subject wherever it is part of what the work is.
 
 ### The branch-opening marker commit
 
 A branch that will act as a trunk opens with an **empty commit** whose subject begins with
-`Start`. This is a deliberate convention, not a checkpoint or a placeholder.
+`Start` — or with `Release`, on a `release/x.x.x` trunk. This is a deliberate convention, not a
+checkpoint or a placeholder.
 
 ```bash
 # opening a long-lived dev branch
@@ -141,6 +143,11 @@ git commit --allow-empty -m 'Start updating the domains a repository selects'
   - A **general branch acting as a trunk** states the work it will carry — `Start adding the
     skills installer`, `Start renaming kit/skills/_core/ to core/`. A later reader scanning the
     log gets the branch's purpose for free.
+  - A **`release/x.x.x` trunk** is opened by its version alone: `Release 0.2.0`. The word
+    `Start` does not appear, because the version is the whole of what is being started.
+  - **Where the work carries content in from elsewhere, the marker names the origin** — `Start
+    migrating the mail templates from lunas-ec-cart-backend`. Stated once here, it covers every
+    commit on the branch, and the merge commit keeps it in the history after the branch is gone.
 - **The marker takes no type prefix, in either message format.** Repositories on Conventional
   Commits write `Start dev`, not `chore: start dev`. The marker sits outside the format.
 
@@ -175,24 +182,41 @@ A subject opens with a verb naming what actually happened. The vocabulary is the
 message formats — capitalized on the imperative format, lowercase after the type on
 Conventional Commits.
 
+**The table below lists the verbs whose role is fixed, not the verbs a subject may use.** A row
+is there because choosing the wrong verb would lose something a later reader needs — whether a
+file survived, whether a class or one of its members was written, whether a constraint went one
+way or the other. Where a listed verb names what happened, it is the one to use, and no synonym
+substitutes for it. Where nothing listed names it, open the subject with the verb that does:
+`Name`, `Point`, `Follow`, `Keep` and their like fix no such distinction and need no row.
+
 | verb | use for |
 | :-- | :-- |
 | `Add` | a new file, member, case, or capability that did not exist |
 | `Declare` | a class written for the first time |
 | `Define` | a class member, function, or constant written for the first time |
-| `Purge` | a whole file deleted, with nothing replacing it |
-| `Kick out` | a part deleted from a file that stays — an entry, a rule, a field |
-| `Update` | an existing thing changed, without a change in contract |
+| `Author` | an AI element written for the first time — a skill, an agent, a command |
+| `Build` | markup written for the first time — a component, a page, an HTML skeleton |
+| `Fulfill` | a gap filled where something was declared but left short — a TODO, an unset option |
+| `Purge` | a whole file or folder deleted, with nothing replacing it |
+| `Kick out` | a part deleted from what stays — a class member, a section, an entry, a field |
+| `Tidy up` | a place brought into order, where nothing was removed and no behavior changed |
+| `Update` | an existing thing changed in itself, leaving it better than before |
+| `Retake` | an existing thing redone because what was there was poor, hurried, or a stopgap |
 | `Fix` | incorrect behavior corrected |
 | `Rename` | identifier changed, behavior untouched |
 | `Move` | relocation between files or directories, content untouched |
+| `Rearrange` | peers put into a different order — imports, declarations, cases, entries |
 | `Extract` | logic pulled out into its own member or module |
-| `Combine` | two members or modules folded into one |
+| `Unify` | two members or modules folded into one |
 | `Optimize` | a change made for speed, behavior untouched |
 | `Use` | switching to a different existing mechanism |
 | `Allow` / `Prevent` | a constraint loosened or tightened |
+| `Turn on` / `Turn off` | a switch flipped — a boolean, a lint rule, a feature flag |
+| `Adjust` | a dial moved — a threshold, a limit, the options of a rule that stays on |
 | `Export` | public surface changed |
+| `Install` / `Uninstall` | a dependency the project takes on, or gives up |
 | `Start` | **empty** branch-opening marker only — see above |
+| `Release` | **empty** marker opening a `release/x.x.x` trunk only — see above |
 | `Merge` | **merge commits only** — see above |
 
 - **`Declare` is for the class itself; `Define` is for what is written inside or beside it** —
@@ -207,21 +231,163 @@ Conventional Commits.
   Add tests for SkillsInstaller
   ```
 
-- **`Purge` and `Kick out` split on what survives.** `Purge` is for a file that is gone —
-  `Purge tests/legacy/OldValidator.js`. `Kick out` takes the shape `Kick out <what> from
-  <where>`, because the point is that `<where>` is still there without `<what>` —
+- **`Author` is the `Declare` of an AI element.** A skill, an agent, a command — whatever is
+  read by the agent rather than run by the application, and installs under `.claude/`:
+  `Author scribe skill`. Like `Declare` and `Define` it is a specific form of `Add`, and where
+  it applies `Add` is the vaguer choice. Editing one that already exists is not `Author` — that
+  is `Update`, `Fulfill` or `Tidy up`, whichever names what was done.
+- **`Build` is the `Declare` of markup.** A component, a page, the HTML skeleton of one:
+  `Build TalkroomMessage component`, `Build HTML skeleton for pages/settings/security.vue`. It
+  is the fourth of the family — `Declare` for a class, `Define` for a member, `Author` for an
+  AI element, `Build` for markup — and each is a specific form of `Add`. **It never means
+  running a build.** `npm run build` produces output, and output is not what a subject
+  announces; a commit that changed the build's configuration changed a config, and takes the
+  verb for that.
+- **`Purge` and `Kick out` split on what survives.** `Purge` is for a file or a folder that is
+  gone whole — `Purge tests/legacy/OldValidator.js`, `Purge tests/legacy/`. `Kick out` takes the
+  shape `Kick out <what> from <where>`, because the point is that `<where>` is still there
+  without `<what>` — a member of a class, a section of a document, an entry of a manifest:
   `Kick out main: from package.json`. The pair mirrors `Declare` and `Define`.
-- **The table carries no `Remove` or `Delete`** for that reason: both read the same whether a
-  whole file went or one line inside it did, so the subject alone leaves the reader guessing.
-  Splitting the word is what makes the difference visible in `git log`.
-- **A restriction lifted is `Allow`, never a negative.** `Don't disable the action button when
-  the competition is completed` describes a state the code should hold; a subject describes a
-  transition. `Allow the action button when the competition is completed` says the same change,
-  and it completes *"Applying this commit will …"*, which a negative cannot.
-- **`Start` and `Merge` are reserved** for the two commits that carry no change of their own —
-  the branch-opening marker and the merge commit, both described above. A change that folds two
-  things into one takes `Combine`, never `Merge`, so that a merge commit stays recognizable by
-  its subject alone.
+- **`Tidy up` is the cleanup that is not a removal.** It takes the shape `Tidy up <where>` —
+  `Tidy up the environment files` — and covers stale naming, leftover duplication and disorder,
+  where naming each micro-change on its own would be noise. When the cleanup *is* a removal, the
+  verb is `Purge` or `Kick out`, however the branch that carries it happens to be named.
+  - **The test is that no responsibility moves.** A typo in a comment or a type, a formatting
+    correction, a blank line added or taken out, the parameter of every public function renamed
+    to `it` — the tree does the same thing before and after, and a reviewer confirms exactly
+    that. One identifier renamed on its own merits is `Rename`; a sweep that makes a whole
+    surface uniform is a tidy-up.
+  - **A type that was wrong over code that was right is a tidy-up, never a `Fix`.** The
+    implementation is what the tree runs, and it was doing its job; only the annotation beside
+    it was mistaken. `Fix` would say the behavior had been wrong, and a later reader could not
+    then tell that subject apart from one that repaired a real defect.
+  - **Reordering has its own verb.** Putting a set of peers into a different order is
+    `Rearrange`, not a tidy-up: `Rearrange imports for vue/core alphabetically`.
+- **`Rearrange` moves peers, and only peers.** Imports, declarations, cases, entries — a set
+  whose members stand at the same level, where the order is a matter of reading and nothing
+  else. Reordering control flow is not this: two `if` statements swapped is a behavior change
+  wearing the clothes of an ordering, and it takes the verb its behavior deserves. Relocating
+  something to another file is `Move`; `Rearrange` never crosses a file.
+- **`Update` and `Retake` split on what was there before.** `Update` carries a sound
+  implementation forward and leaves it giving something it did not give before — the gain is the
+  point. `Retake` replaces what was poor, hurried or a stopgap with what should have been there,
+  and claims no gain beyond that. Neither is `Fix`: that one is for behavior that was wrong,
+  where `Retake` is for an implementation that worked and was not good enough.
+- **A member's inputs and outputs are `Update`'s ground.** A parameter it now takes, a return
+  value it now gives — the member itself is what changed. That a parameter is something which
+  appeared does not make it `Add`: addition takes `Add` where what appeared stands as an item of
+  its own, such as a test case or a manifest entry. Whether the change breaks a caller is marked
+  by the format rather than the verb — Conventional Commits writes `!` with a `BREAKING CHANGE:`
+  trailer.
+- **`Fulfill` fills a gap that was already there; `Add` brings something that was not.** A test
+  left as a TODO, a JSDoc block without its `@returns`, an option a rule was never given, a
+  `package.json` field left blank — the place existed and was short, and the commit makes it
+  whole. Where what is covered is itself new, its tests arrive with it and that is `Add`.
+  Nothing is replaced either way, which is what separates `Fulfill` from `Update`, and nothing
+  was wrong, which separates it from `Fix`. An option that was set and then moved is `Adjust`;
+  an option that was never set is `Fulfill`.
+- **`Add` covers a whole new thing and a part added to one that stands.** A test file that did
+  not exist and one more case inside a file that did are both `Add`, so long as what they cover
+  is itself new — coverage that was owed is `Fulfill`. Addition is deliberately left unsplit: no
+  pair divides it the way `Purge` and `Kick out` divide deletion, because none is needed — the
+  subject names the thing added either way, and nothing a later reader wants is hidden by the
+  choice. Do not invent a verb for the partial case.
+
+  Nor reach for `Update` there. An item added inside something else is still an addition: `Add`
+  names what appeared, where `Update` names only the thing it appeared in. The more telling verb
+  wins, as `Declare` and `Define` win over `Add` where they apply.
+- **A word that needs several of these verbs to say what it covered is too vague for a row.**
+  That is the test every exclusion below comes from: name the operations the word spans, and if
+  the answer is more than one, a reader of the subject cannot tell which happened. It is not
+  about how the word feels — `Refine` and `Apply` feel precise and span four verbs each, where
+  `Purge` feels blunt and spans exactly one.
+- **`Change`, `Remove` and `Create` are the ambiguous trio, and the table carries none of
+  them.** Each is broad enough to cover whatever happened, so the subject narrows nothing, and
+  each has specific verbs here to be narrowed into.
+  - `Change` fits wherever any of the others would. A subject opening with it has said only
+    that the tree is not what it was.
+  - `Remove` reads the same whether a whole file went or one line inside it did — `Purge` and
+    `Kick out` split exactly that, and `Delete` is `Remove`'s twin in this.
+  - `Create` leaves open whether a class, one of its members, or something else arrived, which
+    `Declare`, `Define` and `Add` settle between them. `Make` is `Create`'s twin, and
+    `Make changes to syntax` is what it comes to.
+- **The table carries no `Refine` either.** It claims the thing got better without saying what
+  changed, so the reader is left with the writer's satisfaction and nothing else. Whatever the
+  improvement was, a listed verb names it: the wording redone is `Retake`, the formatting
+  straightened is `Tidy up`, the order put right is `Rearrange`, the thing itself carried
+  forward is `Update`.
+- **The table carries no `Migrate`.** Carrying content in from elsewhere is bracketed by the
+  branch, not repeated on every commit: the marker names the origin once — `Start migrating the
+  mail templates from lunas-ec-cart-backend` — and each commit inside then says what kind of
+  thing arrived, `Declare` or `Define` or `Add`. A subject reading `Migrate BaseInputValidator`
+  says less than `Declare BaseInputValidator` does, and the origin it gestures at is nowhere.
+- **The subject names the thing that changed, not the thing that was brought to it.** This is
+  why the table carries no `Apply`. `Apply flex layout to main-container` puts the layout in the
+  object and leaves `main-container` — the thing that is now different — in a trailing phrase.
+  And the word spans four verbs: enabling a module is `Install` or `Turn on`, switching to
+  another mechanism is `Use`, evening out the spacing is `Tidy up`, and
+  `Apply respective change to the branch-number usage` is the umbrella noun that
+  [granularity.md](./references/granularity.md) already turns away.
+- **The table carries no `Replace`.** It spans `Use`, where one mechanism gave way to another,
+  and `Retake` or `Update`, where a passage of prose did. It also invites a subject that names
+  only what was dropped — `Replace SCSS variables` says nothing about what stands there now,
+  where `Use CSS custom properties instead of SCSS variables` says both and puts the surviving
+  mechanism first.
+- **The table carries no `Implement` or `Enhance`.** Both name a whole feature's worth of work,
+  which is the scale of a Conventional Commits type and of a branch, not of one commit. A
+  repository on that format writes `feat`, and a trunk-scale branch is named `implement/xxx`;
+  the commits inside are finer than either, and each takes the verb for what it did.
+- **A verb that names the purpose is not a verb that names the change.** `Keep`, `Tell` and
+  `Point` read as precise and each spans several operations, so a reader is left with the
+  writer's aim and no way to know what was done.
+  - `Keep` covers a requirement the code was short of (`Fulfill`), a rule that had not existed
+    before (`Prevent`), and a passage newly written (`Add`) — one verb over three commits a
+    reader needs to tell apart.
+  - `Tell` covers the ground of `Fulfill`, where the reader was short of something, and of
+    `Add`, where the statement is new.
+  - `Point` covers `Retake` where a passage was replaced, `Update` where it gained, and `Use`
+    where a reference in code moved to another mechanism.
+  - `Optimize` and `Retake` name a motive as well, and keep their rows because the motive
+    settles which operation it was rather than standing in for it.
+- **`Extract` leaves the logic in the tree, in a home of its own.** The call site stays and
+  delegates to what was pulled out, which is what separates it from `Purge` and `Kick out` —
+  nothing was deleted. Relocating something intact is `Move`; `Extract` makes a new home out of
+  part of an existing one, and `Unify` is the same operation run backwards. `Cut out` is not
+  in the table for the reason `Remove` and `Delete` are not: it reads as excision, so the
+  subject leaves open whether the logic landed somewhere or went away.
+- **`Install` and `Uninstall` name the dependency, not the file that records it.** `Install
+  date-fns 4.1.0` and `Uninstall date-fns` say what the project now depends on, or no longer
+  does. Reaching instead for `Add`, or for `Kick out`, would describe an edit to `package.json`,
+  which is merely where the fact is written down. A version change to a dependency already
+  installed is `Update`.
+- **A subject describes a transition, never a state.** `Don't disable the action button when
+  the competition is completed` describes a state the code should hold; `Allow the action button
+  when the competition is completed` says the same change as a transition, and it completes
+  *"Applying this commit will …"*, which a negative cannot. So a restriction lifted is `Allow`,
+  never a negative.
+  - **This is why `Put` is not in the table.** `Put the settings at the bottom` names where
+    things sit once the commit is applied, not what the commit did. What it did was
+    `Rearrange`, or `Move`, or `Add`, and one of those three always fits.
+- **`Turn on` and `Turn off` name the switch, not what it permits.** `Turn off
+  jsdoc/require-jsdoc for tests in eslint.config.js` says which setting moved; `Allow` and
+  `Prevent` name the behavior that is now open or closed. Where both would be true, the switch
+  is the more telling of the two, because a reader can go and find it. A value that moved along
+  a scale is neither: that one is `Adjust`.
+  - **`Enable` and `Disable` are not in the table**, and for a different reason than the vague
+    words: each spans exactly one verb, which is `Turn on` and `Turn off`. A synonym of a
+    listed verb costs nothing to write and costs a reader twice — the history splits between
+    two spellings of one event, and whoever searches it for when a rule went off has to know
+    both.
+- **A setting changes in three degrees, and each has its own verb.** `Turn on` and `Turn off`
+  flip the switch. `Adjust` moves the dial while the switch stays where it is — `Adjust MaxFiles
+  to 20 in <config>`, `Adjust max-len to 120 in eslint.config.js`. `Update` is for the setting
+  that changed in itself rather than in degree — `Update jest version to 30.4.2 in
+  package.json`. `Adjust` carries no direction: a dial is as properly turned down as up, which
+  is why `Update`'s gain does not apply to it.
+- **`Start`, `Release` and `Merge` are reserved** for the commits that carry no change of their
+  own — the two branch-opening markers and the merge commit, all described above. A change that
+  folds two things into one takes `Unify`, never `Merge`, so that a merge commit stays
+  recognizable by its subject alone.
 
 ### Referring to class members
 
@@ -244,7 +410,7 @@ With the class name attached, write it as `SampleClass#extractValue()` or
 
 ```
 Update BaseRestfulApiLauncher#extendRequestHooks() to return fulfilled hooks
-Fix JSDoc of BaseRestfulApiLauncher.get:ResponseBodyParser
+Tidy up the JSDoc of BaseRestfulApiLauncher.get:ResponseBodyParser
 ```
 
 This is the same notation used throughout documentation and error messages; see the
