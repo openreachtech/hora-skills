@@ -193,7 +193,7 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
 | `Purge` | a whole file or folder deleted, with nothing replacing it |
 | `Kick out` | a part deleted from what stays — a class member, a section, an entry, a field |
 | `Tidy up` | a place brought into order, where nothing was removed and no behavior changed |
-| `Update` | an existing thing changed in itself, leaving it better than before, contract untouched |
+| `Update` | an existing thing changed in itself, leaving it better than before |
 | `Retake` | an existing thing redone because what was there was poor, hurried, or a stopgap |
 | `Fix` | incorrect behavior corrected |
 | `Rename` | identifier changed, behavior untouched |
