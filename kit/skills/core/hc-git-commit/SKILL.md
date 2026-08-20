@@ -199,7 +199,7 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
 | `Rename` | identifier changed, behavior untouched |
 | `Move` | relocation between files or directories, content untouched |
 | `Extract` | logic pulled out into its own member or module |
-| `Combine` | two members or modules folded into one |
+| `Unify` | two members or modules folded into one |
 | `Optimize` | a change made for speed, behavior untouched |
 | `Use` | switching to a different existing mechanism |
 | `Allow` / `Prevent` | a constraint loosened or tightened |
@@ -250,7 +250,7 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
 - **`Extract` leaves the logic in the tree, in a home of its own.** The call site stays and
   delegates to what was pulled out, which is what separates it from `Purge` and `Kick out` —
   nothing was deleted. Relocating something intact is `Move`; `Extract` makes a new home out of
-  part of an existing one, and `Combine` is the same operation run backwards. `Cut out` is not
+  part of an existing one, and `Unify` is the same operation run backwards. `Cut out` is not
   in the table for the reason `Remove` and `Delete` are not: it reads as excision, so the
   subject leaves open whether the logic landed somewhere or went away.
 - **`Install` and `Uninstall` name the dependency, not the file that records it.** `Install
@@ -264,7 +264,7 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   and it completes *"Applying this commit will …"*, which a negative cannot.
 - **`Start` and `Merge` are reserved** for the two commits that carry no change of their own —
   the branch-opening marker and the merge commit, both described above. A change that folds two
-  things into one takes `Combine`, never `Merge`, so that a merge commit stays recognizable by
+  things into one takes `Unify`, never `Merge`, so that a merge commit stays recognizable by
   its subject alone.
 
 ### Referring to class members
