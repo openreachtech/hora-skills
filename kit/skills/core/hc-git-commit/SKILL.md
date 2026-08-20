@@ -2,10 +2,11 @@
 name: hc-git-commit
 description: >
   Conventions for git commits and the branches they land on. Covers the granularity of what
-  belongs in a single commit, the message format (imperative or Conventional Commits, chosen
-  per project), the verb vocabulary shared by both, and the trunk role with the subjects that
-  open and close a branch. Use before writing a commit message, before splitting a working
-  tree into commits, and before cutting or merging a branch.
+  belongs in a single commit, the message format (imperative or Conventional Commits), the
+  verb vocabulary shared by both, and the trunk role with the subjects that open and close a
+  branch. The commands that gate a commit belong to the workflows convention. Use before
+  writing a commit message, before splitting a working tree into commits, and before cutting
+  or merging a branch.
 ---
 
 # Git Commit
