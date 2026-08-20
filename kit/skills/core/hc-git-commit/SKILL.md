@@ -111,16 +111,29 @@ git commit --allow-empty -m 'Start dev'
 # opening a general branch that will carry sub-branches
 git switch -c feature/equip-tools-for-each-application
 git commit --allow-empty -m 'Start adding the skills installer'
+
+# opening a nested trunk: cut from the branch above, and carrying sub-branches of its own
+git switch -c update/the-domains-a-repository-selects
+git commit --allow-empty -m 'Start updating the domains a repository selects'
 ```
 
-- It must be **empty** (`--allow-empty`). Its purpose is to give a fresh branch a commit so a
-  pull request can be opened before any code exists. A `Start …` subject on a commit that
+- It must be **empty** (`--allow-empty`). It exists to put a commit on a branch that has no
+  work on it yet, so there is nothing for it to carry. A `Start …` subject on a commit that
   actually contains changes is not this convention — it is a mislabelled change.
 - It is the **first commit on the branch**, made immediately after branching.
-- **One per trunk, and none on a sub-branch.** The marker belongs to the branch the work will
-  travel through as a pull request. A branch cut from that one merges back locally instead, so
-  there is no pull request to open early and nothing for the marker to do. `Start` is not a
-  verb for resuming work mid-branch either.
+- **One per trunk, and none on a sub-branch.** The test is the branch's role: will other
+  branches be cut from this one and merged back into it? Where the answer is yes, the branch is
+  a trunk — that is what [branches.md](./references/branches.md) defines the word to mean, and
+  that definition is the whole of the condition.
+- **A nested trunk takes a marker of its own.** A general branch cut from `main` that then has
+  work split off it is a sub-branch and a trunk at once, and it is the trunk half the marker
+  answers to. Such a branch merges back locally, with no pull request anywhere in it, and it
+  still opens with `Start …`.
+- **Whether a pull request is ever opened decides nothing.** Where the merge does go through a
+  host, the marker buys a branch that can be reviewed before any code exists — but that is
+  something the commit makes possible, never the test for making one.
+- **`Start` is not a verb for resuming work mid-branch.** A branch already carrying commits has
+  nothing left to open.
 - The subject names **what is being started**, which depends on the kind of trunk.
   - A **trunk that is one by name** is named directly: a `dev` branch opens with `Start dev`.
     Here `dev` is the branch, not a placeholder word.
