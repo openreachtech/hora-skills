@@ -35,7 +35,6 @@ Procedural rules related to the development workflow.
   matched against the whole test path, not as literal paths, so a pattern selects every file it
   matches — unlike the eslint arguments above, which are paths.
 - Follow the git commit convention before writing a commit message, and before deciding how to split working-tree changes into commits. It resolves which message format the project uses and defines what belongs in a single commit.
-- Decide commit granularity **while working**, not once the tree is already dirty with several unrelated changes.
 
 ## Before completing implementation
 
