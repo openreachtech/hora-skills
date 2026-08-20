@@ -187,7 +187,7 @@ is there because choosing the wrong verb would lose something a later reader nee
 file survived, whether a class or one of its members was written, whether a constraint went one
 way or the other. Where a listed verb names what happened, it is the one to use, and no synonym
 substitutes for it. Where nothing listed names it, open the subject with the verb that does:
-`Document`, `Name`, `Point`, `Follow` and their like fix no such distinction and need no row.
+`Name`, `Point`, `Follow`, `Keep` and their like fix no such distinction and need no row.
 
 | verb | use for |
 | :-- | :-- |
