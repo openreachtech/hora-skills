@@ -203,6 +203,7 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
 | `Optimize` | a change made for speed, behavior untouched |
 | `Use` | switching to a different existing mechanism |
 | `Allow` / `Prevent` | a constraint loosened or tightened |
+| `Turn on` / `Turn off` | a switch flipped — a boolean, a lint rule, a feature flag |
 | `Export` | public surface changed |
 | `Install` / `Uninstall` | a dependency the project takes on, or gives up |
 | `Start` | **empty** branch-opening marker only — see above |
@@ -268,6 +269,12 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   the competition is completed` describes a state the code should hold; a subject describes a
   transition. `Allow the action button when the competition is completed` says the same change,
   and it completes *"Applying this commit will …"*, which a negative cannot.
+- **`Turn on` and `Turn off` name the switch, not what it permits.** `Turn off
+  jsdoc/require-jsdoc for tests in eslint.config.js` says which setting moved; `Allow` and
+  `Prevent` name the behavior that is now open or closed. Where both would be true, the switch
+  is the more telling of the two, because a reader can go and find it. A value that moved along
+  a scale is neither: `Update MaxFiles to 20 in <config>` — the setting stayed on, and only its
+  number changed.
 - **`Start`, `Release` and `Merge` are reserved** for the commits that carry no change of their
   own — the two branch-opening markers and the merge commit, all described above. A change that
   folds two things into one takes `Unify`, never `Merge`, so that a merge commit stays
