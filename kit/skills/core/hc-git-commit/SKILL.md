@@ -313,10 +313,14 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   does. Reaching instead for `Add`, or for `Kick out`, would describe an edit to `package.json`,
   which is merely where the fact is written down. A version change to a dependency already
   installed is `Update`.
-- **A restriction lifted is `Allow`, never a negative.** `Don't disable the action button when
-  the competition is completed` describes a state the code should hold; a subject describes a
-  transition. `Allow the action button when the competition is completed` says the same change,
-  and it completes *"Applying this commit will …"*, which a negative cannot.
+- **A subject describes a transition, never a state.** `Don't disable the action button when
+  the competition is completed` describes a state the code should hold; `Allow the action button
+  when the competition is completed` says the same change as a transition, and it completes
+  *"Applying this commit will …"*, which a negative cannot. So a restriction lifted is `Allow`,
+  never a negative.
+  - **This is why `Put` is not in the table.** `Put the settings at the bottom` names where
+    things sit once the commit is applied, not what the commit did. What it did was
+    `Rearrange`, or `Move`, or `Add`, and one of those three always fits.
 - **`Turn on` and `Turn off` name the switch, not what it permits.** `Turn off
   jsdoc/require-jsdoc for tests in eslint.config.js` says which setting moved; `Allow` and
   `Prevent` name the behavior that is now open or closed. Where both would be true, the switch
