@@ -83,6 +83,11 @@ consequence.
     Kick out check:levers from package.json
     Purge scripts/check-levers.mjs
     ```
+
+    The subjects come apart as cleanly as the commits do, because `SKILL.md` gives a removal
+    two verbs instead of one — `Kick out <what> from <where>` for the file that stays without
+    it, and `Purge <path>` for the file that goes. That pair is the tool for splitting one
+    removal across several commits; a single `Remove` would hide the seam it makes visible.
 - A rename and **every call site it touches**. Half a rename is a broken tree.
 
 ## Staging a mixed working tree
