@@ -288,6 +288,11 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   Nor reach for `Update` there. An item added inside something else is still an addition: `Add`
   names what appeared, where `Update` names only the thing it appeared in. The more telling verb
   wins, as `Declare` and `Define` win over `Add` where they apply.
+- **A word that needs several of these verbs to say what it covered is too vague for a row.**
+  That is the test every exclusion below comes from: name the operations the word spans, and if
+  the answer is more than one, a reader of the subject cannot tell which happened. It is not
+  about how the word feels — `Refine` and `Apply` feel precise and span four verbs each, where
+  `Purge` feels blunt and spans exactly one.
 - **`Change`, `Remove` and `Create` are the ambiguous trio, and the table carries none of
   them.** Each is broad enough to cover whatever happened, so the subject narrows nothing, and
   each has specific verbs here to be narrowed into.
