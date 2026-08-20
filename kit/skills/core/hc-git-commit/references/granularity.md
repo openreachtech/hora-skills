@@ -74,6 +74,15 @@ consequence.
     then the thing itself. Each step deletes something nothing else points at any more, so no
     intermediate state refers to what is gone. Going the other way breaks at the first commit,
     which is what makes a removal look unsplittable when it is not.
+  - Retiring a check that a CI workflow runs, an npm script registers, and a script file
+    implements is three commits, and taken in this order not one of them leaves a dangling
+    reference behind:
+
+    ```
+    Kick out the levers reference check from the CI workflow
+    Kick out check:levers from package.json
+    Purge scripts/check-levers.mjs
+    ```
 - A rename and **every call site it touches**. Half a rename is a broken tree.
 
 ## Staging a mixed working tree
