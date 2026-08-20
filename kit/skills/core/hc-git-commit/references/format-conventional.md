@@ -23,8 +23,8 @@ The message format used when a project resolves to `conventional`. Referenced fr
 
 A colon before the first space separates the type from the summary. Every other colon in a
 subject belongs to the class-member notation, where it always follows `#` or `.`:
-`fix: correct JSDoc of BaseRestfulApiLauncher.get:ResponseBodyParser` carries one of each. The
-two never collide — one opens the subject, the other sits inside a member name.
+`docs: tidy up the JSDoc of BaseRestfulApiLauncher.get:ResponseBodyParser` carries one of each.
+The two never collide — one opens the subject, the other sits inside a member name.
 
 ```
 feat: add LockEmployeeSignInInputValidator for employee sign-in validation
