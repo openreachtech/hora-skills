@@ -25,6 +25,10 @@ The shape of the name settles nothing. `release/x.x.x` is a trunk and
 - **Trunks nest.** A general branch cut from `main` that then has work split off it is both: a
   sub-branch of `main`, and the trunk of what it carries. The role is held against a particular
   branch, never held outright.
+  - **Each half brings its own obligations, and neither cancels the other.** Being a trunk, the
+    branch opens with the `Start …` marker described in `SKILL.md`; being a sub-branch, it
+    merges back into `main` once it is done. That the merge is made locally, with no pull
+    request to open early, takes nothing away from the marker.
 - **A sub-branch merges back into its trunk, and a trunk never merges into what it carries.**
   That is the whole of what the role decides, and it decides it the same way at every level of
   the nesting.
