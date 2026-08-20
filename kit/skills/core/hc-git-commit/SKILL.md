@@ -203,6 +203,7 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
 | `Fix` | incorrect behavior corrected |
 | `Rename` | identifier changed, behavior untouched |
 | `Move` | relocation between files or directories, content untouched |
+| `Rearrange` | peers put into a different order — imports, declarations, cases, entries |
 | `Extract` | logic pulled out into its own member or module |
 | `Unify` | two members or modules folded into one |
 | `Optimize` | a change made for speed, behavior untouched |
@@ -238,18 +239,21 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   where naming each micro-change on its own would be noise. When the cleanup *is* a removal, the
   verb is `Purge` or `Kick out`, however the branch that carries it happens to be named.
   - **The test is that no responsibility moves.** A typo in a comment or a type, a formatting
-    correction, a blank line added or taken out, declarations put into dictionary order, the
-    parameter of every public function renamed to `it` — the tree does the same thing before
-    and after, and a reviewer confirms exactly that. One identifier renamed on its own merits
-    is `Rename`; a sweep that makes a whole surface uniform is a tidy-up.
+    correction, a blank line added or taken out, the parameter of every public function renamed
+    to `it` — the tree does the same thing before and after, and a reviewer confirms exactly
+    that. One identifier renamed on its own merits is `Rename`; a sweep that makes a whole
+    surface uniform is a tidy-up.
   - **A type that was wrong over code that was right is a tidy-up, never a `Fix`.** The
     implementation is what the tree runs, and it was doing its job; only the annotation beside
     it was mistaken. `Fix` would say the behavior had been wrong, and a later reader could not
     then tell that subject apart from one that repaired a real defect.
-  - **Reordering is `Tidy up` only among items of one kind.** Declarations, cases, entries,
-    imports — putting a set of peers into order changes nothing. Reordering control flow does:
-    two `if` statements swapped is a behavior change wearing the clothes of a tidy-up, and it
-    takes the verb its behavior deserves.
+  - **Reordering has its own verb.** Putting a set of peers into a different order is
+    `Rearrange`, not a tidy-up: `Rearrange imports for vue/core alphabetically`.
+- **`Rearrange` moves peers, and only peers.** Imports, declarations, cases, entries — a set
+  whose members stand at the same level, where the order is a matter of reading and nothing
+  else. Reordering control flow is not this: two `if` statements swapped is a behavior change
+  wearing the clothes of an ordering, and it takes the verb its behavior deserves. Relocating
+  something to another file is `Move`; `Rearrange` never crosses a file.
 - **`Update` and `Retake` split on what was there before.** `Update` carries a sound
   implementation forward and leaves it giving something it did not give before — the gain is the
   point. `Retake` replaces what was poor, hurried or a stopgap with what should have been there,
