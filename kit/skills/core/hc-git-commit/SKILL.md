@@ -204,6 +204,7 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
 | `Use` | switching to a different existing mechanism |
 | `Allow` / `Prevent` | a constraint loosened or tightened |
 | `Turn on` / `Turn off` | a switch flipped — a boolean, a lint rule, a feature flag |
+| `Adjust` | a dial moved — a threshold, a limit, the options of a rule that stays on |
 | `Export` | public surface changed |
 | `Install` / `Uninstall` | a dependency the project takes on, or gives up |
 | `Start` | **empty** branch-opening marker only — see above |
@@ -273,8 +274,13 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   jsdoc/require-jsdoc for tests in eslint.config.js` says which setting moved; `Allow` and
   `Prevent` name the behavior that is now open or closed. Where both would be true, the switch
   is the more telling of the two, because a reader can go and find it. A value that moved along
-  a scale is neither: `Update MaxFiles to 20 in <config>` — the setting stayed on, and only its
-  number changed.
+  a scale is neither: that one is `Adjust`.
+- **A setting changes in three degrees, and each has its own verb.** `Turn on` and `Turn off`
+  flip the switch. `Adjust` moves the dial while the switch stays where it is — `Adjust MaxFiles
+  to 20 in <config>`, `Adjust max-len to 120 in eslint.config.js`. `Update` is for the setting
+  that changed in itself rather than in degree — `Update jest version to 30.4.2 in
+  package.json`. `Adjust` carries no direction: a dial is as properly turned down as up, which
+  is why `Update`'s gain does not apply to it.
 - **`Start`, `Release` and `Merge` are reserved** for the commits that carry no change of their
   own — the two branch-opening markers and the merge commit, all described above. A change that
   folds two things into one takes `Unify`, never `Merge`, so that a merge commit stays
