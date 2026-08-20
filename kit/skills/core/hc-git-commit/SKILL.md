@@ -292,6 +292,11 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   - `Create` leaves open whether a class, one of its members, or something else arrived, which
     `Declare`, `Define` and `Add` settle between them. `Make` is `Create`'s twin, and
     `Make changes to syntax` is what it comes to.
+- **The table carries no `Refine` either.** It claims the thing got better without saying what
+  changed, so the reader is left with the writer's satisfaction and nothing else. Whatever the
+  improvement was, a listed verb names it: the wording redone is `Retake`, the formatting
+  straightened is `Tidy up`, the order put right is `Rearrange`, the thing itself carried
+  forward is `Update`.
 - **The table carries no `Migrate`.** Carrying content in from elsewhere is bracketed by the
   branch, not repeated on every commit: the marker names the origin once — `Start migrating the
   mail templates from lunas-ec-cart-backend` — and each commit inside then says what kind of
