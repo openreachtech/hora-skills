@@ -268,11 +268,12 @@ documentation convention.
 
 ### Each commit stands alone
 
-- Every commit must leave the tree in a state that **passes lint**. Do not commit a known-
-  failing intermediate state and repair it in the next commit. See the workflows convention
-  for what must be run before completing work.
 - Order commits so that **no commit depends on a later one**. A reader checking out any single
   commit should find a coherent tree.
+- **What must pass before a commit is not settled here.** Which commands run before a commit,
+  and which before the work is called complete, belongs to the workflows convention. This one
+  settles what goes into a commit, how it is worded, and the order the commits land in — never
+  whether a command's result permits the commit.
 
 ## Granularity in one line
 
