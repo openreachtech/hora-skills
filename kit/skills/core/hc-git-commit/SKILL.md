@@ -334,7 +334,7 @@ With the class name attached, write it as `SampleClass#extractValue()` or
 
 ```
 Update BaseRestfulApiLauncher#extendRequestHooks() to return fulfilled hooks
-Fix JSDoc of BaseRestfulApiLauncher.get:ResponseBodyParser
+Tidy up the JSDoc of BaseRestfulApiLauncher.get:ResponseBodyParser
 ```
 
 This is the same notation used throughout documentation and error messages; see the

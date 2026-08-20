@@ -19,7 +19,7 @@ The message format used when a project resolves to `imperative`. Referenced from
 Export FormElementInspector via main-export
 Add correctness checks reference for code-review skill
 Rename VariablesValidator variable name to ValueHashValidator in BaseFormElementClerk
-Fix JSDoc of BaseRestfulApiLauncher.get:ResponseBodyParser
+Tidy up the JSDoc of BaseRestfulApiLauncher.get:ResponseBodyParser
 Allow the action button when the competition is completed
 Add `dist/` to .gitignore
 ```
@@ -50,8 +50,8 @@ often removes the need for a body.
 Name the concrete thing that changed, using the class-member notation given in `SKILL.md`.
 
 ```
-Bad:  Fix the launcher
-Good: Fix JSDoc of BaseRestfulApiLauncher.get:ResponseBodyParser
+Bad:  Tidy up the launcher
+Good: Tidy up the JSDoc of BaseRestfulApiLauncher.get:ResponseBodyParser
 
 Bad:  Update tests
 Good: Update test for BaseRestfulApiLauncher#extendRequestHooks()
