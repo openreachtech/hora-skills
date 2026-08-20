@@ -190,7 +190,7 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
 | `Add` | a new file, member, case, or capability that did not exist |
 | `Declare` | a class written for the first time |
 | `Define` | a class member, function, or constant written for the first time |
-| `Purge` | a whole file deleted, with nothing replacing it |
+| `Purge` | a whole file or folder deleted, with nothing replacing it |
 | `Kick out` | a part deleted from a file that stays — an entry, a rule, a field |
 | `Tidy up` | a place brought into order, where nothing was removed and no behavior changed |
 | `Update` | an existing thing given something it did not give before, contract untouched |
@@ -221,10 +221,11 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   Add tests for SkillsInstaller
   ```
 
-- **`Purge` and `Kick out` split on what survives.** `Purge` is for a file that is gone —
-  `Purge tests/legacy/OldValidator.js`. `Kick out` takes the shape `Kick out <what> from
-  <where>`, because the point is that `<where>` is still there without `<what>` —
-  `Kick out main: from package.json`. The pair mirrors `Declare` and `Define`.
+- **`Purge` and `Kick out` split on what survives.** `Purge` is for a file or a folder that is
+  gone whole — `Purge tests/legacy/OldValidator.js`, `Purge tests/legacy/`. `Kick out` takes the
+  shape `Kick out <what> from <where>`, because the point is that `<where>` is still there
+  without `<what>` — `Kick out main: from package.json`. The pair mirrors `Declare` and
+  `Define`.
 - **`Tidy up` is the cleanup that is not a removal.** It takes the shape `Tidy up <where>` —
   `Tidy up the environment files` — and covers stale naming, leftover duplication and disorder,
   where naming each micro-change on its own would be noise. When the cleanup *is* a removal, the
