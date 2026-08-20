@@ -190,8 +190,8 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
 | `Add` | a new file, member, case, or capability that did not exist |
 | `Declare` | a class written for the first time |
 | `Define` | a class member, function, or constant written for the first time |
-| `Purge` | a whole file deleted, with nothing replacing it |
-| `Kick out` | a part deleted from a file that stays — an entry, a rule, a field |
+| `Purge` | a whole file or folder deleted, with nothing replacing it |
+| `Kick out` | a part deleted from what stays — a class member, a section, an entry, a field |
 | `Tidy up` | a place brought into order, where nothing was removed and no behavior changed |
 | `Update` | an existing thing given something it did not give before, contract untouched |
 | `Retake` | an existing thing redone because what was there was poor, hurried, or a stopgap |
@@ -221,9 +221,10 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   Add tests for SkillsInstaller
   ```
 
-- **`Purge` and `Kick out` split on what survives.** `Purge` is for a file that is gone —
-  `Purge tests/legacy/OldValidator.js`. `Kick out` takes the shape `Kick out <what> from
-  <where>`, because the point is that `<where>` is still there without `<what>` —
+- **`Purge` and `Kick out` split on what survives.** `Purge` is for a file or a folder that is
+  gone whole — `Purge tests/legacy/OldValidator.js`, `Purge tests/legacy/`. `Kick out` takes the
+  shape `Kick out <what> from <where>`, because the point is that `<where>` is still there
+  without `<what>` — a member of a class, a section of a document, an entry of a manifest:
   `Kick out main: from package.json`. The pair mirrors `Declare` and `Define`.
 - **`Tidy up` is the cleanup that is not a removal.** It takes the shape `Tidy up <where>` —
   `Tidy up the environment files` — and covers stale naming, leftover duplication and disorder,
@@ -245,8 +246,9 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   subject leaves open whether the logic landed somewhere or went away.
 - **`Install` and `Uninstall` name the dependency, not the file that records it.** `Install
   date-fns 4.1.0` and `Uninstall date-fns` say what the project now depends on, or no longer
-  does. `Add` and `Kick out` would describe editing `package.json`, which is merely where the
-  fact is written down. A version change to a dependency already installed is `Update`.
+  does. Reaching instead for `Add`, or for `Kick out`, would describe an edit to `package.json`,
+  which is merely where the fact is written down. A version change to a dependency already
+  installed is `Update`.
 - **A restriction lifted is `Allow`, never a negative.** `Don't disable the action button when
   the competition is completed` describes a state the code should hold; a subject describes a
   transition. `Allow the action button when the competition is completed` says the same change,
