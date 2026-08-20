@@ -66,6 +66,28 @@ consequence.
 - A change and whatever is **required for the tree to stay lint-clean and coherent** at that
   commit. If splitting would produce a commit that does not build, the split is in the wrong
   place — find a different seam rather than committing a broken intermediate state.
+  - **A seam is not only a line between files. An order is a seam too.** One breaking order
+    proves nothing about the rest: the same change split the other way round often passes
+    through every intermediate state intact. Before concluding that no seam exists, reverse the
+    order and try again.
+  - **Take a removal apart from the outside in** — the callers first, then the registration,
+    then the thing itself. Each step deletes something nothing else points at any more, so no
+    intermediate state refers to what is gone. Going the other way breaks at the first commit,
+    which is what makes a removal look unsplittable when it is not.
+  - Retiring a check that a CI workflow runs, an npm script registers, and a script file
+    implements is three commits, and taken in this order not one of them leaves a dangling
+    reference behind:
+
+    ```
+    Kick out the levers reference check from the CI workflow
+    Kick out check:levers from package.json
+    Purge scripts/check-levers.mjs
+    ```
+
+    The subjects come apart as cleanly as the commits do, because `SKILL.md` gives a removal
+    two verbs instead of one — `Kick out <what> from <where>` for the file that stays without
+    it, and `Purge <path>` for the file that goes. That pair is the tool for splitting one
+    removal across several commits; a single `Remove` would hide the seam it makes visible.
 - A rename and **every call site it touches**. Half a rename is a broken tree.
 
 ## Staging a mixed working tree
