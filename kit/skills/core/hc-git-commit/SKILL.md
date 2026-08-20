@@ -262,10 +262,10 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   the competition is completed` describes a state the code should hold; a subject describes a
   transition. `Allow the action button when the competition is completed` says the same change,
   and it completes *"Applying this commit will …"*, which a negative cannot.
-- **`Start` and `Merge` are reserved** for the two commits that carry no change of their own —
-  the branch-opening marker and the merge commit, both described above. A change that folds two
-  things into one takes `Unify`, never `Merge`, so that a merge commit stays recognizable by
-  its subject alone.
+- **`Start`, `Release` and `Merge` are reserved** for the commits that carry no change of their
+  own — the two branch-opening markers and the merge commit, all described above. A change that
+  folds two things into one takes `Unify`, never `Merge`, so that a merge commit stays
+  recognizable by its subject alone.
 
 ### Referring to class members
 
