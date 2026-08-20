@@ -96,8 +96,9 @@ concluding that a change is not in the history.
   `Update files`, and `Address feedback` describe a working session; they tell a later reader
   nothing about what the tree now does differently. (The one deliberate exception is the
   branch-opening marker below, which carries no changes at all.)
-- Do not record **process or provenance** in the message: no "as requested", no "per review
-  comment", no tool attribution.
+- Do not record **how the change came to be asked for**: no "as requested", no "per review
+  comment", no tool attribution. Where the content itself came from is a different matter — that
+  belongs in the subject wherever it is part of what the work is.
 
 ### The branch-opening marker commit
 
@@ -144,6 +145,9 @@ git commit --allow-empty -m 'Start updating the domains a repository selects'
     log gets the branch's purpose for free.
   - A **`release/x.x.x` trunk** is opened by its version alone: `Release 0.2.0`. The word
     `Start` does not appear, because the version is the whole of what is being started.
+  - **Where the work carries content in from elsewhere, the marker names the origin** — `Start
+    migrating the mail templates from lunas-ec-cart-backend`. Stated once here, it covers every
+    commit on the branch, and the merge commit keeps it in the history after the branch is gone.
 - **The marker takes no type prefix, in either message format.** Repositories on Conventional
   Commits write `Start dev`, not `chore: start dev`. The marker sits outside the format.
 
@@ -255,6 +259,11 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
 - **The table carries no `Remove` or `Delete`.** Both read the same whether a whole file went
   or one line inside it did, so the subject alone leaves the reader guessing. Splitting the word
   into two is what makes the difference visible in `git log`.
+- **The table carries no `Migrate`.** Carrying content in from elsewhere is bracketed by the
+  branch, not repeated on every commit: the marker names the origin once — `Start migrating the
+  mail templates from lunas-ec-cart-backend` — and each commit inside then says what kind of
+  thing arrived, `Declare` or `Define` or `Add`. A subject reading `Migrate BaseInputValidator`
+  says less than `Declare BaseInputValidator` does, and the origin it gestures at is nowhere.
 - **`Extract` leaves the logic in the tree, in a home of its own.** The call site stays and
   delegates to what was pulled out, which is what separates it from `Purge` and `Kick out` —
   nothing was deleted. Relocating something intact is `Move`; `Extract` makes a new home out of
