@@ -94,8 +94,9 @@ concluding that a change is not in the history.
     what the identifier already says. Cut the clause, not the identifier.
 - Describe **the change**, not the activity that produced it. `wip`, `save progress`,
   `Update files`, and `Address feedback` describe a working session; they tell a later reader
-  nothing about what the tree now does differently. (The one deliberate exception is the
-  branch-opening marker below, which carries no changes at all.)
+  nothing about what the tree now does differently. (Two commits are deliberate exceptions: the
+  branch-opening marker below, which carries no changes at all, and the throwaway save point in
+  [granularity.md](./references/granularity.md), which is deleted before anyone reads it.)
 - Do not record **how the change came to be asked for**: no "as requested", no "per review
   comment", no tool attribution. Where the content itself came from is a different matter — that
   belongs in the subject wherever it is part of what the work is.
