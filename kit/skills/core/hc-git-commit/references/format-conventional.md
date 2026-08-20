@@ -91,8 +91,9 @@ Related: `add` and `implement` are not two different things. Use `add`.
 
 ## Breaking changes
 
-A breaking change is marked with `!` before the colon, and explained in the body under a
-`BREAKING CHANGE:` trailer.
+A breaking change is marked with `!` before the colon. The `BREAKING CHANGE:` trailer that
+explains it, and the body it sits under, are required of both formats — `SKILL.md` states that
+rule, and this format adds the subject marker on top of it.
 
 ```
 feat(resolver)!: require clientMemberId on unlockClientMemberSignIn
