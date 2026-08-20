@@ -111,6 +111,10 @@ git commit --allow-empty -m 'Start dev'
 # opening a general branch that will carry sub-branches
 git switch -c feature/equip-tools-for-each-application
 git commit --allow-empty -m 'Start adding the skills installer'
+
+# opening a nested trunk: cut from the branch above, and carrying sub-branches of its own
+git switch -c update/the-domains-a-repository-selects
+git commit --allow-empty -m 'Start updating the domains a repository selects'
 ```
 
 - It must be **empty** (`--allow-empty`). It exists to put a commit on a branch that has no
