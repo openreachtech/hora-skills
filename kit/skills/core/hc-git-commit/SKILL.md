@@ -189,6 +189,7 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
 | `Define` | a class member, function, or constant written for the first time |
 | `Purge` | a whole file deleted, with nothing replacing it |
 | `Kick out` | a part deleted from a file that stays — an entry, a rule, a field |
+| `Tidy up` | a place brought into order, where nothing was removed and no behavior changed |
 | `Update` | an existing thing changed, without a change in contract |
 | `Fix` | incorrect behavior corrected |
 | `Rename` | identifier changed, behavior untouched |
@@ -218,6 +219,10 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   `Purge tests/legacy/OldValidator.js`. `Kick out` takes the shape `Kick out <what> from
   <where>`, because the point is that `<where>` is still there without `<what>` —
   `Kick out main: from package.json`. The pair mirrors `Declare` and `Define`.
+- **`Tidy up` is the cleanup that is not a removal.** It takes the shape `Tidy up <where>` —
+  `Tidy up the environment files` — and covers stale naming, leftover duplication and disorder,
+  where naming each micro-change on its own would be noise. When the cleanup *is* a removal, the
+  verb is `Purge` or `Kick out`, however the branch that carries it happens to be named.
 - **The table carries no `Remove` or `Delete`** for that reason: both read the same whether a
   whole file went or one line inside it did, so the subject alone leaves the reader guessing.
   Splitting the word is what makes the difference visible in `git log`.
