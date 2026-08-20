@@ -25,9 +25,19 @@ The shape of the name settles nothing. `release/x.x.x` is a trunk and
 - **Trunks nest.** A general branch cut from `main` that then has work split off it is both: a
   sub-branch of `main`, and the trunk of what it carries. The role is held against a particular
   branch, never held outright.
+  - **Each half brings its own obligations, and neither cancels the other.** Being a trunk, the
+    branch opens with the `Start …` marker described in `SKILL.md`; being a sub-branch, it
+    merges back into `main` once it is done. That the merge is made locally, with no pull
+    request to open early, takes nothing away from the marker.
 - **A sub-branch merges back into its trunk, and a trunk never merges into what it carries.**
-  That is the whole of what the role decides, and it decides it the same way at every level of
-  the nesting.
+  The direction is the same at every level of the nesting.
+- **A trunk is where work arrives, not where work is done.** Nothing is committed to a trunk
+  directly: cut a branch for the change, commit it there, and merge it back. This holds for a
+  general branch from the moment it takes the role, and it holds on a trunk whose only commit so
+  far is its own `Start …` marker — a trunk with nothing on it yet is still not a place to work.
+  - The exceptions are the two commits a trunk makes about itself rather than about the work:
+    the `Start …` marker that opens it, and the `Merge …` commit that brings a sub-branch in.
+    Both are described in `SKILL.md`, and neither carries a change of its own.
 
 ## Naming a general branch
 
