@@ -187,7 +187,7 @@ is there because choosing the wrong verb would lose something a later reader nee
 file survived, whether a class or one of its members was written, whether a constraint went one
 way or the other. Where a listed verb names what happened, it is the one to use, and no synonym
 substitutes for it. Where nothing listed names it, open the subject with the verb that does:
-`Document`, `Name`, `Point`, `Follow` and their like fix no such distinction and need no row.
+`Name`, `Point`, `Follow`, `Keep` and their like fix no such distinction and need no row.
 
 | verb | use for |
 | :-- | :-- |
@@ -278,9 +278,15 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
   Nor reach for `Update` there. An item added inside something else is still an addition: `Add`
   names what appeared, where `Update` names only the thing it appeared in. The more telling verb
   wins, as `Declare` and `Define` win over `Add` where they apply.
-- **The table carries no `Remove` or `Delete`.** Both read the same whether a whole file went
-  or one line inside it did, so the subject alone leaves the reader guessing. Splitting the word
-  into two is what makes the difference visible in `git log`.
+- **`Change`, `Remove` and `Create` are the ambiguous trio, and the table carries none of
+  them.** Each is broad enough to cover whatever happened, so the subject narrows nothing, and
+  each has specific verbs here to be narrowed into.
+  - `Change` fits wherever any of the others would. A subject opening with it has said only
+    that the tree is not what it was.
+  - `Remove` reads the same whether a whole file went or one line inside it did — `Purge` and
+    `Kick out` split exactly that, and `Delete` is `Remove`'s twin in this.
+  - `Create` leaves open whether a class, one of its members, or something else arrived, which
+    `Declare`, `Define` and `Add` settle between them.
 - **The table carries no `Migrate`.** Carrying content in from elsewhere is bracketed by the
   branch, not repeated on every commit: the marker names the origin once — `Start migrating the
   mail templates from lunas-ec-cart-backend` — and each commit inside then says what kind of
