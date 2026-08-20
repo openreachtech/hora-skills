@@ -58,6 +58,12 @@ Registering a new artifact in an index or export barrel is its own commit as wel
 class and exporting it are two decisions, and the export is the one with a public-surface
 consequence.
 
+**A class's tests are committed before its implementation.** The order is what makes the split
+worth having: the test commit states what the class is expected to do, and the implementation
+commit is the one that makes the statement true. Committed the other way round, the tests only
+confirm what already worked, and there is no commit at which the claim stands on its own to be
+reviewed. This is test-driven development written into the history rather than into the editor.
+
 ## What to keep together
 
 - A change and the **type annotations or JSDoc that describe it**. A signature and its
