@@ -231,6 +231,12 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
 - **The table carries no `Remove` or `Delete`** for that reason: both read the same whether a
   whole file went or one line inside it did, so the subject alone leaves the reader guessing.
   Splitting the word is what makes the difference visible in `git log`.
+- **`Extract` leaves the logic in the tree, in a home of its own.** The call site stays and
+  delegates to what was pulled out, which is what separates it from `Purge` and `Kick out` —
+  nothing was deleted. Relocating something intact is `Move`; `Extract` makes a new home out of
+  part of an existing one, and `Combine` is the same operation run backwards. `Cut out` is not
+  in the table for the reason `Remove` and `Delete` are not: it reads as excision, so the
+  subject leaves open whether the logic landed somewhere or went away.
 - **`Install` and `Uninstall` name the dependency, not the file that records it.** `Install
   date-fns 4.1.0` and `Uninstall date-fns` say what the project now depends on, or no longer
   does. `Add` and `Kick out` would describe editing `package.json`, which is merely where the
