@@ -200,6 +200,7 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
 | `Use` | switching to a different existing mechanism |
 | `Allow` / `Prevent` | a constraint loosened or tightened |
 | `Export` | public surface changed |
+| `Install` / `Uninstall` | a dependency the project takes on, or gives up |
 | `Start` | **empty** branch-opening marker only — see above |
 | `Merge` | **merge commits only** — see above |
 
@@ -226,6 +227,10 @@ substitutes for it. Where nothing listed names it, open the subject with the ver
 - **The table carries no `Remove` or `Delete`** for that reason: both read the same whether a
   whole file went or one line inside it did, so the subject alone leaves the reader guessing.
   Splitting the word is what makes the difference visible in `git log`.
+- **`Install` and `Uninstall` name the dependency, not the file that records it.** `Install
+  date-fns 4.1.0` and `Uninstall date-fns` say what the project now depends on, or no longer
+  does. `Add` and `Kick out` would describe editing `package.json`, which is merely where the
+  fact is written down. A version change to a dependency already installed is `Update`.
 - **A restriction lifted is `Allow`, never a negative.** `Don't disable the action button when
   the competition is completed` describes a state the code should hold; a subject describes a
   transition. `Allow the action button when the competition is completed` says the same change,
