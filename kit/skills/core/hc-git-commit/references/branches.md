@@ -63,9 +63,9 @@ is deliberately descriptive. Nothing reads it after the branch is gone.
 - **A member is written `<member>-of-<class>`.** The slash is already spent on the verb, so what
   is left spells the relation out instead of punctuating it.
 - **Work of a scale that will make the branch a trunk takes a category at a higher level of
-  abstraction** — `implement/xxx`, `feature/xxx`, `retake/xxx`, `update/xxx`. A branch that is
-  about to have six branches cut from it cannot be named for one narrow verb without lying
-  about five of them.
+  abstraction** — `implement/xxx`, `setup/xxx`, `feature/xxx`, `retake/xxx`, `update/xxx`. A
+  branch that is about to have six branches cut from it cannot be named for one narrow verb
+  without lying about five of them.
 - **A sub-branch cut from a general branch acting as a trunk is named the same way**, and the
   nesting adds no constraint of its own: `<verb | category>/xxxx`, free. The narrow verbs
   belong here, where each branch really does carry one thing.
