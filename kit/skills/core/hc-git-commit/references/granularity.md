@@ -124,6 +124,16 @@ git diff              # confirm what is being left for the next commit
   - Nor to the `Merge …` commit that closes a branch. It carries no change of its own either.
     What a reviewer weighs there is the branch it brings in, and that was already scoped commit
     by commit inside the branch.
+  - Nor to a commit made **on the premise that it is deleted right away** — a save point taken
+    only so that an operation needing a clean tree can run, undone by `git reset --soft`, by
+    `git commit --amend`, or by a squash the moment it has served that purpose. **Its message
+    is free.** Every convention on a subject exists to tell a later reader what changed, and
+    this commit is gone before there is one: `saving-20260821-1530` is as good a subject as
+    any, no verb from the vocabulary in `SKILL.md` has to fit it, and the changes in it are
+    left undivided.
+    - **The premise is what buys the freedom, so the premise has to hold.** A commit still
+      there when the work is shared was never one of these, whatever was intended when it was
+      made. Delete it before the branch goes out, or write it as any other commit.
 - **End-of-day dumps.** A single commit holding everything touched since morning is the
   default outcome of never deciding granularity. Decide it while working.
 - **Typo-fix follow-ups on unpushed work.** A `Fix typo` commit immediately after the commit
