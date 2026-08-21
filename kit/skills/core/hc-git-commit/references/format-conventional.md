@@ -23,8 +23,8 @@ The message format used when a project resolves to `conventional`. Referenced fr
 
 A colon before the first space separates the type from the summary. Every other colon in a
 subject belongs to the class-member notation, where it always follows `#` or `.`:
-`fix: correct JSDoc of BaseRestfulApiLauncher.get:ResponseBodyParser` carries one of each. The
-two never collide — one opens the subject, the other sits inside a member name.
+`docs: tidy up the JSDoc of BaseRestfulApiLauncher.get:ResponseBodyParser` carries one of each.
+The two never collide — one opens the subject, the other sits inside a member name.
 
 ```
 feat: add LockEmployeeSignInInputValidator for employee sign-in validation
@@ -64,9 +64,10 @@ feat(resolver): add unlockClientMemberSignIn mutation
 The summary follows the same substance rules as any other format: name the concrete thing that
 changed, in the imperative mood, using the class-member notation given in `SKILL.md`.
 
-**Its verb comes from the shared table in `SKILL.md`**, lowercased to sit after the type:
-`feat: declare AlphaClass`, `refactor: extract the retry loop`. The vocabulary does not change
-between the two formats — only the capitalization and what precedes it do.
+**Its verb follows the shared table in `SKILL.md`** wherever that table fixes a role,
+lowercased to sit after the type: `feat: declare AlphaClass`, `refactor: extract the retry
+loop`. The vocabulary does not change between the two formats — only the capitalization and
+what precedes it do.
 
 The characteristic failure of this format is a **redundant trailing clause** that restates the
 identifier already named:
@@ -90,8 +91,9 @@ Related: `add` and `implement` are not two different things. Use `add`.
 
 ## Breaking changes
 
-A breaking change is marked with `!` before the colon, and explained in the body under a
-`BREAKING CHANGE:` trailer.
+A breaking change is marked with `!` before the colon. The `BREAKING CHANGE:` trailer that
+explains it, and the body it sits under, are required of both formats — `SKILL.md` states that
+rule, and this format adds the subject marker on top of it.
 
 ```
 feat(resolver)!: require clientMemberId on unlockClientMemberSignIn

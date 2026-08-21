@@ -25,9 +25,19 @@ The shape of the name settles nothing. `release/x.x.x` is a trunk and
 - **Trunks nest.** A general branch cut from `main` that then has work split off it is both: a
   sub-branch of `main`, and the trunk of what it carries. The role is held against a particular
   branch, never held outright.
+  - **Each half brings its own obligations, and neither cancels the other.** Being a trunk, the
+    branch opens with the `Start …` marker described in `SKILL.md`; being a sub-branch, it
+    merges back into `main` once it is done. That the merge is made locally, with no pull
+    request to open early, takes nothing away from the marker.
 - **A sub-branch merges back into its trunk, and a trunk never merges into what it carries.**
-  That is the whole of what the role decides, and it decides it the same way at every level of
-  the nesting.
+  The direction is the same at every level of the nesting.
+- **A trunk is where work arrives, not where work is done.** Nothing is committed to a trunk
+  directly: cut a branch for the change, commit it there, and merge it back. This holds for a
+  general branch from the moment it takes the role, and it holds on a trunk whose only commit so
+  far is its own opening marker — a trunk with nothing on it yet is still not a place to work.
+  - The exceptions are the two commits a trunk makes about itself rather than about the work:
+    the marker that opens it, and the `Merge …` commit that brings a sub-branch in. Both are
+    described in `SKILL.md`, and neither carries a change of its own.
 
 ## Naming a general branch
 
@@ -41,6 +51,7 @@ define/sendMessage-of-AlphaClass
 rename/FormElementClerk
 fix/type-errors-reported-by-the-client-package
 install/date-fns-4.1.0
+tidyup/the-environment-files
 ```
 
 **The name is written for whoever scans `git branch` while the work is still in flight**, so it
@@ -50,12 +61,15 @@ is deliberately descriptive. Nothing reads it after the branch is gone.
   class and `Define` names a member, a function or a constant, which is why
   `declare/AlphaClass` and `define/sendMessage-of-AlphaClass` say what they carry without any
   further explanation. The verbs are listed in `SKILL.md`.
+  - **A verb of two words joins into one, with no hyphen** — `Tidy up` gives `tidyup/xxxx`,
+    `Kick out` gives `kickout/xxxx`, `Turn off` gives `turnoff/xxxx`. The slash ends the token,
+    so nothing inside it has to.
 - **A member is written `<member>-of-<class>`.** The slash is already spent on the verb, so what
   is left spells the relation out instead of punctuating it.
 - **Work of a scale that will make the branch a trunk takes a category at a higher level of
-  abstraction** — `implement/xxx`, `feature/xxx`, `retake/xxx`, `update/xxx`. A branch that is
-  about to have six branches cut from it cannot be named for one narrow verb without lying
-  about five of them.
+  abstraction** — `implement/xxx`, `setup/xxx`, `feature/xxx`, `retake/xxx`, `update/xxx`. A
+  branch that is about to have six branches cut from it cannot be named for one narrow verb
+  without lying about five of them.
 - **A sub-branch cut from a general branch acting as a trunk is named the same way**, and the
   nesting adds no constraint of its own: `<verb | category>/xxxx`, free. The narrow verbs
   belong here, where each branch really does carry one thing.
