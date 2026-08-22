@@ -17,7 +17,7 @@ Whatever component fills a role, the block for it answers the same four question
 | what does it need to be configured to emit or accept, for the next role to work? | `command:` / `environment:` | yes — a store that feeds change propagation must be told to produce what the propagator reads |
 | does the host need to reach it, and on which port? | `ports:`, always `127.0.0.1`-prefixed | yes — and a service that advertises its own address must publish the port it advertises |
 | how does it say it is ready? | `healthcheck:` | yes — the runner waits on this and nothing else |
-| what is the most memory it may take from the machine? | `mem_limit` | yes — every container gets a hard cap, and the caps are budgeted against physical memory ([§ Memory](#memory-cap-every-container-then-budget-against-physical-memory)) |
+| what is the most memory it may take from the machine? | `mem_limit` | yes — every container gets a hard cap, and the caps are budgeted against the runtime's memory ([§ Memory](#memory-cap-every-container-then-budget-against-the-runtimes-memory)) |
 | what must be inside its image, so the stack starts without network access? | `build:` | yes — plugins, extensions and drivers are baked in, never downloaded at start |
 
 ## Why a second compose file
@@ -29,14 +29,14 @@ They want different things:
 | --- | --- | --- |
 | lifetime | days, kept between sessions | kept between sessions too, but destroyable in one command |
 | ports | the conventional ones | a block of its own **if** the two must run at once |
-| memory | generous, uncapped | every container hard-capped, all caps budgeted to a conservative slice of physical memory ([§ Memory](#memory-cap-every-container-then-budget-against-physical-memory)) |
+| memory | generous, uncapped | every container hard-capped, all caps budgeted to a conservative slice of the runtime's memory ([§ Memory](#memory-cap-every-container-then-budget-against-the-runtimes-memory)) |
 | data | accumulated by hand | loaded once from the seed set, then mutated by the operator |
 | volumes | persistent | persistent **per project**, dropped only by `clean.sh` |
 
 Keeping one file for both means every one of those rows becomes a compromise. Keep two, and put the
 E2E one under `e2e/` where its purpose is obvious.
 
-## Memory: cap every container, then budget against physical memory
+## Memory: cap every container, then budget against the runtime's memory
 
 The E2E stack is a stack of resident processes — a database, one or two JVM services, a cache, the
 application and its background daemons — that all hold memory for the entire session while no one
@@ -45,7 +45,7 @@ total pushes the machine into swap or the out-of-memory killer. Two rules keep t
 and both are requirements.
 
 **Every service gets a hard `mem_limit`.** Not a heap flag — a container-level cap. A container the
-compose file does not cap can use all of physical memory, so a single uncapped service undoes the
+compose file does not cap can use everything the runtime has, so a single uncapped service undoes the
 budget no matter how carefully the others are sized. This is the one line that protects the host.
 
 **A JVM heap flag is not a memory cap.** `-Xmx512m` bounds the *heap* only; the JVM's off-heap
@@ -56,18 +56,23 @@ never the heap — as the number the machine actually has to find. A store with 
 relational database, a cache) still gets a `mem_limit`; it simply grows into it via its own buffers
 and the page cache rather than a `-Xmx`.
 
-**Budget the caps against physical memory, conservatively, assuming two stacks are up at once.** The
+**Budget the caps against the memory the container runtime was given, conservatively, assuming two
+stacks are up at once.** On native Linux that is the machine's memory; on Docker Desktop and WSL2 it
+is the runtime VM's allocation, which is **half the machine by default** — budget against the
+machine there and the caps overflow the VM long before they trouble the host. The
 whole point of the port block and the dedicated project name ([§4](../SKILL.md)) is that this stack
 can run *beside* the developer's own — so size it as if it always does. The rule of thumb:
 
-> **The sum of every `mem_limit` in this stack stays around 40% of the machine's physical memory.**
+> **The sum of every `mem_limit` in this stack stays around 40% of the memory the container
+> runtime was given.**
 
 Two stacks at 40% leave 20% for the operating system, the editor and the browser — the margin that
 keeps the machine responsive instead of swapping. This is deliberately conservative because the
 failure it prevents (the whole machine freezing) costs far more than a service running in a slightly
-tighter heap. On a 16 GB laptop that is a ~6 GB budget for the entire stack; the example values
-below sum to well under it, and are scaled down further on a smaller machine rather than letting the
-total drift up.
+tighter heap. On a 16 GB Linux laptop that is a ~6 GB budget for the entire stack. **The same 16 GB
+machine running WSL2 gives the runtime 8 GB by default, so the budget is ~3.2 GB** — read the figure
+the runtime reports (`docker info`), not the one the machine advertises. The example values below sum
+to well under the Linux figure, and are scaled down rather than letting the total drift up.
 
 Expressing the cap in compose:
 
@@ -91,9 +96,11 @@ room for the developer's own stack beside it:
 | change propagation (Kafka Connect) | `768m` | `-Xmx384m` | JVM: cap is ~2× heap |
 | read model (Elasticsearch) | `1g` | `-Xms512m -Xmx512m` | JVM: cap is ~2× heap; the heaviest single service |
 
-That sums to ~3.6 GB — comfortably inside 40% of a 16 GB machine and still under 40% of an 8 GB one.
+That sums to ~3.6 GB — inside a 16 GB Linux machine's budget, but **over** the ~3.2 GB a default
+WSL2 VM on that same machine allows, which is exactly the trap: the figure to check is the
+runtime's.
 The point is the **relationship**: pick each `mem_limit` first from what the service tolerates, keep
-each JVM heap near half its cap, and check the total against the physical-memory budget before
+each JVM heap near half its cap, and check the total against the runtime's memory budget before
 committing — not the reverse. **General rule:** whatever components fill the roles, every one gets a
 `mem_limit`, JVM ones get a heap near half of it, and the sum is held to the conservative slice above.
 
@@ -333,6 +340,18 @@ services:
 - **A read model that is not a separate service still exists as a step.** A materialized view or a
   denormalized table lives in the system of record, so it has no block here — but it still needs
   creating before anything writes to it, a name of its own per run, and a backfill after seeding.
+
+### Edge — example: nginx in front of the application
+
+The service block for the edge, the configuration it mounts, and why it is the last service to
+become healthy are in [edge-and-proxy.md](./edge-and-proxy.md), where the rest of the proxy layer
+lives. Everything in this file still applies to it: a `127.0.0.1`-prefixed published port, a
+`mem_limit` like every other container, and a healthcheck the runner can poll.
+
+One caveat specific to it: **the container's healthcheck answers from inside the container's own
+namespace**, so it reports healthy while nothing outside can reach the edge. The runner therefore
+also polls the published port from the host — see
+[the health-wait section](./runner-and-lifecycle.md#waiting-on-health-never-on-sleep).
 
 ## Healthchecks are the contract
 
