@@ -43,7 +43,7 @@ npm install -D @openreachtech/hora-skills
 いま宣言したフックが効くのは、次の `npm install` からです。最初の配置は、コマンドを自分で実行してください。一度だけ配置したい場合や、フックを置けないリポジトリでも同じです。
 
 ```sh
-npx hora-skills install
+npx --no hora-skills install
 ```
 
 ## 使い方
@@ -55,7 +55,7 @@ npx hora-skills install
 既定では全ドメインが入ります。Claude Code はインストール済みの全スキルの名前と説明を常時コンテキストに載せるため、バックエンドだけのリポジトリでもフロントエンドの 46 件分を毎ターン負担することになります。ドメイン単位で絞れます。
 
 ```sh
-npx hora-skills install --domains core,backend
+npx --no hora-skills install --domains core,backend
 ```
 
 package.json に一度書いておけば、引数なしの `hora-skills install` がそれに従います。
@@ -74,11 +74,11 @@ package.json に一度書いておけば、引数なしの `hora-skills install`
 
 `.claude/` と、その中の `skills/` は、シンボリックリンクではなくリポジトリのディレクトリである必要があります。インストールは対象へ至る各段を検査し、いずれかがリンクであれば、何も書き込まず、何も削除せずに終了します。 インストール内容の記録である `.hora/equip-skills.json` も同じように検査します。ここにリンクがあると、書き込みがリンク先へ届き、その中身を上書きしてしまうためです。
 
-何も運ばなかったインストールは、その理由を告げ、0 以外の終了コードで終わります。プロジェクト自身の `postinstall` として実行しているなら、それは `npm install` の出力に現れます。単独で実行した場合は `npx hora-skills install` が同じことを告げます。
+何も運ばなかったインストールは、その理由を告げ、0 以外の終了コードで終わります。プロジェクト自身の `postinstall` として実行しているなら、それは `npm install` の出力に現れます。単独で実行した場合は `npx --no hora-skills install` が同じことを告げます。
 
 リンクはコマンドを実行する人の指示ではなく、リポジトリの中身です。それを辿ると、スキルをどこへ書くか、そして前回のスキルをどこから消すかを、リポジトリ側が決められることになります。
 
-いずれかをリポジトリ間で共有するディレクトリへ向けている場合は、そのディレクトリを直接名指ししてください。`npx hora-skills install --dir <解決先のディレクトリ>` で同じ状態に到達し、リンクがある以上、スキルは `.claude/skills/` から見えます。`--dir` はコマンドを実行する人が名指しするものなので、そのまま受け入れます。
+いずれかをリポジトリ間で共有するディレクトリへ向けている場合は、そのディレクトリを直接名指ししてください。`npx --no hora-skills install --dir <解決先のディレクトリ>` で同じ状態に到達し、リンクがある以上、スキルは `.claude/skills/` から見えます。`--dir` はコマンドを実行する人が名指しするものなので、そのまま受け入れます。
 
 ### 配置を最新に保つ
 
@@ -94,7 +94,7 @@ package.json に一度書いておけば、引数なしの `hora-skills install`
 引数なしの `npm install` はプロジェクトの `postinstall` を再実行するので、スキルも追随します。パッケージをコマンドラインで名指しする更新(`npm install @openreachtech/hora-skills@latest`)では走りません。フックを置いていないリポジトリも同じです。その場合は、同じコマンドを再実行してください。
 
 ```sh
-npx hora-skills install
+npx --no hora-skills install
 ```
 
 `install` は何度実行しても同じ結果になります。前回インストールしたスキル(`.hora/equip-skills.json` に記録されています)と、このパッケージが配布するスキルと同名のフォルダを削除してから、今回の選択をコピーします。そのため改名されたスキルや選択から外れたスキルが残らず、`dist/skills/` を手でコピーしていたリポジトリも初回の実行で整理されます。

@@ -43,7 +43,7 @@ A project's own scripts are outside what npm holds back from v12 on, so this ask
 The hook you just declared takes effect from the next `npm install` on, so run the command by hand for the first placement — and for a one-off, or a repository that is not yours to add a hook to:
 
 ```sh
-npx hora-skills install
+npx --no hora-skills install
 ```
 
 ## Usage
@@ -55,7 +55,7 @@ The skills land in your repository's `.claude/skills/`. Claude Code discovers th
 Every domain installs by default. A repository with only a backend then pays for the 46 frontend skills on every turn, because Claude Code keeps the name and description of each installed skill in context. Narrow the selection by domain:
 
 ```sh
-npx hora-skills install --domains core,backend
+npx --no hora-skills install --domains core,backend
 ```
 
 Or declare it once in your package.json, so a plain `hora-skills install` obeys it:
@@ -74,11 +74,11 @@ The command line wins over package.json, and both fall back to every domain.
 
 `.claude/`, and the `skills/` directory inside it, have to be directories of your repository rather than symbolic links. An installation verifies every step it is reached through, and finding a link at any of them it writes nothing and removes nothing. `.hora/equip-skills.json`, the record of what was installed, is verified the same way: a link there would send the write to whatever it stands for and overwrite it.
 
-An installation that carries nothing says why and ends with a failing exit code. Where the command runs as your project's own `postinstall`, that is what `npm install` reports; run on its own, `npx hora-skills install` tells you the same.
+An installation that carries nothing says why and ends with a failing exit code. Where the command runs as your project's own `postinstall`, that is what `npm install` reports; run on its own, `npx --no hora-skills install` tells you the same.
 
 A link is content of the repository rather than an instruction of whoever runs the command, so following one would let the repository decide where skills are written and, worse, where the skills of the previous run are removed from.
 
-Where either points at a directory shared between repositories, name that directory instead — `npx hora-skills install --dir <the directory it resolves to>` reaches the same state, and the link still makes the skills visible at `.claude/skills/`. A `--dir` is named by whoever runs the command, so it is taken as given.
+Where either points at a directory shared between repositories, name that directory instead — `npx --no hora-skills install --dir <the directory it resolves to>` reaches the same state, and the link still makes the skills visible at `.claude/skills/`. A `--dir` is named by whoever runs the command, so it is taken as given.
 
 ### Keeping the installation current
 
@@ -94,7 +94,7 @@ The installed skills are this package's build output rather than source of your 
 An `npm install` with no arguments re-runs your project's `postinstall`, so the skills follow along. Naming the package on the command line — `npm install @openreachtech/hora-skills@latest` — does not, and neither does a repository without a hook. Run the command again yourself:
 
 ```sh
-npx hora-skills install
+npx --no hora-skills install
 ```
 
 `install` is repeatable: it removes what the previous run installed — recorded in `.hora/equip-skills.json` — along with any folder named after a skill this package distributes, before copying the current selection. A renamed or deselected skill therefore leaves nothing behind, and a repository that had copied `dist/skills/` by hand is tidied up on its first run.
