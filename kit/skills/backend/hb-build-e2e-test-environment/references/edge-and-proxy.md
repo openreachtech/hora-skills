@@ -7,6 +7,10 @@ from §5 of [SKILL.md](../SKILL.md).
 > **nginx is the example. The edge is the role.** Every rule here is about *the thing in front of
 > the application*. The nginx directives are one way to write it, and the Apache versions are in a
 > table below. Service names, ports and paths are **examples**, not values to copy.
+>
+> **This file applies only where production has an edge.** If it does not, skip all of it and do not
+> add a proxy here — a layer production does not run hides bugs just as effectively as a missing
+> one.
 
 ## What only the edge can catch
 
@@ -42,6 +46,22 @@ Change three things and nothing else:
 
 Copy everything else **as it is** — header forwarding, body size, timeouts, buffering, and the
 location blocks in their original order. Any other difference is a bug you will not catch.
+
+### When production's edge is a managed one
+
+A cloud load balancer, an API gateway or a CDN has no configuration file you can copy. Running a
+local nginx in its place is a rehearsal, not the same thing. Do it anyway — it still catches the
+header, body-size and buffering bugs — but be honest about the gap.
+
+| Do this | Not this |
+| --- | --- |
+| List the behaviours the product depends on, and reproduce those | Try to imitate the whole product |
+| Write down which ones you could not reproduce, and why | Leave the difference unrecorded |
+| Hand the rest to the deployment runbook, to check after release | Report the local run as end-to-end proof |
+
+The ones worth reproducing are almost always the same four: header forwarding, request body size,
+timeouts and buffering. The ones you usually cannot are the provider's own — WAF rules, request
+signing, edge caching, and how it behaves when it is overloaded.
 
 ### Write down where the copy came from
 
@@ -248,8 +268,12 @@ tells you what the edge does.
 
 ## When you leave the edge out
 
-Leaving it out is a fair choice — a demo, a deadline, a machine it will not run on. Leaving it out
-in silence is not. Write this down next to the environment:
+First, be clear which situation you are in. **If production has no edge, there is nothing to leave
+out** — the role does not exist for this product, and there is nothing to record. This section is
+about the other case: production has one, and you decided not to build it here.
+
+That is a fair choice — a demo, a deadline, a machine it will not run on. Making it in silence is
+not. Write this down next to the environment:
 
 - **what you measured** — the routes you tried and what each returned, as a table
 - **what you fixed in the product** instead of in the environment

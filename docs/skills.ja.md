@@ -55,7 +55,7 @@
 | `hb-ai-agent-structure` | `mentsu-agent-loop-core` 上にアプリ側 AI エージェントを構成します。`app/agents/<name>/` に `ProceduralAgentLoop` サブクラスとステップごとの `BaseAgentAction` サブクラスを置きます。 |
 | `hb-ai-prompt-document-store` | エージェントの設定・指示文・ドキュメント・ツールスキーマをコードに埋め込まず DB に保持し、リクエスト時にプロンプトへ組み立て、バックアップテーブルでバージョン管理します。 |
 | `hb-backend-testing` | テストファイルの配置(DB 書き込みなしは `tests/__tests__`、ありは `tests/_orders`)、DB 書き込みテストの実行順の保証、実行方法、テストとダブルの純粋性ルール。 |
-| `hb-build-e2e-test-environment` | `e2e/docker/` 配下の手動操作用ローカル E2E 環境の構築・実行・デバッグ。コンテナ構成、本番と同じリバースプロキシ層、専用シードセット、`up`/`start`/`seed`/`clean`/`down` スクリプト。 |
+| `hb-build-e2e-test-environment` | `e2e/docker/` 配下の手動操作用ローカル E2E 環境の構築・実行・デバッグ。コンテナ構成、本番にリバースプロキシがある場合はその層、専用シードセット、`up`/`start`/`seed`/`clean`/`down` スクリプト。 |
 | `hb-constant-definition` | アプリ定数は必ず 2 ファイルで定義します。`constants/` の CommonJS マスター(単一の情報源)と、それを再 export する `app/constants/` の ESM ブリッジ。 |
 | `hb-cookie-authentication` | renchan バックエンドのアクター別 Cookie 認証。認証情報とトークンのモデル、アクセストークンとローテーションするリフレッシュトークン(再利用検知つき)、HttpOnly のリフレッシュ Cookie、signIn / signUp / signOut / renewAccessToken の各リゾルバー。 |
 | `hb-database-design` | マイグレーションやモデルを書く前に決めるスキーマの論理設計。正規化の判断、ステータス/カテゴリの表現、カラム型、時刻の保持、読み取りのスケール、履歴とバージョン管理。 |
