@@ -1,12 +1,12 @@
 # Skills
 
-A catalog of every skill in this repository — 110 in total — with a one- or two-line summary each.
+A catalog of every skill in this repository — 111 in total — with a one- or two-line summary each.
 
 Each skill lives at `kit/skills/<domain>/<name>/`, one level under its domain directory, and that folder name is both the skill's `name:` and the folder name it is installed under. **Skill** below is therefore all you need: it is what you invoke as `/name`, what appears under `.claude/skills/` once installed, and where the source sits. The two-character prefix is the domain — see [the flatten build convention](https://github.com/openreachtech/hora-skills/blob/main/.claude/skills/flatten/SKILL.md) for the layout and the naming rules. Full guidance for any skill is in its own `SKILL.md`.
 
 ## `core` — `hc-*`
 
-34 skills. Conventions and procedures that apply to any project, regardless of stack.
+35 skills. Conventions and procedures that apply to any project, regardless of stack.
 
 | Skill (= Command) | Summary |
 | :-- | :-- |
@@ -24,6 +24,7 @@ Each skill lives at `kit/skills/<domain>/<name>/`, one level under its domain di
 | `hc-constants` | Constant conventions — uppercase `SNAKE_CASE` naming, chopping down, and the file organization and placement of object-type constants. |
 | `hc-contracts` | Type contracts for function and method arguments and return values, and how contract types are defined. |
 | `hc-dependency-defect` | Work around a bug in code this project uses but does not own — a subclass that overrides only the broken member, called by its own name, with a comment saying when it can be deleted. |
+| `hc-deployment-document` | Write a server deployment runbook through conversation — the hosting profile, the first-time build, the repeatable release, migrations, rollback, and the output that confirms each step worked. |
 | `hc-documentation` | Documentation writing conventions, including the `#instanceMember` / `.staticMember` notation used when referring to class members. |
 | `hc-errors` | Error handling — return `null` on failure from value-generating methods, and the throw-message format for abstract members. |
 | `hc-functions` | Function conventions. Parameters follow method parameters: named arguments as a principle. |
