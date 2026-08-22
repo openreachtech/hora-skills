@@ -17,7 +17,7 @@
 
 There is **no `templates/` tier** — do not create one.
 
-**`components/pages/*` vs `/pages/*`:** `components/pages/wallet/WalletHistory.vue` is a feature sub-component; `/pages/wallet/index.vue` is the actual Nuxt route that imports it (see [pages](references/pages-route-structure.md)).
+**`components/pages/*` vs `/pages/*`:** `components/pages/wallet/WalletHistory.vue` is a feature sub-component; `/pages/wallet/index.vue` is the actual Nuxt route that imports it (see [pages](./pages-route-structure.md)).
 
 ## File Layout
 
