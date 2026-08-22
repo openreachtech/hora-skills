@@ -48,16 +48,16 @@ you there, and the rest of this skill explains how:
 1. **One command per intention, fixed order inside each.** Every step is scripted, the steps within
    a script are ordered by dependency, and which script to run is the operator's call rather than
    something a script infers
-   ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+   ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
 2. **Private.** Everything the compose file starts is reachable only from this machine, and — where
    the two are meant to run at once — everything it starts stays clear of the developer's own stack
    ([§4](#4-ports-are-published-to-loopback-only-on-a-dedicated-block)).
 3. **Disposable, and predictably so.** Each command's effect on the data is fixed and stated in its
    name — rebuild, start, seed, clean — so no step has to detect state and the operator always knows
-   what survived ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+   what survived ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
 4. **Complete.** The **application and its background processes** are started by the same script, not
    left for the operator to remember. Middleware being up is not the same as data moving
-   ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+   ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
 
 ## 1. Roles first: the component set here is one example
 
@@ -116,12 +116,12 @@ e2e/
 │   │   ├── search/Dockerfile
 │   │   └── connect/Dockerfile
 │   └── initdb/                 the SQL the system of record runs when its volume is created
-├── up.sh                       rebuild: clean → start → seed (§6)
-├── start.sh                    bring the stack and the processes up. no data operation (§6)
-├── seed.sh                     load the seed set into a stack that is already up (§6)
-├── clean.sh                    delete the data in every store — the only script that destroys (§6)
-├── down.sh                     stop the processes and the stack, keep the data (§6)
-└── logs/                       the background processes' output, git-ignored (§6)
+├── up.sh                       rebuild: clean → start → seed (§7)
+├── start.sh                    bring the stack and the processes up. no data operation (§7)
+├── seed.sh                     load the seed set into a stack that is already up (§7)
+├── clean.sh                    delete the data in every store — the only script that destroys (§7)
+├── down.sh                     stop the processes and the stack, keep the data (§7)
+└── logs/                       the background processes' output, git-ignored (§7)
 ```
 
 Three kinds of thing live here, and the layout says which is which: **`docker/` is the definition**,
@@ -160,7 +160,7 @@ repository root beside the other environments' files, where the environment faca
 
 Besides the env file, the other thing that does **not** live here is the seed data: the E2E seed
 sets stay wherever the project's seeder tooling looks for them (`sequelize/seeders/` in the
-examples). What separates them there is the **set**, not the path ([§5](#5-data-a-seed-set-of-its-own)).
+examples). What separates them there is the **set**, not the path ([§6](#6-data-a-seed-set-of-its-own)).
 
 ## 3. Environment: a dedicated environment name, with an env file of its own
 
@@ -187,7 +187,7 @@ environments' files. Two rules govern that file:
   build one env file out of another by reference, import or generation — when the stack gains a
   component or a key, updating every environment's file is part of that change. (Note the deliberate
   contrast with seed data, where master rows are **re-exported, never copied**
-  ([§5](#5-data-a-seed-set-of-its-own)): seed rows must be identical across environments *by
+  ([§6](#6-data-a-seed-set-of-its-own)): seed rows must be identical across environments *by
   construction*, env values are per-environment *by definition*.)
 
 **Which values must differ from the other environments is a decision, not a fixed list.** Two
@@ -263,7 +263,7 @@ The stack also needs its **own compose project name**, or it adopts the developm
 containers, network and volumes. Details, the full compose walk-through, and the per-service
 settings the pipeline depends on are in [compose-definition.md](./references/compose-definition.md).
 
-## 5. Data: a seed set of its own
+## 6. Data: a seed set of its own
 
 The environment gets **two seeder directories of its own**, seeded by their own scripts:
 
@@ -293,7 +293,7 @@ The environment gets **two seeder directories of its own**, seeded by their own 
 The directory layout, the re-export skeleton, the id band, the generated-artifact step and how to
 keep the set pipeline-shaped are in [seed-data.md](./references/seed-data.md).
 
-## 6. The runner: one command per intention, and no script that guesses
+## 7. The runner: one command per intention, and no script that guesses
 
 ```bash
 e2e/up.sh                 # rebuild: clean, start, seed, hand over — the from-nothing path
@@ -368,7 +368,7 @@ Four properties of the scripts matter more than the steps:
   commands that stop and that wipe it. An environment nobody can find their way into is not
   finished.
 
-## 7. Traps that let a half-built stack look finished
+## 8. Traps that let a half-built stack look finished
 
 Each of these produces a stack that **starts cleanly and behaves wrongly** — the failure mode this
 skill exists to prevent, because the operator will read it as a product defect. Written in the
@@ -394,15 +394,15 @@ example stack's components — the shape carries over
 - **A clean that only reached the system of record** — the read model still answers with documents
   whose rows are gone, the transport still holds the old messages, and the screen shows deleted data.
   Clean every store in one command, processes stopped first
-  ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+  ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
 - **A script that decides for itself whether to load** — a load that died halfway looks loaded, a
   hand-emptied table looks fresh, and the wrong branch is invisible until it misfires. Let the command
-  the operator typed say what happens ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+  the operator typed say what happens ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
 - **Seeders made idempotent so re-running is "safe"** — the id collision was the environment saying
   the set is already there, and smoothing it over trades a loud, correct failure for rows that quietly
-  differ from the set ([§5](#5-data-a-seed-set-of-its-own)).
+  differ from the set ([§6](#6-data-a-seed-set-of-its-own)).
 - **Background processes started by hand, or not at all** — the middleware is up, the screens work,
-  and nothing propagates. Start them from the script ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+  and nothing propagates. Start them from the script ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
 - **No logs kept** — when something does not appear on screen, the answer is in the daemon's or the
   consumer's output, and a run that discarded it forces a rebuild to find out why.
 - **A container started with no `mem_limit`** — it grows into whatever the machine has, so one
@@ -434,17 +434,17 @@ example stack's components — the shape carries over
 - [ ] The stack runs under its own environment name (`live-local` is the recommendation) with its own committed `.env.<stack-env>` — a complete, standalone file in which no key is referenced, imported or generated out of another environment's file, even where the values coincide ([§3](#3-environment-a-dedicated-environment-name-with-an-env-file-of-its-own)).
 - [ ] The coexist / must-not-destroy questions have been answered out loud, and the values they force are written in `.env.<stack-env>`; anything the compose file interpolates reaches compose via `--env-file` or the runner's exports ([§3](#3-environment-a-dedicated-environment-name-with-an-env-file-of-its-own)).
 - [ ] If a build may not destroy what the developer has, the system of record's name, every derived name's identity, the read model's name and the object storage location are all the E2E stack's own — these are the failures that are silent ([§3](#3-environment-a-dedicated-environment-name-with-an-env-file-of-its-own)).
-- [ ] Seed data is in the environment's own `<stack-env>-master/` + `<stack-env>/` directories, master rows **re-exported** from the production master, ids in the reserved band, and sign-in accounts included ([§5](#5-data-a-seed-set-of-its-own)).
-- [ ] The build generates the binary artifacts the seeds promise ([§5](#5-data-a-seed-set-of-its-own)).
-- [ ] Waiting is on healthchecks with a deadline, and any failure aborts instead of handing over ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
-- [ ] **Each script does one thing and none of them inspects the data to choose a branch**; `up.sh` is literally `clean.sh` → `start.sh` → `seed.sh`, and `--start-only` delegates to `start.sh` ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
-- [ ] `start.sh` performs no data operation, and every step in it is safe to run against an environment that is already up ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
-- [ ] Provisioning that depends on data is in `seed.sh`, not `start.sh` — otherwise starting an empty environment fails for an unrelated-looking reason ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
-- [ ] Nothing but `clean.sh` deletes data, and the abort trap calls `down.sh`, not `clean.sh` ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
-- [ ] `clean.sh` reaches **every** store — system of record, read model, transport channels and offsets, propagation state, queue, object storage — and stops the background processes before it starts ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
-- [ ] `seed.sh` run against an already-seeded environment fails loudly on the fixed ids rather than being made idempotent ([§5](#5-data-a-seed-set-of-its-own)).
-- [ ] The application and every background process the product needs are started by `start.sh` and stopped by `down.sh`, with their output kept in `e2e/logs/` ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
-- [ ] Whichever script the operator invoked ends by printing the URL to open, the log locations, and the stop and wipe commands ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+- [ ] Seed data is in the environment's own `<stack-env>-master/` + `<stack-env>/` directories, master rows **re-exported** from the production master, ids in the reserved band, and sign-in accounts included ([§6](#6-data-a-seed-set-of-its-own)).
+- [ ] The build generates the binary artifacts the seeds promise ([§6](#6-data-a-seed-set-of-its-own)).
+- [ ] Waiting is on healthchecks with a deadline, and any failure aborts instead of handing over ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+- [ ] **Each script does one thing and none of them inspects the data to choose a branch**; `up.sh` is literally `clean.sh` → `start.sh` → `seed.sh`, and `--start-only` delegates to `start.sh` ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+- [ ] `start.sh` performs no data operation, and every step in it is safe to run against an environment that is already up ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+- [ ] Provisioning that depends on data is in `seed.sh`, not `start.sh` — otherwise starting an empty environment fails for an unrelated-looking reason ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+- [ ] Nothing but `clean.sh` deletes data, and the abort trap calls `down.sh`, not `clean.sh` ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+- [ ] `clean.sh` reaches **every** store — system of record, read model, transport channels and offsets, propagation state, queue, object storage — and stops the background processes before it starts ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+- [ ] `seed.sh` run against an already-seeded environment fails loudly on the fixed ids rather than being made idempotent ([§6](#6-data-a-seed-set-of-its-own)).
+- [ ] The application and every background process the product needs are started by `start.sh` and stopped by `down.sh`, with their output kept in `e2e/logs/` ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+- [ ] Whichever script the operator invoked ends by printing the URL to open, the log locations, and the stop and wipe commands ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
 - [ ] The unit suite still passes untouched and `npm run lint` passes.
 
 ## Detail files
@@ -463,9 +463,9 @@ Every detail file uses the same example stack, whose components illustrate the r
   host-vs-network address split, the port block, and the missing-key-reads-as-`null` behavior (§3, §4)
 - [seed-data.md](./references/seed-data.md) — the master / fixture split of the environment's own
   seeder directories, the re-export skeleton, the reserved id band, the seed scripts, and the
-  generated-artifact step (§5)
+  generated-artifact step (§6)
 - [runner-and-lifecycle.md](./references/runner-and-lifecycle.md) — the command set, the rule that
   puts each step in `start.sh` or `seed.sh`, a step table per script with the reason each step sits
   where it does, `up.sh` as their composition, what `clean.sh` has to reach and in what order,
   health-wait shapes, application and background-process handling, the hand-over, the
-  abort-on-failure trap, and the CI stance (§6, §7)
+  abort-on-failure trap, and the CI stance (§7, §8)

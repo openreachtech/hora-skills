@@ -2,7 +2,7 @@
 
 The one command that builds the environment, loads it, starts everything and hands it to the
 operator — its step order, the reason each step sits where it does, and how the environment is torn
-down. Referenced from §6 and §7 of [SKILL.md](../SKILL.md). Commands are the recommended shape and
+down. Referenced from §7 and §8 of [SKILL.md](../SKILL.md). Commands are the recommended shape and
 the script names are **illustrative examples**; adapt them to your project. `<stack-env>` stands for
 the E2E stack's own environment name — `live-local` is the recommended name.
 
