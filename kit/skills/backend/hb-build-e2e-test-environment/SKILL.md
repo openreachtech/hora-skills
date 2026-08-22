@@ -292,19 +292,31 @@ settings the pipeline depends on are in [compose-definition.md](./references/com
 
 ## 5. The edge: what the browser actually connects to
 
-In production the browser usually reaches the product through a reverse proxy. If this environment
-lets the browser talk to the application directly, **it cannot catch any bug that lives in the
-proxy** — and it still reports success. The operator sees a missing layer and a working one as the
-same thing. That is the failure the rest of this skill exists to prevent.
+In production, the browser often reaches the product through a reverse proxy. Where it does, an
+environment that lets the browser talk to the application directly **cannot catch any bug that
+lives in the proxy** — and it still reports success. The operator sees a missing layer and a working
+one as the same thing. That is the failure the rest of this skill exists to prevent.
 
-So the edge is a role like any other ([§1](#1-roles-first-the-component-set-here-is-one-example)),
-and you **include it by default**.
+So **where production has an edge, include one here by default**. It is a role like any other
+([§1](#1-roles-first-the-component-set-here-is-one-example)).
+
+**Where production has no edge, this section drops out**, the same as any other role the product
+does not have. Do not add one just to be thorough. An environment with a layer production does not
+have is wrong in the other direction, and it hides the same kind of bug — it would pass requests
+through a proxy nobody runs in production.
 
 Four rules:
 
 - **Copy the configuration from production.** Start with the production file. Remove TLS
   termination. Point upstream at the E2E application. Do not write a new file: a new file has none
   of production's bugs, and finding those bugs is the only reason this section exists.
+
+  **Where production's edge is a managed one — a cloud load balancer, an API gateway, a CDN — there
+  is no file to copy.** Do not pretend otherwise. Pick the behaviours your product actually depends
+  on (header forwarding, body size, timeouts, buffering), reproduce those in whatever proxy you run
+  locally, and write down which ones you could not reproduce. The deployment runbook checks the
+  rest after release. A local nginx standing in for an ALB is a useful rehearsal, not the same
+  thing, and saying so is what keeps it useful.
 - **Write down where the copy came from**, at the top of the file:
 
   ```nginx
@@ -542,7 +554,7 @@ example stack's components — the shape carries over
 - [ ] Any service that advertises its own address is published on the port it advertises ([§4](#4-ports-are-published-to-loopback-only-on-a-dedicated-block)).
 - [ ] The stack has its own compose project name, so it cannot adopt the development stack's volumes ([§4](#4-ports-are-published-to-loopback-only-on-a-dedicated-block)).
 - [ ] Where production has an edge, this environment has one too, and **every screen was driven through it** rather than against the application's own port ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
-- [ ] The edge configuration was **derived from the production one**, and carries the `derived-from` / `derived-at` / `deltas` record naming what was changed ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- [ ] The edge configuration was **copied from the production one**, and carries the `derived-from` / `derived-at` / `deltas` record naming what was changed. Where production's edge is managed and has no file, the behaviours reproduced and the ones that could not be are written down instead ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
 - [ ] Header forwarding (`Upgrade` / `Connection`) and the request body-size limit were confirmed **by exercising them**, not by reading the configuration ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
 - [ ] The edge and the application sit on the **same side of the container boundary** ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
 - [ ] Any check that depends on the client's source address has the **client on that side too**, so the addresses are not collapsed by a published port ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
