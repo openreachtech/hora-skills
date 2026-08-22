@@ -89,7 +89,8 @@ is written for a single application to an empty schema and is not re-runnable, b
 | 5 | register **change propagation**, if its configuration is static | register a connector whose watch list is fixed | after the channels, because it produces to them. If the configuration is derived from data, this step is not here — it is in `seed.sh` |
 | 6 | start the background processes the product needs, recording their PIDs | the worker daemon and the change-log consumer | nothing propagates without them; the middleware being up is not enough. After the channels exist, or a subscriber exits on startup |
 | 7 | start the **application** (and the UI's own server, if it is served separately), recording their PIDs | `npm run start` | there is no UI to operate until this runs |
-| 8 | wait until the application answers, then **print the hand-over** and clear the abort trap | poll the app's port | starting is finished only when someone can actually open it |
+| 8 | bring the **edge** up, once the application answers | the reverse proxy in front of the app | it has nothing to serve before then, and a proxy started first turns a slow application into a confusing 502. It holds no data, so `clean.sh` has nothing to do for it |
+| 9 | wait until the edge answers **from the host**, then **print the hand-over** and clear the abort trap | poll the published edge port | starting is finished only when someone can actually open it — and only a poll from outside proves that |
 
 Every step is idempotent, because `start.sh` runs against a stack that may already be up, may have
 just been cleaned, or may hold a full session's data. It never learns which — it does not need to.

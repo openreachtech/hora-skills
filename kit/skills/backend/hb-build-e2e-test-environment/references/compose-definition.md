@@ -341,6 +341,18 @@ services:
   denormalized table lives in the system of record, so it has no block here — but it still needs
   creating before anything writes to it, a name of its own per run, and a backfill after seeding.
 
+### Edge — example: nginx in front of the application
+
+The service block for the edge, the configuration it mounts, and why it is the last service to
+become healthy are in [edge-and-proxy.md](./edge-and-proxy.md), where the rest of the proxy layer
+lives. Everything in this file still applies to it: a `127.0.0.1`-prefixed published port, a
+`mem_limit` like every other container, and a healthcheck the runner can poll.
+
+One caveat specific to it: **the container's healthcheck answers from inside the container's own
+namespace**, so it reports healthy while nothing outside can reach the edge. The runner therefore
+also polls the published port from the host — see
+[the health-wait section](./runner-and-lifecycle.md#waiting-on-health-never-on-sleep).
+
 ## Healthchecks are the contract
 
 Every service declares its own healthcheck, and the runner only ever polls compose for the result
