@@ -62,20 +62,21 @@ you there, and the rest of this skill explains how:
 
 ## What this skill assumes about the machine
 
-The default is **Ubuntu, or WSL2 on Windows**, with Docker Engine or a compatible runtime. Plain
-Windows — PowerShell or `cmd` — is out of scope; go through WSL2. Five rules keep a stack built here
-working on the other machines the team uses:
+Use **Ubuntu, or WSL2 on Windows**, with Docker Engine or something compatible. Plain Windows —
+PowerShell or `cmd` — is out of scope. Go through WSL2.
 
-| Rule | What breaks without it |
+Five rules keep the stack working on the other machines your team uses:
+
+| Rule | What goes wrong without it |
 | --- | --- |
-| Scripts are **bash 3.2 compatible** and use no GNU-only option | macOS ships bash 3.2 and a BSD userland, where `declare -A`, `mapfile`, `${x,,}`, `timeout`, `date -d` and `grep -P` are all absent. Measure a deadline by polling elapsed seconds instead. |
-| The memory budget is a slice of **the memory the container runtime was given**, never of physical memory | On Docker Desktop and WSL2 the ceiling is the runtime VM's allocation, and WSL2 takes half the machine by default. A budget written against physical memory overflows the VM. On Linux the two figures coincide, which is why the distinction is easy to miss. |
-| `.gitattributes` carries `*.sh text eol=lf` | A script that picked up CRLF fails as `bash\r: bad interpreter`, so the environment is broken by cloning it. |
-| The edge is selected by **loopback address and port**, never by `server_name` | Host-name routing needs an `/etc/hosts` edit on every machine, and WSL2 regenerates that file by default. |
-| Nothing depends on `host.docker.internal` | Podman spells it `host.containers.internal`. Keeping the edge and the application on the same side of the container boundary ([§5](#5-the-edge-what-the-browser-actually-connects-to)) removes the need for either. |
+| Write scripts for **bash 3.2**, and use no GNU-only option | macOS still ships bash 3.2, with BSD tools. It has no `declare -A`, `mapfile`, `${x,,}`, `timeout`, `date -d` or `grep -P`. To set a deadline, count elapsed seconds in a loop. |
+| Budget memory against **what the container runtime was given**, not against the machine | Docker Desktop and WSL2 run containers inside a VM, and WSL2 gives that VM half the machine by default. Budget against the machine and you overflow the VM. On Linux the two numbers are the same, so the mistake is easy to make. |
+| Put `*.sh text eol=lf` in `.gitattributes` | A script with CRLF line endings fails with `bash\r: bad interpreter`. Cloning the repository is then enough to break the environment. |
+| Reach the edge by **loopback address and port**, not by `server_name` | Routing by host name means editing `/etc/hosts` on every machine. WSL2 rewrites that file by default. |
+| Do not use `host.docker.internal` | Podman calls it `host.containers.internal`. You do not need either one if the edge and the application stay on the same side of the container boundary ([§5](#5-the-edge-what-the-browser-actually-connects-to)). |
 
-Windows-native scripts are **opt-in**: write them only when asked, keep the `.sh` set canonical, and
-follow [windows-runner.md](./references/windows-runner.md).
+Scripts for Windows itself are **opt-in**. Write them only when someone asks. The `.sh` scripts stay
+the real ones. See [windows-runner.md](./references/windows-runner.md).
 
 ## 1. Roles first: the component set here is one example
 
@@ -291,18 +292,20 @@ settings the pipeline depends on are in [compose-definition.md](./references/com
 
 ## 5. The edge: what the browser actually connects to
 
-If the browser reaches the product through a reverse proxy in production, an environment that
-connects to the application directly **cannot detect any defect that lives in the proxy layer** —
-and reports success anyway. To the operator, that missing layer is indistinguishable from a working
-one, which is the failure the rest of this skill exists to prevent. The edge is a role like any
-other ([§1](#1-roles-first-the-component-set-here-is-one-example)) and is **included by default**.
+In production the browser usually reaches the product through a reverse proxy. If this environment
+lets the browser talk to the application directly, **it cannot catch any bug that lives in the
+proxy** — and it still reports success. The operator sees a missing layer and a working one as the
+same thing. That is the failure the rest of this skill exists to prevent.
 
-Four rules carry it:
+So the edge is a role like any other ([§1](#1-roles-first-the-component-set-here-is-one-example)),
+and you **include it by default**.
 
-- **Derive the configuration from production.** Take the production file, drop TLS termination,
-  repoint upstream at the E2E application. A configuration written from scratch shares no defect
-  with production, and detecting those defects is the only reason this section exists.
-- **Record the derivation in the file itself**, so drift is visible to anyone who opens it:
+Four rules:
+
+- **Copy the configuration from production.** Start with the production file. Remove TLS
+  termination. Point upstream at the E2E application. Do not write a new file: a new file has none
+  of production's bugs, and finding those bugs is the only reason this section exists.
+- **Write down where the copy came from**, at the top of the file:
 
   ```nginx
   # derived-from: the deployment runbook's edge configuration chapter
@@ -310,42 +313,40 @@ Four rules carry it:
   # deltas:       TLS termination removed / upstream repointed to the E2E app
   ```
 
-  Update `derived-at` and rewrite `deltas` whenever production changes. **A record that was not
-  updated does not describe a derivation; it describes a different file.** A `deltas` list that
-  keeps growing says the copy has become a reimplementation, and the production side is what to fix.
-- **Put the edge and the application on the same side of the container boundary** — both in
-  containers, or neither. Where a check depends on the client's **source address**, the client
-  belongs on that side too: a published port rewrites the source address, so moving the application
-  alone does not fix it.
-- **Check the edge from the side that consumes it.** A healthcheck that runs inside the container
-  answers from within its own namespace, and reports healthy while nothing outside can reach it.
-  This is not a rule about healthchecks — it holds for waiting, for reachability and for acceptance
-  alike.
+  When production changes, update `derived-at` and rewrite `deltas`. **A note nobody updated does
+  not tell you this is a copy. It tells you the two files are now different.** If `deltas` keeps
+  growing, the copy is turning into a rewrite. Fix the production file so both can share more.
+- **Keep the edge and the application on the same side of the container boundary.** Put both in
+  containers, or neither. If a check depends on the client's **source address**, put the client on
+  that side too. A published port rewrites the source address, so moving only the application does
+  not help.
+- **Check the edge from the side that uses it.** A healthcheck inside the container only sees the
+  inside. It reports healthy even when nothing outside can reach the edge. The same holds for
+  waiting, for reachability and for acceptance — not just for healthchecks.
 
-Two shapes satisfy the boundary rule, and mixing them does not work:
+Two shapes follow the boundary rule. Mixing them does not work:
 
 ```
-A — the edge is part of what is being checked
+A — the edge is part of what you are checking
   [client container ×N] → [edge container] → [app container]
-  one compose network; the source addresses are genuinely distinct
+  one compose network, and the source addresses are really different
 
 B — no edge
   [browser on the host] → [app process on the host]
-  the proxy layer is not checked at all
+  nothing checks the proxy layer
 ```
 
-**Choosing B is legitimate; choosing it silently is not.** A demo, a deadline, or a machine the edge
-will not run on are all reasons to leave it out — and each one obliges a record of what was
-measured, what was decided, and where the verification was handed to instead (normally the
-deployment runbook). Do not leave a non-working edge config and a spec that always fails behind
-either: a sweep that is red every time buries the failures that are real.
+**Shape B is a fair choice. Choosing it in silence is not.** A demo, a deadline, or a machine the
+edge will not run on are all good reasons. Each one still needs a note: what you measured, what you
+decided, and who checks it instead — usually the deployment runbook. Also, do not leave a broken
+edge config and a spec that always fails. A run that is red every time hides the real failures.
 
-**Say what a check proves at the granularity it proves it.** Exercising the edge without the
-application behind it covers the edge's own configuration and nothing about the seam between the
-two. Written down rounded up, that reads six months later as "verified end to end".
+**Say exactly what a check proves.** Testing the edge without the application behind it proves the
+edge's own configuration. It proves nothing about how the two work together. Round that up in your
+notes, and six months later someone reads it as "we tested the whole thing".
 
-The compose service, the nginx configuration and its Apache equivalents, how to derive the file from
-production, and the measured record of what happens when the boundary is crossed are in
+The compose service, the nginx configuration, the Apache equivalents, how to make the copy, and what
+we measured when the boundary was crossed are all in
 [edge-and-proxy.md](./references/edge-and-proxy.md).
 
 ## 6. Data: a seed set of its own
