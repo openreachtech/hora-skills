@@ -60,6 +60,23 @@ you there, and the rest of this skill explains how:
    left for the operator to remember. Middleware being up is not the same as data moving
    ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
 
+## What this skill assumes about the machine
+
+The default is **Ubuntu, or WSL2 on Windows**, with Docker Engine or a compatible runtime. Plain
+Windows — PowerShell or `cmd` — is out of scope; go through WSL2. Five rules keep a stack built here
+working on the other machines the team uses:
+
+| Rule | What breaks without it |
+| --- | --- |
+| Scripts are **bash 3.2 compatible** and use no GNU-only option | macOS ships bash 3.2 and a BSD userland, where `declare -A`, `mapfile`, `${x,,}`, `timeout`, `date -d` and `grep -P` are all absent. Measure a deadline by polling elapsed seconds instead. |
+| The memory budget is a slice of **the memory the container runtime was given**, never of physical memory | On Docker Desktop and WSL2 the ceiling is the runtime VM's allocation, and WSL2 takes half the machine by default. A budget written against physical memory overflows the VM. On Linux the two figures coincide, which is why the distinction is easy to miss. |
+| `.gitattributes` carries `*.sh text eol=lf` | A script that picked up CRLF fails as `bash\r: bad interpreter`, so the environment is broken by cloning it. |
+| The edge is selected by **loopback address and port**, never by `server_name` | Host-name routing needs an `/etc/hosts` edit on every machine, and WSL2 regenerates that file by default. |
+| Nothing depends on `host.docker.internal` | Podman spells it `host.containers.internal`. Keeping the edge and the application on the same side of the container boundary ([§5](#5-the-edge-what-the-browser-actually-connects-to)) removes the need for either. |
+
+Windows-native scripts are **opt-in**: write them only when asked, keep the `.sh` set canonical, and
+follow [windows-runner.md](./references/windows-runner.md).
+
 ## 1. Roles first: the component set here is one example
 
 Before writing anything, **enumerate what the product actually talks to and classify each component
@@ -561,7 +578,10 @@ Every detail file uses the same example stack, whose components illustrate the r
   record the derivation, the reduced test bed that exercises the edge alone and the propositions it
   does not cover, and the measured record of what happens when the container boundary is crossed
   (§5)
-
+- [windows-runner.md](./references/windows-runner.md) — **opt-in, read only when Windows-native
+  scripts are asked for**: the per-OS differences behind the assumptions above, why plain Windows
+  does not run the `.sh` set, the intention-by-intention PowerShell mapping, the shape of the five
+  `.ps1` scripts, and how to record what was actually verified
 - [environment-and-ports.md](./references/environment-and-ports.md) — the dedicated environment name
   and how its standalone `.env.<stack-env>` is authored, the table of values that must differ per
   environment, the dotenv/`process.env` precedence rule with the merge that causes it, the
