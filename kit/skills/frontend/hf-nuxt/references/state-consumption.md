@@ -14,4 +14,4 @@ const context = AppHeaderContext.create({
   .setupComponent()
 ```
 
-Contexts read the store via `this.customerStore.customerStateRef.value.*` and call its actions. Never call `useCustomerStore()` inside a context class — call it in `setup` and inject. See [[hf-furo-context-patterns]] for injection and [composables](references/composables-conventions.md) for the setup-only rule.
+Contexts read the store via `this.customerStore.customerStateRef.value.*` and call its actions. Never call `useCustomerStore()` inside a context class — call it in `setup` and inject. See [[hf-furo-context-patterns]] for injection and [composables](./composables-conventions.md) for the setup-only rule.
