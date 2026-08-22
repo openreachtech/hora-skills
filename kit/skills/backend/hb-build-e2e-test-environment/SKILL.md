@@ -3,9 +3,10 @@ name: hb-build-e2e-test-environment
 description: >
   Build, run and debug the manual local E2E environment under `e2e/docker/` — a
   container-compose stack of the product's real middleware (system of record, cache and job queue,
-  event transport, read model, object storage), its own seed set, and the `up` / `start` / `seed`
-  / `clean` / `down` scripts that drive it. Stated per component role, so any stack maps onto it.
-  Use also when adding E2E seed data. Verifying behavior inside the environment is out of scope.
+  event transport, read model, object storage, the reverse-proxy edge), its own seed set, and the
+  `up` / `start` / `seed` / `clean` / `down` scripts that drive it. Stated per component role, so
+  any stack maps onto it. Use also when adding E2E seed data. Verifying behavior inside the
+  environment is out of scope.
 ---
 
 # Build E2E Test Environment
@@ -48,16 +49,34 @@ you there, and the rest of this skill explains how:
 1. **One command per intention, fixed order inside each.** Every step is scripted, the steps within
    a script are ordered by dependency, and which script to run is the operator's call rather than
    something a script infers
-   ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+   ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
 2. **Private.** Everything the compose file starts is reachable only from this machine, and — where
    the two are meant to run at once — everything it starts stays clear of the developer's own stack
    ([§4](#4-ports-are-published-to-loopback-only-on-a-dedicated-block)).
 3. **Disposable, and predictably so.** Each command's effect on the data is fixed and stated in its
    name — rebuild, start, seed, clean — so no step has to detect state and the operator always knows
-   what survived ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+   what survived ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
 4. **Complete.** The **application and its background processes** are started by the same script, not
    left for the operator to remember. Middleware being up is not the same as data moving
-   ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+   ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+
+## What this skill assumes about the machine
+
+Use **Ubuntu, or WSL2 on Windows**, with Docker Engine or something compatible. Plain Windows —
+PowerShell or `cmd` — is out of scope. Go through WSL2.
+
+Five rules keep the stack working on the other machines your team uses:
+
+| Rule | What goes wrong without it |
+| --- | --- |
+| Write scripts for **bash 3.2**, and use no GNU-only option | macOS still ships bash 3.2, with BSD tools. It has no `declare -A`, `mapfile`, `${x,,}`, `timeout`, `date -d` or `grep -P`. To set a deadline, count elapsed seconds in a loop. |
+| Budget memory against **what the container runtime was given**, not against the machine | Docker Desktop and WSL2 run containers inside a VM, and WSL2 gives that VM half the machine by default. Budget against the machine and you overflow the VM. On Linux the two numbers are the same, so the mistake is easy to make. |
+| Put `*.sh text eol=lf` in `.gitattributes` | A script with CRLF line endings fails with `bash\r: bad interpreter`. Cloning the repository is then enough to break the environment. |
+| Reach the edge by **loopback address and port**, not by `server_name` | Routing by host name means editing `/etc/hosts` on every machine. WSL2 rewrites that file by default. |
+| Do not use `host.docker.internal` | Podman calls it `host.containers.internal`. You do not need either one if the edge and the application stay on the same side of the container boundary ([§5](#5-the-edge-what-the-browser-actually-connects-to)). |
+
+Scripts for Windows itself are **opt-in**. Write them only when someone asks. The `.sh` scripts stay
+the real ones. See [windows-runner.md](./references/windows-runner.md).
 
 ## 1. Roles first: the component set here is one example
 
@@ -73,6 +92,7 @@ of the skill apply to a stack it was not written in.
 | **change propagation** — what turns a write in the system of record into an update of the read model | a CDC connector running in Kafka Connect | a CDC runner without Connect, an outbox table plus a poller, a database trigger, an application-level write to both stores |
 | **read model / search** — the derived store screens read from | a search cluster with an analyzer plugin baked in | another search engine, a materialized view, a denormalized table, a cache the read path is served from |
 | **object storage** — where uploaded and derived files live | a per-run directory on the filesystem | an S3-compatible object server, a cloud-storage emulator, a bucket with a per-run prefix |
+| **edge** — what the browser actually connects to | nginx as a reverse proxy in front of the application | Apache httpd, Caddy, Traefik, HAProxy, or a managed load balancer / API gateway whose behaviour the product depends on |
 | **the application and its own processes** — the product itself | the API server, a worker daemon, a change-log consumer | whatever process set has to be running for a request to be answered end to end |
 
 - **A role your product does not have simply drops out.** No read model means no index-creation step,
@@ -112,16 +132,17 @@ it — is committed under a **single top-level directory of its own**:
 e2e/
 ├── docker/                     the stack definition, and everything the compose file references
 │   ├── compose.yaml            the services, loopback-published on the E2E port block (§2, §4)
+│   ├── nginx/                  the edge configuration the compose file mounts (§5)
 │   ├── images/                 build contexts for images that need a plugin baked in
 │   │   ├── search/Dockerfile
 │   │   └── connect/Dockerfile
 │   └── initdb/                 the SQL the system of record runs when its volume is created
-├── up.sh                       rebuild: clean → start → seed (§6)
-├── start.sh                    bring the stack and the processes up. no data operation (§6)
-├── seed.sh                     load the seed set into a stack that is already up (§6)
-├── clean.sh                    delete the data in every store — the only script that destroys (§6)
-├── down.sh                     stop the processes and the stack, keep the data (§6)
-└── logs/                       the background processes' output, git-ignored (§6)
+├── up.sh                       rebuild: clean → start → seed (§7)
+├── start.sh                    bring the stack and the processes up. no data operation (§7)
+├── seed.sh                     load the seed set into a stack that is already up (§7)
+├── clean.sh                    delete the data in every store — the only script that destroys (§7)
+├── down.sh                     stop the processes and the stack, keep the data (§7)
+└── logs/                       the background processes' output, git-ignored (§7)
 ```
 
 Three kinds of thing live here, and the layout says which is which: **`docker/` is the definition**,
@@ -138,10 +159,10 @@ repository root beside the other environments' files, where the environment faca
   processes — the application, the worker daemons, and anything that **polls on an interval** —
   keep taking CPU and memory the whole time, with no operator touching a screen. Any memory-hungry
   job run beside them — the unit suite in parallel workers is the classic — competes for the same
-  physical memory, and a job that fit on an idle machine can be killed by the operating system on
+  memory, and a job that fit on an idle machine can be killed by the operating system on
   one where the stack resides. Two defences, and they are complementary: the compose file **hard-caps
-  every container with `mem_limit` and holds the sum of those caps to a conservative slice of physical
-  memory** (~40%, sized so two stacks can be up at once), so the stack's *ceiling* is bounded no matter
+  every container with `mem_limit` and holds the sum of those caps to a conservative slice of the
+  memory the container runtime was given** (~40%, sized so two stacks can be up at once), so the stack's *ceiling* is bounded no matter
   what runs beside it ([compose-definition.md](./references/compose-definition.md)); and even under
   that ceiling, run heavy jobs after `down.sh` — or count the stack's capped footprint against the
   memory the job budgets for itself — because the ceiling protects the machine, it does not make the
@@ -160,7 +181,7 @@ repository root beside the other environments' files, where the environment faca
 
 Besides the env file, the other thing that does **not** live here is the seed data: the E2E seed
 sets stay wherever the project's seeder tooling looks for them (`sequelize/seeders/` in the
-examples). What separates them there is the **set**, not the path ([§5](#5-data-a-seed-set-of-its-own)).
+examples). What separates them there is the **set**, not the path ([§6](#6-data-a-seed-set-of-its-own)).
 
 ## 3. Environment: a dedicated environment name, with an env file of its own
 
@@ -187,7 +208,7 @@ environments' files. Two rules govern that file:
   build one env file out of another by reference, import or generation — when the stack gains a
   component or a key, updating every environment's file is part of that change. (Note the deliberate
   contrast with seed data, where master rows are **re-exported, never copied**
-  ([§5](#5-data-a-seed-set-of-its-own)): seed rows must be identical across environments *by
+  ([§6](#6-data-a-seed-set-of-its-own)): seed rows must be identical across environments *by
   construction*, env values are per-environment *by definition*.)
 
 **Which values must differ from the other environments is a decision, not a fixed list.** Two
@@ -251,6 +272,12 @@ has:
 | event transport (Kafka) | `127.0.0.1:29092` | `127.0.0.1:19092` | **published port must equal the port it advertises** |
 | read model (search cluster) | `127.0.0.1:9200` | `127.0.0.1:19200` | |
 | change propagation (Connect) | `127.0.0.1:8083` | `127.0.0.1:18083` | |
+| edge (nginx) | `127.0.0.1:80` | `127.0.0.1:18080` | **the URL the hand-over prints** ([§5](#5-the-edge-what-the-browser-actually-connects-to)) |
+
+**Keep the application's own port published as well**, even once the edge is in front of it. It is
+what tells an operator whether a failure is the application's or the edge's, and it costs one line.
+What changes is the hand-over: the URL the script prints is the **edge's**, because that is the path
+production takes ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
 
 **The transport entry is the trap, and it generalizes.** Any service that answers a client with **its
 own advertised address** — a broker handing back cluster metadata, a clustered queue redirecting to a
@@ -263,7 +290,78 @@ The stack also needs its **own compose project name**, or it adopts the developm
 containers, network and volumes. Details, the full compose walk-through, and the per-service
 settings the pipeline depends on are in [compose-definition.md](./references/compose-definition.md).
 
-## 5. Data: a seed set of its own
+## 5. The edge: what the browser actually connects to
+
+In production, the browser often reaches the product through a reverse proxy. Where it does, an
+environment that lets the browser talk to the application directly **cannot catch any bug that
+lives in the proxy** — and it still reports success. The operator sees a missing layer and a working
+one as the same thing. That is the failure the rest of this skill exists to prevent.
+
+So **where production has an edge, include one here by default**. It is a role like any other
+([§1](#1-roles-first-the-component-set-here-is-one-example)).
+
+**Where production has no edge, this section drops out**, the same as any other role the product
+does not have. Do not add one just to be thorough. An environment with a layer production does not
+have is wrong in the other direction, and it hides the same kind of bug — it would pass requests
+through a proxy nobody runs in production.
+
+Four rules:
+
+- **Copy the configuration from production.** Start with the production file. Remove TLS
+  termination. Point upstream at the E2E application. Do not write a new file: a new file has none
+  of production's bugs, and finding those bugs is the only reason this section exists.
+
+  **Where production's edge is a managed one — a cloud load balancer, an API gateway, a CDN — there
+  is no file to copy.** Do not pretend otherwise. Pick the behaviours your product actually depends
+  on (header forwarding, body size, timeouts, buffering), reproduce those in whatever proxy you run
+  locally, and write down which ones you could not reproduce. The deployment runbook checks the
+  rest after release. A local nginx standing in for an ALB is a useful rehearsal, not the same
+  thing, and saying so is what keeps it useful.
+- **Write down where the copy came from**, at the top of the file:
+
+  ```nginx
+  # derived-from: the deployment runbook's edge configuration chapter
+  # derived-at:   2026-08-22
+  # deltas:       TLS termination removed / upstream repointed to the E2E app
+  ```
+
+  When production changes, update `derived-at` and rewrite `deltas`. **A note nobody updated does
+  not tell you this is a copy. It tells you the two files are now different.** If `deltas` keeps
+  growing, the copy is turning into a rewrite. Fix the production file so both can share more.
+- **Keep the edge and the application on the same side of the container boundary.** Put both in
+  containers, or neither. If a check depends on the client's **source address**, put the client on
+  that side too. A published port rewrites the source address, so moving only the application does
+  not help.
+- **Check the edge from the side that uses it.** A healthcheck inside the container only sees the
+  inside. It reports healthy even when nothing outside can reach the edge. The same holds for
+  waiting, for reachability and for acceptance — not just for healthchecks.
+
+Two shapes follow the boundary rule. Mixing them does not work:
+
+```
+A — the edge is part of what you are checking
+  [client container ×N] → [edge container] → [app container]
+  one compose network, and the source addresses are really different
+
+B — no edge
+  [browser on the host] → [app process on the host]
+  nothing checks the proxy layer
+```
+
+**Shape B is a fair choice. Choosing it in silence is not.** A demo, a deadline, or a machine the
+edge will not run on are all good reasons. Each one still needs a note: what you measured, what you
+decided, and who checks it instead — usually the deployment runbook. Also, do not leave a broken
+edge config and a spec that always fails. A run that is red every time hides the real failures.
+
+**Say exactly what a check proves.** Testing the edge without the application behind it proves the
+edge's own configuration. It proves nothing about how the two work together. Round that up in your
+notes, and six months later someone reads it as "we tested the whole thing".
+
+The compose service, the nginx configuration, the Apache equivalents, how to make the copy, and what
+we measured when the boundary was crossed are all in
+[edge-and-proxy.md](./references/edge-and-proxy.md).
+
+## 6. Data: a seed set of its own
 
 The environment gets **two seeder directories of its own**, seeded by their own scripts:
 
@@ -293,7 +391,7 @@ The environment gets **two seeder directories of its own**, seeded by their own 
 The directory layout, the re-export skeleton, the id band, the generated-artifact step and how to
 keep the set pipeline-shaped are in [seed-data.md](./references/seed-data.md).
 
-## 6. The runner: one command per intention, and no script that guesses
+## 7. The runner: one command per intention, and no script that guesses
 
 ```bash
 e2e/up.sh                 # rebuild: clean, start, seed, hand over — the from-nothing path
@@ -354,7 +452,12 @@ Four properties of the scripts matter more than the steps:
 
 - **Waiting is on healthchecks, never on `sleep`.** Every service declares a healthcheck and the
   script polls it to a **deadline**, then reports which service never became healthy and the command
-  that shows its log. A fixed sleep is a race that passes on a fast machine.
+  that shows its log. A fixed sleep is a race that passes on a fast machine. **Poll from the side
+  that will use the service** — a check run inside the container reports healthy while nothing
+  outside can reach it ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- **The edge comes up last, once the application answers.** It has nothing to serve before then, and
+  a proxy that starts first turns a slow application into a confusing 502. It holds no data, so
+  `clean.sh` has nothing to do for it.
 - **The application and the background processes are part of the environment.** Change events do not
   reach the read model because the middleware is up: the processes that carry them — in the example a
   **worker daemon** and a **change-log consumer** — have to be running, and the **application itself**
@@ -365,10 +468,11 @@ Four properties of the scripts matter more than the steps:
   that also deleted the operator's data would be the worst outcome of all.
 - **Finish by handing over.** The last thing the script prints is what the operator needs to start
   working: the URL to open, where the process logs are, whether data was loaded or kept, and the
-  commands that stop and that wipe it. An environment nobody can find their way into is not
-  finished.
+  commands that stop and that wipe it. Where there is an edge, **the URL is the edge's**, because
+  that is the path production takes; the application's own port stays published for triage. An
+  environment nobody can find their way into is not finished.
 
-## 7. Traps that let a half-built stack look finished
+## 8. Traps that let a half-built stack look finished
 
 Each of these produces a stack that **starts cleanly and behaves wrongly** — the failure mode this
 skill exists to prevent, because the operator will read it as a product defect. Written in the
@@ -394,17 +498,35 @@ example stack's components — the shape carries over
 - **A clean that only reached the system of record** — the read model still answers with documents
   whose rows are gone, the transport still holds the old messages, and the screen shows deleted data.
   Clean every store in one command, processes stopped first
-  ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+  ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
 - **A script that decides for itself whether to load** — a load that died halfway looks loaded, a
   hand-emptied table looks fresh, and the wrong branch is invisible until it misfires. Let the command
-  the operator typed say what happens ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+  the operator typed say what happens ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
 - **Seeders made idempotent so re-running is "safe"** — the id collision was the environment saying
   the set is already there, and smoothing it over trades a loud, correct failure for rows that quietly
-  differ from the set ([§5](#5-data-a-seed-set-of-its-own)).
+  differ from the set ([§6](#6-data-a-seed-set-of-its-own)).
 - **Background processes started by hand, or not at all** — the middleware is up, the screens work,
-  and nothing propagates. Start them from the script ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+  and nothing propagates. Start them from the script ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
 - **No logs kept** — when something does not appear on screen, the answer is in the daemon's or the
   consumer's output, and a run that discarded it forces a rebuild to find out why.
+- **No edge at all, where production has one** — every defect that lives in the proxy layer is
+  invisible here and surfaces only in production: unforwarded `Upgrade` headers, the default body
+  size limit, buffered streaming, a missing `X-Forwarded-For`. The full list, and what each looks
+  like on screen, is in [edge-and-proxy.md](./references/edge-and-proxy.md) ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- **An edge configuration written from scratch instead of derived from production** — it shares no
+  defect with the real one, so it detects none of them. The layer is present and proves nothing
+  ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- **A derived configuration with no record of what it was derived from** — production moves, the
+  copy does not, and nothing says so. By the time anyone looks, they are two unrelated files
+  ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- **The edge and the application on opposite sides of the container boundary** — traffic crosses it
+  twice, and the paths that appear to work are the ones that mislead ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- **A source-address check read as green when the addresses were collapsed** — traffic through a
+  published port arrives with one rewritten source address, so a per-client rule passes even when
+  the implementation counts every client as one ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- **Two test beds' results reported as one end-to-end result** — exercising the edge without the
+  application behind it proves the edge's configuration and nothing about the seam. Recorded
+  rounded up, it reads later as "verified end to end" ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
 - **A container started with no `mem_limit`** — it grows into whatever the machine has, so one
   uncapped service silently undoes the whole memory budget and the machine swaps or OOM-kills under a
   load the caps were supposed to prevent. Cap every container, and set each JVM service's heap to
@@ -426,25 +548,32 @@ example stack's components — the shape carries over
 - [ ] Every component the product talks to is accounted for by role, and the ones the project does not have are deliberately absent rather than forgotten ([§1](#1-roles-first-the-component-set-here-is-one-example)).
 - [ ] The whole environment is under `e2e/`, with the compose file and everything it references by relative path together under `e2e/docker/`, the scripts at the root, and the run's output (logs, storage) git-ignored ([§2](#2-where-the-e2e-environment-lives)).
 - [ ] `npm run test` is completely unaffected — no test file was added under `e2e/`, and the unit suite still needs nothing but Node ([§2](#2-where-the-e2e-environment-lives)).
-- [ ] Every service declares a `mem_limit`, each JVM service's heap is about half its cap, and the sum of all caps sits at a conservative slice of physical memory (~40%, so two stacks can be up at once) ([compose-definition.md](./references/compose-definition.md)).
+- [ ] Every service declares a `mem_limit`, each JVM service's heap is about half its cap, and the sum of all caps sits at a conservative slice of the memory the container runtime was given (~40%, so two stacks can be up at once — on Docker Desktop or WSL2 that is the VM's allocation, not the machine's) ([compose-definition.md](./references/compose-definition.md)).
 - [ ] No heavy job (the parallel unit suite above all) is assumed to share the machine with the running stack — it runs after `down.sh`, or the stack's capped footprint is counted against its memory budget ([§2](#2-where-the-e2e-environment-lives)).
 - [ ] Every published port is `127.0.0.1`-prefixed — on a block of its own if the stack coexists with the developer's — and services the host does not reach publish nothing ([§4](#4-ports-are-published-to-loopback-only-on-a-dedicated-block)).
 - [ ] Any service that advertises its own address is published on the port it advertises ([§4](#4-ports-are-published-to-loopback-only-on-a-dedicated-block)).
 - [ ] The stack has its own compose project name, so it cannot adopt the development stack's volumes ([§4](#4-ports-are-published-to-loopback-only-on-a-dedicated-block)).
+- [ ] Where production has an edge, this environment has one too, and **every screen was driven through it** rather than against the application's own port ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- [ ] The edge configuration was **copied from the production one**, and carries the `derived-from` / `derived-at` / `deltas` record naming what was changed. Where production's edge is managed and has no file, the behaviours reproduced and the ones that could not be are written down instead ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- [ ] Header forwarding (`Upgrade` / `Connection`) and the request body-size limit were confirmed **by exercising them**, not by reading the configuration ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- [ ] The edge and the application sit on the **same side of the container boundary** ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- [ ] Any check that depends on the client's source address has the **client on that side too**, so the addresses are not collapsed by a published port ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- [ ] Reachability and health were confirmed **from the side that consumes them**, not from inside the container ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- [ ] If the edge was left out, the measurement, the decision and where the verification was handed to are written down — and what any partial test bed proves is recorded at that granularity ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
 - [ ] The stack runs under its own environment name (`live-local` is the recommendation) with its own committed `.env.<stack-env>` — a complete, standalone file in which no key is referenced, imported or generated out of another environment's file, even where the values coincide ([§3](#3-environment-a-dedicated-environment-name-with-an-env-file-of-its-own)).
 - [ ] The coexist / must-not-destroy questions have been answered out loud, and the values they force are written in `.env.<stack-env>`; anything the compose file interpolates reaches compose via `--env-file` or the runner's exports ([§3](#3-environment-a-dedicated-environment-name-with-an-env-file-of-its-own)).
 - [ ] If a build may not destroy what the developer has, the system of record's name, every derived name's identity, the read model's name and the object storage location are all the E2E stack's own — these are the failures that are silent ([§3](#3-environment-a-dedicated-environment-name-with-an-env-file-of-its-own)).
-- [ ] Seed data is in the environment's own `<stack-env>-master/` + `<stack-env>/` directories, master rows **re-exported** from the production master, ids in the reserved band, and sign-in accounts included ([§5](#5-data-a-seed-set-of-its-own)).
-- [ ] The build generates the binary artifacts the seeds promise ([§5](#5-data-a-seed-set-of-its-own)).
-- [ ] Waiting is on healthchecks with a deadline, and any failure aborts instead of handing over ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
-- [ ] **Each script does one thing and none of them inspects the data to choose a branch**; `up.sh` is literally `clean.sh` → `start.sh` → `seed.sh`, and `--start-only` delegates to `start.sh` ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
-- [ ] `start.sh` performs no data operation, and every step in it is safe to run against an environment that is already up ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
-- [ ] Provisioning that depends on data is in `seed.sh`, not `start.sh` — otherwise starting an empty environment fails for an unrelated-looking reason ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
-- [ ] Nothing but `clean.sh` deletes data, and the abort trap calls `down.sh`, not `clean.sh` ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
-- [ ] `clean.sh` reaches **every** store — system of record, read model, transport channels and offsets, propagation state, queue, object storage — and stops the background processes before it starts ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
-- [ ] `seed.sh` run against an already-seeded environment fails loudly on the fixed ids rather than being made idempotent ([§5](#5-data-a-seed-set-of-its-own)).
-- [ ] The application and every background process the product needs are started by `start.sh` and stopped by `down.sh`, with their output kept in `e2e/logs/` ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
-- [ ] Whichever script the operator invoked ends by printing the URL to open, the log locations, and the stop and wipe commands ([§6](#6-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+- [ ] Seed data is in the environment's own `<stack-env>-master/` + `<stack-env>/` directories, master rows **re-exported** from the production master, ids in the reserved band, and sign-in accounts included ([§6](#6-data-a-seed-set-of-its-own)).
+- [ ] The build generates the binary artifacts the seeds promise ([§6](#6-data-a-seed-set-of-its-own)).
+- [ ] Waiting is on healthchecks with a deadline, and any failure aborts instead of handing over ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+- [ ] **Each script does one thing and none of them inspects the data to choose a branch**; `up.sh` is literally `clean.sh` → `start.sh` → `seed.sh`, and `--start-only` delegates to `start.sh` ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+- [ ] `start.sh` performs no data operation, and every step in it is safe to run against an environment that is already up ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+- [ ] Provisioning that depends on data is in `seed.sh`, not `start.sh` — otherwise starting an empty environment fails for an unrelated-looking reason ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+- [ ] Nothing but `clean.sh` deletes data, and the abort trap calls `down.sh`, not `clean.sh` ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+- [ ] `clean.sh` reaches **every** store — system of record, read model, transport channels and offsets, propagation state, queue, object storage — and stops the background processes before it starts ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+- [ ] `seed.sh` run against an already-seeded environment fails loudly on the fixed ids rather than being made idempotent ([§6](#6-data-a-seed-set-of-its-own)).
+- [ ] The application and every background process the product needs are started by `start.sh` and stopped by `down.sh`, with their output kept in `e2e/logs/` ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
+- [ ] Whichever script the operator invoked ends by printing the URL to open, the log locations, and the stop and wipe commands ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
 - [ ] The unit suite still passes untouched and `npm run lint` passes.
 
 ## Detail files
@@ -455,17 +584,26 @@ Every detail file uses the same example stack, whose components illustrate the r
 - [compose-definition.md](./references/compose-definition.md) — the whole compose file for the E2E
   stack, the per-service settings the pipeline depends on (row-image change log, transport listeners,
   read-model heap and security, baked-in plugins), the per-container `mem_limit` caps and the
-  physical-memory budget that sizes them, project naming, volumes vs `tmpfs`, and healthchecks
+  runtime-memory budget that sizes them, project naming, volumes vs `tmpfs`, and healthchecks
   (§2, §4)
+- [edge-and-proxy.md](./references/edge-and-proxy.md) — the edge compose service, the nginx
+  configuration and its Apache equivalents, how to derive the E2E file from the production one and
+  record the derivation, the reduced test bed that exercises the edge alone and the propositions it
+  does not cover, and the measured record of what happens when the container boundary is crossed
+  (§5)
+- [windows-runner.md](./references/windows-runner.md) — **opt-in, read only when Windows-native
+  scripts are asked for**: the per-OS differences behind the assumptions above, why plain Windows
+  does not run the `.sh` set, the intention-by-intention PowerShell mapping, the shape of the five
+  `.ps1` scripts, and how to record what was actually verified
 - [environment-and-ports.md](./references/environment-and-ports.md) — the dedicated environment name
   and how its standalone `.env.<stack-env>` is authored, the table of values that must differ per
   environment, the dotenv/`process.env` precedence rule with the merge that causes it, the
   host-vs-network address split, the port block, and the missing-key-reads-as-`null` behavior (§3, §4)
 - [seed-data.md](./references/seed-data.md) — the master / fixture split of the environment's own
   seeder directories, the re-export skeleton, the reserved id band, the seed scripts, and the
-  generated-artifact step (§5)
+  generated-artifact step (§6)
 - [runner-and-lifecycle.md](./references/runner-and-lifecycle.md) — the command set, the rule that
   puts each step in `start.sh` or `seed.sh`, a step table per script with the reason each step sits
   where it does, `up.sh` as their composition, what `clean.sh` has to reach and in what order,
   health-wait shapes, application and background-process handling, the hand-over, the
-  abort-on-failure trap, and the CI stance (§6, §7)
+  abort-on-failure trap, and the CI stance (§7, §8)
