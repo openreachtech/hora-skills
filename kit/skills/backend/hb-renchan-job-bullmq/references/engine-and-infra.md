@@ -4,7 +4,7 @@ The shared infrastructure every job points at. Referenced from §2 of [SKILL.md]
 
 ## Engine — the one config object
 
-A `BaseJobEngine` subclass ([app/ContentGenerationJobEngine.js](../../../../app/ContentGenerationJobEngine.js))
+A `BaseJobEngine` subclass (`app/ContentGenerationJobEngine.js`)
 is the single place that names paths, Redis, the Share/Context constructors, error codes, and log
 files. Every Dispatcher / Worker / Scheduler references it via `EngineCtor`.
 
@@ -48,7 +48,7 @@ export default class ContentGenerationJobEngine extends BaseJobEngine {
 
 ## Share — per-process shared bag
 
-`BaseJobShare` subclass ([app/contexts/ContentGenerationJobShare.js](../../../../app/contexts/ContentGenerationJobShare.js)).
+`BaseJobShare` subclass (`app/contexts/ContentGenerationJobShare.js`).
 Created once per process by the engine; holds `processClerk`, `env`, `timber`, and (when injected)
 the `subscriptionBroker`. The getter just returns the stored instance — no side effects. Enqueue-only
 processes construct the Share with `subscriptionBroker: null`.
@@ -61,7 +61,7 @@ the worker stays thin.
 
 ## RedisConnection — one Redis, two option shapes
 
-[app/queue/RedisConnection.js](../../../../app/queue/RedisConnection.js) reads `REDIS_HOST` /
+`app/queue/RedisConnection.js` reads `REDIS_HOST` /
 `REDIS_PORT` / `REDIS_PASSWORD` and produces:
 
 - **`generateConnectionOptions()`** — for BullMQ queues/workers. **Must include
