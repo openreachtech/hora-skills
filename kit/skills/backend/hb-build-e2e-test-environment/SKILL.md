@@ -138,10 +138,10 @@ repository root beside the other environments' files, where the environment faca
   processes — the application, the worker daemons, and anything that **polls on an interval** —
   keep taking CPU and memory the whole time, with no operator touching a screen. Any memory-hungry
   job run beside them — the unit suite in parallel workers is the classic — competes for the same
-  physical memory, and a job that fit on an idle machine can be killed by the operating system on
+  memory, and a job that fit on an idle machine can be killed by the operating system on
   one where the stack resides. Two defences, and they are complementary: the compose file **hard-caps
-  every container with `mem_limit` and holds the sum of those caps to a conservative slice of physical
-  memory** (~40%, sized so two stacks can be up at once), so the stack's *ceiling* is bounded no matter
+  every container with `mem_limit` and holds the sum of those caps to a conservative slice of the
+  memory the container runtime was given** (~40%, sized so two stacks can be up at once), so the stack's *ceiling* is bounded no matter
   what runs beside it ([compose-definition.md](./references/compose-definition.md)); and even under
   that ceiling, run heavy jobs after `down.sh` — or count the stack's capped footprint against the
   memory the job budgets for itself — because the ceiling protects the machine, it does not make the
@@ -426,7 +426,7 @@ example stack's components — the shape carries over
 - [ ] Every component the product talks to is accounted for by role, and the ones the project does not have are deliberately absent rather than forgotten ([§1](#1-roles-first-the-component-set-here-is-one-example)).
 - [ ] The whole environment is under `e2e/`, with the compose file and everything it references by relative path together under `e2e/docker/`, the scripts at the root, and the run's output (logs, storage) git-ignored ([§2](#2-where-the-e2e-environment-lives)).
 - [ ] `npm run test` is completely unaffected — no test file was added under `e2e/`, and the unit suite still needs nothing but Node ([§2](#2-where-the-e2e-environment-lives)).
-- [ ] Every service declares a `mem_limit`, each JVM service's heap is about half its cap, and the sum of all caps sits at a conservative slice of physical memory (~40%, so two stacks can be up at once) ([compose-definition.md](./references/compose-definition.md)).
+- [ ] Every service declares a `mem_limit`, each JVM service's heap is about half its cap, and the sum of all caps sits at a conservative slice of the memory the container runtime was given (~40%, so two stacks can be up at once — on Docker Desktop or WSL2 that is the VM's allocation, not the machine's) ([compose-definition.md](./references/compose-definition.md)).
 - [ ] No heavy job (the parallel unit suite above all) is assumed to share the machine with the running stack — it runs after `down.sh`, or the stack's capped footprint is counted against its memory budget ([§2](#2-where-the-e2e-environment-lives)).
 - [ ] Every published port is `127.0.0.1`-prefixed — on a block of its own if the stack coexists with the developer's — and services the host does not reach publish nothing ([§4](#4-ports-are-published-to-loopback-only-on-a-dedicated-block)).
 - [ ] Any service that advertises its own address is published on the port it advertises ([§4](#4-ports-are-published-to-loopback-only-on-a-dedicated-block)).
@@ -455,7 +455,7 @@ Every detail file uses the same example stack, whose components illustrate the r
 - [compose-definition.md](./references/compose-definition.md) — the whole compose file for the E2E
   stack, the per-service settings the pipeline depends on (row-image change log, transport listeners,
   read-model heap and security, baked-in plugins), the per-container `mem_limit` caps and the
-  physical-memory budget that sizes them, project naming, volumes vs `tmpfs`, and healthchecks
+  runtime-memory budget that sizes them, project naming, volumes vs `tmpfs`, and healthchecks
   (§2, §4)
 - [environment-and-ports.md](./references/environment-and-ports.md) — the dedicated environment name
   and how its standalone `.env.<stack-env>` is authored, the table of values that must differ per
