@@ -12,7 +12,7 @@ declare module 'vue-router' {
 }
 ```
 
-This types the custom `headerTitle` set via `definePageMeta` ([pages](references/pages-route-structure.md)).
+This types the custom `headerTitle` set via `definePageMeta` ([pages](./pages-route-structure.md)).
 
 ## Third-party ambient consts (`robot-payment.d.ts`)
 

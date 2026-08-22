@@ -75,6 +75,6 @@ The template accesses **everything** through `context.*`:
 - **Nuxt built-in components** — from `'#components'`: `import { Icon, NuxtLink } from '#components'`.
 - **Other components** — absolute alias with extension: `import AppDialog from '~/components/units/AppDialog.vue'`.
 - **Sibling context** — relative: `import XxxContext from './XxxContext.js'`.
-- **Composables/stores** — explicit import, then called in `setup` and passed into the context (see [composables](references/composables-conventions.md), [stores](references/state-store-pattern.md)).
+- **Composables/stores** — explicit import, then called in `setup` and passed into the context (see [composables](./composables-conventions.md), [stores](./state-store-pattern.md)).
 
 Every referenced component must appear in the `components: {}` block of `defineComponent`.
