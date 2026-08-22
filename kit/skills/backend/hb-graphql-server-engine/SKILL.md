@@ -75,7 +75,7 @@ and overrides only what is endpoint-specific.**
 | Base | Where | Role |
 | --- | --- | --- |
 | `BaseGraphqlServerEngine` | `@openreachtech/renchan` | The **framework contract**: factory (`create` / `createAsync`), `buildErrorHash`, and the abstract members every engine fills in (`config`, `Share`, `Context`, `collectMiddleware`, `generateFilterHandler`, …). |
-| `BaseAppGraphqlServerEngine` | [server/graphql/BaseAppGraphqlServerEngine.js](../../../server/graphql/BaseAppGraphqlServerEngine.js) | **This app's shared settings** — factor here anything common to every endpoint: the shared `collectMiddleware()` (cors / json / static / upload / urlencoded) and `standardErrorCodeHash`. |
+| `BaseAppGraphqlServerEngine` | `server/graphql/BaseAppGraphqlServerEngine.js` | **This app's shared settings** — factor here anything common to every endpoint: the shared `collectMiddleware()` (cors / json / static / upload / urlencoded) and `standardErrorCodeHash`. |
 
 - **When a setting is the same for every endpoint, lift it into the app base.** Middleware and the
   error-code hash are the usual ones. Each concrete engine then extends `BaseAppGraphqlServerEngine`
@@ -142,7 +142,7 @@ static get config () {
 }
 ```
 
-- **Always resolve paths with `rootPath.to(...)`** ([app/globals/root-path.js](../../../app/globals/root-path.js)),
+- **Always resolve paths with `rootPath.to(...)`** (`app/globals/root-path.js`),
   never hand-built relative strings.
 - **`graphqlEndpoint` must be unique** across all engines (each maps to its own path + port in
   `server/index.js`, [§8](#8-wiring-into-serverindexjs)).
@@ -175,8 +175,8 @@ threads them into every resolver call.
   Context with another endpoint — the principal and permissions differ.
 - The Share / Context implementations themselves (findUser, visa issuing, extra clients) are their own
   concern; this skill only wires them onto the engine. (See the `contexts/` classes such as
-  [AdminGraphqlContext.js](../../../server/graphql/contexts/AdminGraphqlContext.js) /
-  [AdminGraphqlShare.js](../../../server/graphql/contexts/AdminGraphqlShare.js).)
+  `AdminGraphqlContext.js` /
+  `AdminGraphqlShare.js`.)
 
 ## 4. Authentication: `schemasToSkipFiltering` + `generateFilterHandler`
 
@@ -310,7 +310,7 @@ Two ways to run something *after* a resolver returns, both wired on the engine:
 
 ## 8. Wiring into `server/index.js`
 
-An engine does nothing until it is booted. [server/index.js](../../../server/index.js) starts **one
+An engine does nothing until it is booted. `server/index.js` starts **one
 HTTP server per engine** with `GraphqlServerBuilder`, each on its own port:
 
 ```js

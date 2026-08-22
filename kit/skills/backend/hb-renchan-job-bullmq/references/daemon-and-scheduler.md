@@ -31,7 +31,7 @@ await daemon.startDaemon()
 
 When workers publish progress to a subscription, build the broker first and inject it into the
 Engine, then create the daemon from that engine
-([scripts/startJobDaemon.js](../../../../scripts/startJobDaemon.js)):
+(`scripts/startJobDaemon.js`):
 
 ```js
 import { SubscriptionBroker } from '@openreachtech/renchan'
@@ -94,7 +94,7 @@ export default class GammaIntervalJobScheduler extends BaseIntervalJobScheduler 
 ```
 
 (Cron looks identical with `BaseCronJobScheduler`; see
-[purge-expired-content-sessions](../../../../app/jobs/purge-expired-content-sessions/).) The
+`purge-expired-content-sessions`.) The
 **Worker** for a scheduled job is a normal `BaseJobWorker` — the schedule only controls *when* a job
 is enqueued.
 
@@ -167,8 +167,8 @@ process.exit(0)
 ```
 
 - Await the call and exit — this is the module's intended shape, matching this repo's
-  [start-schedule.js](../../../../scripts/start-schedule.js).
-  [ContentGenerationJobSchedulerService.js](../../../../app/ContentGenerationJobSchedulerService.js)
+  `start-schedule.js`.
+  `ContentGenerationJobSchedulerService.js`
   registers the hourly purge cron.
 - Both calls return an array of response objects for optional inspection (start: `hasError()` /
   `hasResponse()` / `jobName` / `createDispatchedAt()`; stop: `hasError()` / `schedulerId` /
@@ -177,6 +177,6 @@ process.exit(0)
 
 ## pm2 processes
 
-[pm2.config.cjs](../../../../pm2.config.cjs) runs the two long-lived processes: **`GraphQL API`**
+`pm2.config.cjs` runs the two long-lived processes: **`GraphQL API`**
 (`server/index.js`, the producer) and **`Job Daemon`** (`scripts/startJobDaemon.js`, the
 consumer). Schedule registration is run on demand, not as a pm2 app.
