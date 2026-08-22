@@ -46,6 +46,8 @@ The hook you just declared takes effect from the next `npm install` on, so run t
 npx --no hora-skills install
 ```
 
+**`--no` stops npx before it downloads**: the name is still resolved against the registry, but nothing is fetched, so neither the install script nor the bin of a stranger's package ever runs. Without it, a bin that is not installed becomes a fetch of whatever has been published under `hora-skills`, an unscoped name this package does not hold.
+
 ## Usage
 
 The skills land in your repository's `.claude/skills/`. Claude Code discovers them from there, and each becomes invocable by its own name — `/hc-naming`, `/hb-query-resolver`, `/hf-cp-table`. Installed skills sit side by side with your repository's own, in one flat list, which is what the `hc-`/`hb-`/`hf-` prefix is for.

@@ -46,6 +46,8 @@ npm install -D @openreachtech/hora-skills
 npx --no hora-skills install
 ```
 
+**`--no` は、ダウンロードの前で npx を止めます** — 名前の解決はレジストリに問い合わせますが、取得はしないので、他人のパッケージの install スクリプトも bin も走りません。これが無いと、bin が入っていない状態は、このパッケージが持たない無スコープ名 `hora-skills` で公開されたものの取得になります。
+
 ## 使い方
 
 スキルは自分のリポジトリの `.claude/skills/` に配置されます。Claude Code はそこからスキルを認識し、それぞれが自身の名前で呼び出せるようになります(`/hc-naming`・`/hb-query-resolver`・`/hf-cp-table` など)。インストールされたスキルは、そのリポジトリ自身のスキルと 1 つのフラットな一覧に並びます。`hc-`/`hb-`/`hf-` のプレフィックスはそのためにあります。
