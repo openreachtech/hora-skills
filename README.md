@@ -48,6 +48,8 @@ npx --no hora-skills install
 
 **`--no` stops npx before it downloads**: the name is still resolved against the registry, but nothing is fetched, so neither the install script nor the bin of a stranger's package ever runs. Without it, a bin that is not installed becomes a fetch of whatever has been published under `hora-skills`, an unscoped name this package does not hold.
 
+Where the package is not a dependency at all — a one-off, or a repository that is not yours to add a hook to — name it in full instead: `npx --package=@openreachtech/hora-skills hora-skills install`. What is fetched is then a scoped name nobody else can publish under, which is the guarantee the unscoped bin name never carried.
+
 ## Usage
 
 The skills land in your repository's `.claude/skills/`. Claude Code discovers them from there, and each becomes invocable by its own name — `/hc-naming`, `/hb-query-resolver`, `/hf-cp-table`. Installed skills sit side by side with your repository's own, in one flat list, which is what the `hc-`/`hb-`/`hf-` prefix is for.
