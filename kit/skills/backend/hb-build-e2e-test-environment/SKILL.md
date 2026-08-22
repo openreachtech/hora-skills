@@ -3,9 +3,10 @@ name: hb-build-e2e-test-environment
 description: >
   Build, run and debug the manual local E2E environment under `e2e/docker/` — a
   container-compose stack of the product's real middleware (system of record, cache and job queue,
-  event transport, read model, object storage), its own seed set, and the `up` / `start` / `seed`
-  / `clean` / `down` scripts that drive it. Stated per component role, so any stack maps onto it.
-  Use also when adding E2E seed data. Verifying behavior inside the environment is out of scope.
+  event transport, read model, object storage, the reverse-proxy edge), its own seed set, and the
+  `up` / `start` / `seed` / `clean` / `down` scripts that drive it. Stated per component role, so
+  any stack maps onto it. Use also when adding E2E seed data. Verifying behavior inside the
+  environment is out of scope.
 ---
 
 # Build E2E Test Environment
@@ -73,6 +74,7 @@ of the skill apply to a stack it was not written in.
 | **change propagation** — what turns a write in the system of record into an update of the read model | a CDC connector running in Kafka Connect | a CDC runner without Connect, an outbox table plus a poller, a database trigger, an application-level write to both stores |
 | **read model / search** — the derived store screens read from | a search cluster with an analyzer plugin baked in | another search engine, a materialized view, a denormalized table, a cache the read path is served from |
 | **object storage** — where uploaded and derived files live | a per-run directory on the filesystem | an S3-compatible object server, a cloud-storage emulator, a bucket with a per-run prefix |
+| **edge** — what the browser actually connects to | nginx as a reverse proxy in front of the application | Apache httpd, Caddy, Traefik, HAProxy, or a managed load balancer / API gateway whose behaviour the product depends on |
 | **the application and its own processes** — the product itself | the API server, a worker daemon, a change-log consumer | whatever process set has to be running for a request to be answered end to end |
 
 - **A role your product does not have simply drops out.** No read model means no index-creation step,
@@ -112,6 +114,7 @@ it — is committed under a **single top-level directory of its own**:
 e2e/
 ├── docker/                     the stack definition, and everything the compose file references
 │   ├── compose.yaml            the services, loopback-published on the E2E port block (§2, §4)
+│   ├── nginx/                  the edge configuration the compose file mounts (§5)
 │   ├── images/                 build contexts for images that need a plugin baked in
 │   │   ├── search/Dockerfile
 │   │   └── connect/Dockerfile
@@ -251,6 +254,12 @@ has:
 | event transport (Kafka) | `127.0.0.1:29092` | `127.0.0.1:19092` | **published port must equal the port it advertises** |
 | read model (search cluster) | `127.0.0.1:9200` | `127.0.0.1:19200` | |
 | change propagation (Connect) | `127.0.0.1:8083` | `127.0.0.1:18083` | |
+| edge (nginx) | `127.0.0.1:80` | `127.0.0.1:18080` | **the URL the hand-over prints** ([§5](#5-the-edge-what-the-browser-actually-connects-to)) |
+
+**Keep the application's own port published as well**, even once the edge is in front of it. It is
+what tells an operator whether a failure is the application's or the edge's, and it costs one line.
+What changes is the hand-over: the URL the script prints is the **edge's**, because that is the path
+production takes ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
 
 **The transport entry is the trap, and it generalizes.** Any service that answers a client with **its
 own advertised address** — a broker handing back cluster metadata, a clustered queue redirecting to a
@@ -262,6 +271,65 @@ reach.
 The stack also needs its **own compose project name**, or it adopts the development stack's
 containers, network and volumes. Details, the full compose walk-through, and the per-service
 settings the pipeline depends on are in [compose-definition.md](./references/compose-definition.md).
+
+## 5. The edge: what the browser actually connects to
+
+If the browser reaches the product through a reverse proxy in production, an environment that
+connects to the application directly **cannot detect any defect that lives in the proxy layer** —
+and reports success anyway. To the operator, that missing layer is indistinguishable from a working
+one, which is the failure the rest of this skill exists to prevent. The edge is a role like any
+other ([§1](#1-roles-first-the-component-set-here-is-one-example)) and is **included by default**.
+
+Four rules carry it:
+
+- **Derive the configuration from production.** Take the production file, drop TLS termination,
+  repoint upstream at the E2E application. A configuration written from scratch shares no defect
+  with production, and detecting those defects is the only reason this section exists.
+- **Record the derivation in the file itself**, so drift is visible to anyone who opens it:
+
+  ```nginx
+  # derived-from: the deployment runbook's edge configuration chapter
+  # derived-at:   2026-08-22
+  # deltas:       TLS termination removed / upstream repointed to the E2E app
+  ```
+
+  Update `derived-at` and rewrite `deltas` whenever production changes. **A record that was not
+  updated does not describe a derivation; it describes a different file.** A `deltas` list that
+  keeps growing says the copy has become a reimplementation, and the production side is what to fix.
+- **Put the edge and the application on the same side of the container boundary** — both in
+  containers, or neither. Where a check depends on the client's **source address**, the client
+  belongs on that side too: a published port rewrites the source address, so moving the application
+  alone does not fix it.
+- **Check the edge from the side that consumes it.** A healthcheck that runs inside the container
+  answers from within its own namespace, and reports healthy while nothing outside can reach it.
+  This is not a rule about healthchecks — it holds for waiting, for reachability and for acceptance
+  alike.
+
+Two shapes satisfy the boundary rule, and mixing them does not work:
+
+```
+A — the edge is part of what is being checked
+  [client container ×N] → [edge container] → [app container]
+  one compose network; the source addresses are genuinely distinct
+
+B — no edge
+  [browser on the host] → [app process on the host]
+  the proxy layer is not checked at all
+```
+
+**Choosing B is legitimate; choosing it silently is not.** A demo, a deadline, or a machine the edge
+will not run on are all reasons to leave it out — and each one obliges a record of what was
+measured, what was decided, and where the verification was handed to instead (normally the
+deployment runbook). Do not leave a non-working edge config and a spec that always fails behind
+either: a sweep that is red every time buries the failures that are real.
+
+**Say what a check proves at the granularity it proves it.** Exercising the edge without the
+application behind it covers the edge's own configuration and nothing about the seam between the
+two. Written down rounded up, that reads six months later as "verified end to end".
+
+The compose service, the nginx configuration and its Apache equivalents, how to derive the file from
+production, and the measured record of what happens when the boundary is crossed are in
+[edge-and-proxy.md](./references/edge-and-proxy.md).
 
 ## 6. Data: a seed set of its own
 
@@ -354,7 +422,12 @@ Four properties of the scripts matter more than the steps:
 
 - **Waiting is on healthchecks, never on `sleep`.** Every service declares a healthcheck and the
   script polls it to a **deadline**, then reports which service never became healthy and the command
-  that shows its log. A fixed sleep is a race that passes on a fast machine.
+  that shows its log. A fixed sleep is a race that passes on a fast machine. **Poll from the side
+  that will use the service** — a check run inside the container reports healthy while nothing
+  outside can reach it ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- **The edge comes up last, once the application answers.** It has nothing to serve before then, and
+  a proxy that starts first turns a slow application into a confusing 502. It holds no data, so
+  `clean.sh` has nothing to do for it.
 - **The application and the background processes are part of the environment.** Change events do not
   reach the read model because the middleware is up: the processes that carry them — in the example a
   **worker daemon** and a **change-log consumer** — have to be running, and the **application itself**
@@ -365,8 +438,9 @@ Four properties of the scripts matter more than the steps:
   that also deleted the operator's data would be the worst outcome of all.
 - **Finish by handing over.** The last thing the script prints is what the operator needs to start
   working: the URL to open, where the process logs are, whether data was loaded or kept, and the
-  commands that stop and that wipe it. An environment nobody can find their way into is not
-  finished.
+  commands that stop and that wipe it. Where there is an edge, **the URL is the edge's**, because
+  that is the path production takes; the application's own port stays published for triage. An
+  environment nobody can find their way into is not finished.
 
 ## 8. Traps that let a half-built stack look finished
 
@@ -405,6 +479,24 @@ example stack's components — the shape carries over
   and nothing propagates. Start them from the script ([§7](#7-the-runner-one-command-per-intention-and-no-script-that-guesses)).
 - **No logs kept** — when something does not appear on screen, the answer is in the daemon's or the
   consumer's output, and a run that discarded it forces a rebuild to find out why.
+- **No edge at all, where production has one** — every defect that lives in the proxy layer is
+  invisible here and surfaces only in production: unforwarded `Upgrade` headers, the default body
+  size limit, buffered streaming, a missing `X-Forwarded-For`. The full list, and what each looks
+  like on screen, is in [edge-and-proxy.md](./references/edge-and-proxy.md) ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- **An edge configuration written from scratch instead of derived from production** — it shares no
+  defect with the real one, so it detects none of them. The layer is present and proves nothing
+  ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- **A derived configuration with no record of what it was derived from** — production moves, the
+  copy does not, and nothing says so. By the time anyone looks, they are two unrelated files
+  ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- **The edge and the application on opposite sides of the container boundary** — traffic crosses it
+  twice, and the paths that appear to work are the ones that mislead ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- **A source-address check read as green when the addresses were collapsed** — traffic through a
+  published port arrives with one rewritten source address, so a per-client rule passes even when
+  the implementation counts every client as one ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- **Two test beds' results reported as one end-to-end result** — exercising the edge without the
+  application behind it proves the edge's configuration and nothing about the seam. Recorded
+  rounded up, it reads later as "verified end to end" ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
 - **A container started with no `mem_limit`** — it grows into whatever the machine has, so one
   uncapped service silently undoes the whole memory budget and the machine swaps or OOM-kills under a
   load the caps were supposed to prevent. Cap every container, and set each JVM service's heap to
@@ -431,6 +523,13 @@ example stack's components — the shape carries over
 - [ ] Every published port is `127.0.0.1`-prefixed — on a block of its own if the stack coexists with the developer's — and services the host does not reach publish nothing ([§4](#4-ports-are-published-to-loopback-only-on-a-dedicated-block)).
 - [ ] Any service that advertises its own address is published on the port it advertises ([§4](#4-ports-are-published-to-loopback-only-on-a-dedicated-block)).
 - [ ] The stack has its own compose project name, so it cannot adopt the development stack's volumes ([§4](#4-ports-are-published-to-loopback-only-on-a-dedicated-block)).
+- [ ] Where production has an edge, this environment has one too, and **every screen was driven through it** rather than against the application's own port ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- [ ] The edge configuration was **derived from the production one**, and carries the `derived-from` / `derived-at` / `deltas` record naming what was changed ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- [ ] Header forwarding (`Upgrade` / `Connection`) and the request body-size limit were confirmed **by exercising them**, not by reading the configuration ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- [ ] The edge and the application sit on the **same side of the container boundary** ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- [ ] Any check that depends on the client's source address has the **client on that side too**, so the addresses are not collapsed by a published port ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- [ ] Reachability and health were confirmed **from the side that consumes them**, not from inside the container ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
+- [ ] If the edge was left out, the measurement, the decision and where the verification was handed to are written down — and what any partial test bed proves is recorded at that granularity ([§5](#5-the-edge-what-the-browser-actually-connects-to)).
 - [ ] The stack runs under its own environment name (`live-local` is the recommendation) with its own committed `.env.<stack-env>` — a complete, standalone file in which no key is referenced, imported or generated out of another environment's file, even where the values coincide ([§3](#3-environment-a-dedicated-environment-name-with-an-env-file-of-its-own)).
 - [ ] The coexist / must-not-destroy questions have been answered out loud, and the values they force are written in `.env.<stack-env>`; anything the compose file interpolates reaches compose via `--env-file` or the runner's exports ([§3](#3-environment-a-dedicated-environment-name-with-an-env-file-of-its-own)).
 - [ ] If a build may not destroy what the developer has, the system of record's name, every derived name's identity, the read model's name and the object storage location are all the E2E stack's own — these are the failures that are silent ([§3](#3-environment-a-dedicated-environment-name-with-an-env-file-of-its-own)).
@@ -457,6 +556,12 @@ Every detail file uses the same example stack, whose components illustrate the r
   read-model heap and security, baked-in plugins), the per-container `mem_limit` caps and the
   runtime-memory budget that sizes them, project naming, volumes vs `tmpfs`, and healthchecks
   (§2, §4)
+- [edge-and-proxy.md](./references/edge-and-proxy.md) — the edge compose service, the nginx
+  configuration and its Apache equivalents, how to derive the E2E file from the production one and
+  record the derivation, the reduced test bed that exercises the edge alone and the propositions it
+  does not cover, and the measured record of what happens when the container boundary is crossed
+  (§5)
+
 - [environment-and-ports.md](./references/environment-and-ports.md) — the dedicated environment name
   and how its standalone `.env.<stack-env>` is authored, the table of values that must differ per
   environment, the dotenv/`process.env` precedence rule with the merge that causes it, the
