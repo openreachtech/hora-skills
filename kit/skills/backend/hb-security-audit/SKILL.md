@@ -105,3 +105,6 @@ Offer these when relevant (report as findings / PASS / N/A like the rest):
 End with: (1) the summary table (every check → verdict), (2) findings most-severe-first, (3) the
 count by severity, and (4) a one-line reminder that nothing was changed. If asked, offer to hand
 specific findings to a fix workflow — but this skill itself never modifies code.
+
+Write the report in the language the reader is using, as the documentation convention requires of
+any document generated for a reader.
