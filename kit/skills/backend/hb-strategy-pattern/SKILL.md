@@ -37,7 +37,7 @@ processor directory; no existing file changes.
   and reviewable.
 - **Why auto-discovery**: if the loader imported each subclass by name, the "chain" would just
   move into the import list. Loading every class in the directory
-  ([3](#3-bulk-loader-auto-discover-and-pick-by-getter)) makes the directory itself the
+  ([4](#4-bulk-loader-auto-discover-and-pick-by-getter)) makes the directory itself the
   registry.
 - **Why dispatch by getter**: the key a processor handles is part of that processor's contract,
   so it lives **on the subclass** as an overridden getter — not in a name field passed from
