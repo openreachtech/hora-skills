@@ -1,6 +1,6 @@
 # Skills
 
-このリポジトリに収録されている全 111 件のスキルの一覧と、それぞれの概要(1〜2 行)です。
+このリポジトリに収録されている全 112 件のスキルの一覧と、それぞれの概要(1〜2 行)です。
 
 各スキルは `kit/skills/<domain>/<name>/` に置かれ、ドメインディレクトリの直下 1 段に並びます。このフォルダ名がそのスキルの `name:` であり、インストール先のフォルダ名でもあります。したがって下表の**スキル**だけを見れば足ります。`/name` として呼び出す名前であり、インストール後に `.claude/skills/` に現れる名前であり、ソースの置き場所でもあります。先頭 2 文字はドメインを表します。配置と命名の規約は [flatten ビルドの規約](https://github.com/openreachtech/hora-skills/blob/main/.claude/skills/flatten/SKILL.md) を参照してください。各スキルの完全な内容は、それぞれの `SKILL.md` にあります。
 
@@ -48,7 +48,7 @@
 
 ## `backend` — `hb-*`
 
-30 件。いずれも renchan ベースの Node バックエンド向けです。
+31 件。いずれも renchan ベースの Node バックエンド向けです。
 
 | スキル (= コマンド) | 概要 |
 | :-- | :-- |
@@ -56,6 +56,7 @@
 | `hb-ai-agent-structure` | `mentsu-agent-loop-core` 上にアプリ側 AI エージェントを構成します。`app/agents/<name>/` に `ProceduralAgentLoop` サブクラスとステップごとの `BaseAgentAction` サブクラスを置きます。 |
 | `hb-ai-prompt-document-store` | エージェントの設定・指示文・ドキュメント・ツールスキーマをコードに埋め込まず DB に保持し、リクエスト時にプロンプトへ組み立て、バックアップテーブルでバージョン管理します。 |
 | `hb-backend-testing` | テストファイルの配置(DB 書き込みなしは `tests/__tests__`、ありは `tests/_orders`)、DB 書き込みテストの実行順の保証、実行方法、テストとダブルの純粋性ルール。 |
+| `hb-bank-id` | 1 つのバックエンドリポジトリ内で、依頼者ごとに排他的で衝突しない行 id プレフィックスを割り当てる。シーダーやテストフィクスチャで 2 人の書き手が同じ明示 id を選ばないようにする。 |
 | `hb-build-e2e-test-environment` | `e2e/docker/` 配下の手動操作用ローカル E2E 環境の構築・実行・デバッグ。コンテナ構成、本番にリバースプロキシがある場合はその層、専用シードセット、`up`/`start`/`seed`/`clean`/`down` スクリプト。 |
 | `hb-constant-definition` | アプリ定数は必ず 2 ファイルで定義します。`constants/` の CommonJS マスター(単一の情報源)と、それを再 export する `app/constants/` の ESM ブリッジ。 |
 | `hb-cookie-authentication` | renchan バックエンドのアクター別 Cookie 認証。認証情報とトークンのモデル、アクセストークンとローテーションするリフレッシュトークン(再利用検知つき)、HttpOnly のリフレッシュ Cookie、signIn / signUp / signOut / renewAccessToken の各リゾルバー。 |

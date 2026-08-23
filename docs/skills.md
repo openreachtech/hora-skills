@@ -1,6 +1,6 @@
 # Skills
 
-A catalog of every skill in this repository — 111 in total — with a one- or two-line summary each.
+A catalog of every skill in this repository — 112 in total — with a one- or two-line summary each.
 
 Each skill lives at `kit/skills/<domain>/<name>/`, one level under its domain directory, and that folder name is both the skill's `name:` and the folder name it is installed under. **Skill** below is therefore all you need: it is what you invoke as `/name`, what appears under `.claude/skills/` once installed, and where the source sits. The two-character prefix is the domain — see [the flatten build convention](https://github.com/openreachtech/hora-skills/blob/main/.claude/skills/flatten/SKILL.md) for the layout and the naming rules. Full guidance for any skill is in its own `SKILL.md`.
 
@@ -48,7 +48,7 @@ Each skill lives at `kit/skills/<domain>/<name>/`, one level under its domain di
 
 ## `backend` — `hb-*`
 
-30 skills, all for renchan-based Node backends.
+31 skills, all for renchan-based Node backends.
 
 | Skill (= Command) | Summary |
 | :-- | :-- |
@@ -56,6 +56,7 @@ Each skill lives at `kit/skills/<domain>/<name>/`, one level under its domain di
 | `hb-ai-agent-structure` | Structure an app-side AI agent on `mentsu-agent-loop-core`: a `ProceduralAgentLoop` subclass plus per-step `BaseAgentAction` subclasses under `app/agents/<name>/`. |
 | `hb-ai-prompt-document-store` | Hold agent config, instructions, documents and tool schemas in the database rather than in code, assembling the runtime prompt at request time and versioning through backup tables. |
 | `hb-backend-testing` | Where a test file goes (`tests/__tests__` vs `tests/_orders`), how run order among DB-writing tests is guaranteed, how to run the suite, and the purity rules for tests and doubles. |
+| `hb-bank-id` | Allocate an exclusive, collision-free row-id prefix for a requester inside one backend repository, so two writers never pick the same explicit id in seeders and test fixtures. |
 | `hb-build-e2e-test-environment` | Build, run and debug the hand-operated local E2E stack under `e2e/docker/` — its containers, the reverse-proxy edge where production has one, its seed set, and the `up`/`start`/`seed`/`clean`/`down` scripts. |
 | `hb-constant-definition` | Define an application constant as two files: a CommonJS master under `constants/` (the source of truth) plus an ESM bridge under `app/constants/` that re-exports it. |
 | `hb-cookie-authentication` | Cookie-based authentication for a renchan backend, per actor — the credential and token models, access plus rotating refresh tokens with reuse detection, the HttpOnly refresh cookie, and the signIn / signUp / signOut / renewAccessToken resolvers. |
