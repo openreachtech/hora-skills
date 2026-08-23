@@ -6,12 +6,12 @@ A distribution package of Claude Code skills for developing with Hora Kit.
 
 This package ships **skills only** — there is no library to `import`, and the one executable it carries exists to install those skills. A skill is a directory holding a `SKILL.md`, plus optional `references/` and `scripts/`, that Claude Code loads and invokes as `/<name>`. Installing this package into a repository puts the conventions and procedures Open Reach Tech develops with in front of the agent working on that repository.
 
-111 skills are distributed across three domains. The two-character prefix on every name is the domain, so a reader looking at one flat list of skills can tell at a glance which came from this package and where each belongs:
+112 skills are distributed across three domains. The two-character prefix on every name is the domain, so a reader looking at one flat list of skills can tell at a glance which came from this package and where each belongs:
 
 | Prefix | Domain | Skills | What it holds |
 | :-- | :-- | --: | :-- |
 | `hc-` | `core` | 35 | Conventions and procedures that apply to any project, regardless of stack |
-| `hb-` | `backend` | 30 | renchan-based Node backends |
+| `hb-` | `backend` | 31 | renchan-based Node backends |
 | `hf-` | `frontend` | 46 | Furo/Nuxt apps |
 
 [**Skill catalog**](https://github.com/openreachtech/hora-skills/blob/main/docs/skills.md) ([日本語](https://github.com/openreachtech/hora-skills/blob/main/docs/skills.ja.md)) — every skill in this package with a one- or two-line summary, listed by the command name it is invoked by.
