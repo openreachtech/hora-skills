@@ -9,6 +9,7 @@ describe('SKILL_DOMAIN_PREFIX', () => {
         core: 'hc',
         backend: 'hb',
         frontend: 'hf',
+        support: 'hs',
       }
 
       const received = SKILL_DOMAIN_PREFIX
@@ -39,6 +40,12 @@ describe('SKILL_DOMAIN_PREFIX', () => {
           domain: SKILL_DOMAIN.FRONTEND,
         },
         expected: 'hf',
+      },
+      {
+        input: {
+          domain: SKILL_DOMAIN.SUPPORT,
+        },
+        expected: 'hs',
       },
     ]
 

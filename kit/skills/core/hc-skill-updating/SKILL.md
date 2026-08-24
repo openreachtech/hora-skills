@@ -1,6 +1,6 @@
 ---
 name: hc-skill-updating
-description: "Conventions for creating new skills (SKILL.md) or updating existing ones. Defines how to name a skill (the domain prefix, and the folder name that must equal `name:`), where the folder goes among the three domain directories, and the conventions to follow when writing the body and the description."
+description: "Conventions for creating new skills (SKILL.md) or updating existing ones. Defines how to name a skill (the domain prefix, and the folder name that must equal `name:`), where the folder goes among the four domain directories, and the conventions to follow when writing the body and the description."
 ---
 
 # Skill Updating
@@ -16,13 +16,13 @@ skill's own folder name and the folder name it installs as. **One string, three 
 for the reader who sees a flat list of skills and never sees this repository.
 
 - **The name begins with its domain's prefix**: `hc-` for a skill under `core/`, `hb-` under
-  `backend/`, `hf-` under `frontend/`. The prefix is what tells a reader of that flat list which
-  skills came from this library, and which domain each belongs to.
+  `backend/`, `hf-` under `frontend/`, `hs-` under `support/`. The prefix is what tells a reader of
+  that flat list which skills came from this library, and which domain each belongs to.
 - **`name:` and the folder name must be the same string.** They are not two facts to keep in sync
   by habit: the build that produces the installable output and the repository's skill-name audit
   both refuse to proceed on a mismatch.
 - **The name is 4–64 characters of `[a-z0-9-]`**, of which the prefix takes 3. A single case only.
-- **Uniqueness needs no thought.** One directory cannot hold two folders of one name, and the three
+- **Uniqueness needs no thought.** One directory cannot hold two folders of one name, and the four
   prefixes cannot overlap, so no two skills in the library can collide.
 - **Renaming is a breaking change** for repositories that already invoke the skill, so choose
   deliberately the first time. Moving a skill to another domain is a rename too — the prefix
@@ -63,14 +63,15 @@ After the prefix, name the subject, not the source tree:
   executable helpers under `scripts/`.
 - A skill directory holds no `SKILL.md` below its own top level. Its subdirectories are its own
   files, never more skills.
-- There are exactly three domain directories, and a skill folder sits **directly** inside one of
+- There are exactly four domain directories, and a skill folder sits **directly** inside one of
   them — one level, with no grouping directories in between:
 
 ```
 lib/skills/
 ├── core/      hc-*   Common/foundational (conventions applied across backend/frontend)
 ├── backend/   hb-*   Backend-specific
-└── frontend/  hf-*   Frontend-specific
+├── frontend/  hf-*   Frontend-specific
+└── support/   hs-*   Supplementary skills that assist the development workflow
 ```
 
 So every skill in the library is at `lib/skills/<domain>/<name>/SKILL.md`, and nowhere else. There
@@ -81,6 +82,8 @@ have said belongs in the name instead, where the reader of an installed skill ca
 
 - Common conventions that do not depend on a specific domain go under `core/`.
 - Conventions specific to a particular domain go under that domain's directory.
+- Skills that assist the development workflow without defining an implementation convention —
+  explainers, generators, other tooling around the work itself — go under `support/`.
 - The prefix must match the directory. Deciding the domain and deciding the first three characters
   of the name are the same decision.
 

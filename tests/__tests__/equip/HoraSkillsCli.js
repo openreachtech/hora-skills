@@ -973,6 +973,7 @@ describe('HoraSkillsCli', () => {
           'core',
           'backend',
           'frontend',
+          'support',
         ]
 
         const cli = HoraSkillsCli.create({

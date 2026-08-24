@@ -6,13 +6,14 @@ A distribution package of Claude Code skills for developing with Hora Kit.
 
 This package ships **skills only** — there is no library to `import`, and the one executable it carries exists to install those skills. A skill is a directory holding a `SKILL.md`, plus optional `references/` and `scripts/`, that Claude Code loads and invokes as `/<name>`. Installing this package into a repository puts the conventions and procedures Open Reach Tech develops with in front of the agent working on that repository.
 
-112 skills are distributed across three domains. The two-character prefix on every name is the domain, so a reader looking at one flat list of skills can tell at a glance which came from this package and where each belongs:
+114 skills are distributed across four domains. The two-character prefix on every name is the domain, so a reader looking at one flat list of skills can tell at a glance which came from this package and where each belongs:
 
 | Prefix | Domain | Skills | What it holds |
 | :-- | :-- | --: | :-- |
 | `hc-` | `core` | 35 | Conventions and procedures that apply to any project, regardless of stack |
 | `hb-` | `backend` | 31 | renchan-based Node backends |
 | `hf-` | `frontend` | 46 | Furo/Nuxt apps |
+| `hs-` | `support` | 2 | Supplementary skills that assist the development workflow rather than define implementation conventions |
 
 [**Skill catalog**](https://github.com/openreachtech/hora-skills/blob/main/docs/skills.md) ([日本語](https://github.com/openreachtech/hora-skills/blob/main/docs/skills.ja.md)) — every skill in this package with a one- or two-line summary, listed by the command name it is invoked by.
 
@@ -52,7 +53,7 @@ Where the package is not a dependency at all — a one-off, or a repository that
 
 ## Usage
 
-The skills land in your repository's `.claude/skills/`. Claude Code discovers them from there, and each becomes invocable by its own name — `/hc-naming`, `/hb-query-resolver`, `/hf-cp-table`. Installed skills sit side by side with your repository's own, in one flat list, which is what the `hc-`/`hb-`/`hf-` prefix is for.
+The skills land in your repository's `.claude/skills/`. Claude Code discovers them from there, and each becomes invocable by its own name — `/hc-naming`, `/hb-query-resolver`, `/hf-cp-table`. Installed skills sit side by side with your repository's own, in one flat list, which is what the `hc-`/`hb-`/`hf-`/`hs-` prefix is for.
 
 ### Selecting domains
 
@@ -92,6 +93,7 @@ The installed skills are this package's build output rather than source of your 
 .claude/skills/hc-*/
 .claude/skills/hb-*/
 .claude/skills/hf-*/
+.claude/skills/hs-*/
 .hora/
 ```
 
@@ -103,7 +105,7 @@ npx --no hora-skills install
 
 `install` is repeatable: it removes what the previous run installed — recorded in `.hora/equip-skills.json` — along with any folder named after a skill this package distributes, before copying the current selection. A renamed or deselected skill therefore leaves nothing behind, and a repository that had copied `dist/skills/` by hand is tidied up on its first run.
 
-A skill your own repository authored is left alone, as long as its name is not one this package distributes. Carrying the `hc-`/`hb-`/`hf-` prefix is not enough to put it at risk — `hc-own-skill` is untouched — but naming it exactly after a distributed skill hands that name over to this package.
+A skill your own repository authored is left alone, as long as its name is not one this package distributes. Carrying the `hc-`/`hb-`/`hf-`/`hs-` prefix is not enough to put it at risk — `hc-own-skill` is untouched — but naming it exactly after a distributed skill hands that name over to this package.
 
 ### Commands
 
