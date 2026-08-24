@@ -1,7 +1,7 @@
 # Seed data for the E2E environment
 
 The two seeder directories the E2E stack owns, why they are separate from the unit-test fixtures, how
-their ids are allocated, and the artifacts a seeder cannot carry. Referenced from §5 of
+their ids are allocated, and the artifacts a seeder cannot carry. Referenced from §6 of
 [SKILL.md](../SKILL.md). `<stack-env>` stands for the E2E stack's own environment name —
 `live-local` is the recommended name, giving `live-local-master/` and `live-local/`; ids,
 directory names and values are **illustrative examples**.

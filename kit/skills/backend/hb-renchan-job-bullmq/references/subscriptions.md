@@ -25,7 +25,7 @@ the lifecycle hooks into publishes: `onJobProgress` → `publishProgress({ topic
 `onJobCompleted` → `{ phase: 'done', payload: result }`, `onJobFailed` → an error event. It builds the
 `topic` from `channel` + `buildScope({ jobModel })`.
 
-This repo's app base [BaseContentGenerationJobWorker.js](../../../../app/BaseContentGenerationJobWorker.js)
+This repo's app base `BaseContentGenerationJobWorker.js`
 customizes it:
 
 ```js
@@ -75,7 +75,7 @@ calls `super` to publish.)
 ## Subscribe side (GraphQL)
 
 The GraphQL server resolves the subscription with a **matching channel and scope**
-([OnReportProgressSubscriptionResolver.js](../../../../server/graphql/resolvers/customer/actual/subscriptions/OnReportProgressSubscriptionResolver.js)):
+(`OnReportProgressSubscriptionResolver.js`):
 
 ```js
 export default class OnReportProgressSubscriptionResolver extends BaseAgentProgressSubscriptionResolver {

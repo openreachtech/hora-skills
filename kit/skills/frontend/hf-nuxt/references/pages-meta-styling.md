@@ -8,7 +8,7 @@ Imported from `#imports`. Used for:
 - `alias: '/'` — dashboard aliases the root.
 - `$furo: { pageTitle }` and a custom `headerTitle`.
 
-**Middleware is not defined per page** in a Furo app — no `pages/**` sets `middleware:` (see [middleware](references/middleware-structure.md) for the global approach).
+**Middleware is not defined per page** in a Furo app — no `pages/**` sets `middleware:` (see [middleware](./middleware-structure.md) for the global approach).
 
 ## Styling
 

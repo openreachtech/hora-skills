@@ -12,7 +12,7 @@ description: >
 
 `@openreachtech/renchan-job-bullmq` is this repo's job framework: **BullMQ queues on Redis**, wrapped
 in renchan base classes. A job is a small **template of class files in one directory** under
-`app/jobs/<job-name>/`. Two long-running processes share **one Redis** ([pm2.config.cjs](../../../pm2.config.cjs)):
+`app/jobs/<job-name>/`. Two long-running processes share **one Redis** (`pm2.config.cjs`):
 
 - **GraphQL API** (`server/index.js`) — handles requests and **enqueues** jobs (producer).
 - **Job Daemon** (`scripts/startJobDaemon.js`) — **runs** the workers (consumer) and
@@ -84,13 +84,13 @@ Full classes, hooks, the base-app-dispatcher pattern, and the enqueue paths are 
 
 ## 2. Engine / Share / Context / RedisConnection
 
-- **Engine** ([ContentGenerationJobEngine.js](../../../app/ContentGenerationJobEngine.js)) —
+- **Engine** (`ContentGenerationJobEngine.js`) —
   the one config object: `config` = `{ workersPath, schedulersPath, redisConfig }` (both paths point
   at `app/jobs`), plus `ShareCtor` / `ContextCtor`, error codes, log path. `createAsync({ subscriptionBroker })`
   injects the progress broker (§4).
 - **Share** — per-**process** DI (holds `subscriptionBroker` or `null`, `env`, `timber`, …).
 - **Context** — per-**job** DI, created for each run and passed to `executeJob`.
-- **RedisConnection** ([app/queue/RedisConnection.js](../../../app/queue/RedisConnection.js)) —
+- **RedisConnection** (`app/queue/RedisConnection.js`) —
   `generateConnectionOptions()` for BullMQ (**`maxRetriesPerRequest: null` required**) and
   `generatePubSubOptions()` for the broker. **API and Daemon must share one Redis.**
 
@@ -103,16 +103,16 @@ Details and the package-exports table are in [engine-and-infra.md](./references/
 Two boot shapes:
 
 - **Simple** (no progress broker): `JobWorkersDaemon.createAsync({ EngineCtor }).then(daemon => daemon.startDaemon())`.
-- **With a broker** (this repo, [scripts/startJobDaemon.js](../../../scripts/startJobDaemon.js)):
+- **With a broker** (this repo, `scripts/startJobDaemon.js`):
   build a `SubscriptionBroker`, inject it via `Engine.createAsync({ subscriptionBroker })`, then
   `JobWorkersDaemon.loadWorkerCtors({ engine })` → `.create({ engine, WorkerCtors }).startDaemon()`.
 
-**Scheduler registration** is a **one-shot** script ([scripts/start-schedule.js](../../../scripts/start-schedule.js)):
+**Scheduler registration** is a **one-shot** script (`scripts/start-schedule.js`):
 `SchedulerService.createAsync({ EngineCtor })` → `startAllSchedulers()` → exit. It writes repeatable
 jobs to Redis; the Daemon consumes them. `stopAllSchedulers()` removes them without stopping the
 Daemon.
 
-**pm2** ([pm2.config.cjs](../../../pm2.config.cjs)) runs `GraphQL API` and `Job Daemon`.
+**pm2** (`pm2.config.cjs`) runs `GraphQL API` and `Job Daemon`.
 
 Both boot paths, cron **and interval** schedulers, and the start/stop scripts are in
 [daemon-and-scheduler.md](./references/daemon-and-scheduler.md).
@@ -125,10 +125,10 @@ Redis PubSub broker.
 
 - The Daemon injects the broker (§3, Path B); enqueue-only processes pass none → publish is a no-op.
 - AI workers get this automatically from `BaseAgentJobWorker`; the app base
-  [BaseContentGenerationJobWorker.js](../../../app/BaseContentGenerationJobWorker.js) sets
+  `BaseContentGenerationJobWorker.js` sets
   `channel = 'reportProgress'` and `buildScope` (`accessToken` else `jobId`).
 - The subscriber
-  ([OnReportProgressSubscriptionResolver.js](../../../server/graphql/resolvers/customer/actual/subscriptions/OnReportProgressSubscriptionResolver.js))
+  (`OnReportProgressSubscriptionResolver.js`)
   must match the channel and scope. This is why the public-lp queue body carries `accessToken` (§5).
 
 The publish/subscribe wiring and checklist are in [subscriptions.md](./references/subscriptions.md).
@@ -154,7 +154,7 @@ Details and the directory diagram are in [queues.md](./references/queues.md).
   (`{ millisecond, isImmediately }`), listed in `SchedulerService.collectScheduleInputs()` with a
   `schedulerId` matching the scheduler class. See [daemon-and-scheduler.md](./references/daemon-and-scheduler.md).
 - **Connection reuse** — `JobDispatcherProvider`
-  ([app/tools/JobDispatcherProvider.js](../../../app/tools/JobDispatcherProvider.js)) caches one
+  (`app/tools/JobDispatcherProvider.js`) caches one
   Dispatcher per `DispatcherCtor` and dispatches with `keepsConnection: true`; the request Share
   holds one, torn down on process exit. Prefer it over `Dispatcher.createAsync()` per request.
 - **Retries & idempotency** — set `attempts` in `optionHash`; make `executeJob` idempotent (BullMQ may

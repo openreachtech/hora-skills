@@ -168,6 +168,9 @@ Element-level accessibility, contrast, token discipline and visual craft belong 
 convention. Do not re-derive them here — hand those findings over, and keep this report on capability,
 reachability, and truthfulness.
 
+Write the report in the language the reader is using, as the documentation convention requires of
+any document generated for a reader.
+
 ## What this skill does not decide
 
 - Whether the code is well written. That is the coding conventions' business.
