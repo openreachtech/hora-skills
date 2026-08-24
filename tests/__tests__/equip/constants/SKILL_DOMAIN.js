@@ -7,6 +7,7 @@ describe('SKILL_DOMAIN', () => {
         CORE: 'core',
         BACKEND: 'backend',
         FRONTEND: 'frontend',
+        SUPPORT: 'support',
       }
 
       const received = SKILL_DOMAIN
@@ -37,6 +38,12 @@ describe('SKILL_DOMAIN', () => {
           domain: SKILL_DOMAIN.FRONTEND,
         },
         expected: 'frontend',
+      },
+      {
+        input: {
+          domain: SKILL_DOMAIN.SUPPORT,
+        },
+        expected: 'support',
       },
     ]
 
