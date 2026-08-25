@@ -4,12 +4,13 @@ import { fileURLToPath } from 'node:url'
 
 const repoRoot = fileURLToPath(new URL('../../../../', import.meta.url))
 const sourceRoot = join(repoRoot, 'kit/skills')
-const namePattern = /^h[cbf]-[a-z0-9-]{1,61}$/u
+const namePattern = /^h[cbfs]-[a-z0-9-]{1,61}$/u
 
 const DOMAIN_PREFIX = {
   core: 'hc',
   backend: 'hb',
   frontend: 'hf',
+  support: 'hs',
 }
 
 /**

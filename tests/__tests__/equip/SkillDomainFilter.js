@@ -238,6 +238,7 @@ describe('SkillDomainFilter', () => {
               'core',
               'backend',
               'frontend',
+              'support',
             ],
           },
           expected: [],

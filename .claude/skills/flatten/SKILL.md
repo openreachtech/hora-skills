@@ -1,6 +1,6 @@
 ---
 name: flatten
-description: "Repository-specific build convention: kit/skills/ holds exactly three domain directories (core/, backend/, frontend/), each containing one level of skill folders named hc-*, hb-* or hf-*, and the build copies those folders into dist/skills/ unchanged — dropping only the domain level — to produce the flat .claude/skills/ layout that consuming repositories install. Use when rebuilding the dist/ output, or when adding, renaming or placing a skill under kit/skills/."
+description: "Repository-specific build convention: kit/skills/ holds exactly four domain directories (core/, backend/, frontend/, support/), each containing one level of skill folders named hc-*, hb-*, hf-* or hs-*, and the build copies those folders into dist/skills/ unchanged — dropping only the domain level — to produce the flat .claude/skills/ layout that consuming repositories install. Use when rebuilding the dist/ output, or when adding, renaming or placing a skill under kit/skills/."
 ---
 
 # Flatten
@@ -11,13 +11,14 @@ Consuming repositories install skills as a single flat list directly under `.cla
 
 ## Source layout
 
-`kit/skills/` contains exactly three directories, and nothing else:
+`kit/skills/` contains exactly four directories, and nothing else:
 
 | Domain directory | Prefix | What it holds |
 |---|---|---|
 | `core/` | `hc-` | Conventions and procedures that apply to any project, regardless of stack |
 | `backend/` | `hb-` | renchan-based Node backends |
 | `frontend/` | `hf-` | Furo/Nuxt apps |
+| `support/` | `hs-` | Supplementary skills that assist the development workflow rather than define implementation conventions |
 
 Each domain directory contains skill folders and nothing else. Every skill is therefore at exactly this depth:
 
@@ -35,9 +36,9 @@ A skill folder's name is the skill's `name:`, and the folder name it gets under 
 kit/skills/frontend/hf-cp-table/   name: hf-cp-table   →   dist/skills/hf-cp-table/
 ```
 
-The prefix is part of the name: the skill is invoked as `/hf-cp-table`. The `h` stands for **hora**, from Hora Kit — the Open Reach Tech product this skill library is part of — and the second character is the domain: `c` for `core`, `b` for `backend`, `f` for `frontend`.
+The prefix is part of the name: the skill is invoked as `/hf-cp-table`. The `h` stands for **hora**, from Hora Kit — the Open Reach Tech product this skill library is part of — and the second character is the domain: `c` for `core`, `b` for `backend`, `f` for `frontend`, `s` for `support`.
 
-Two characters buy two things. A consuming repository installs these skills side by side with its own, in one flat list, and the prefix is what tells a reader at a glance which skills came from this library and which domain each belongs to. And because the three prefixes are mutually exclusive and a filesystem cannot hold two folders of one name in one directory, no two skills in the library can end up with the same name — the flat namespace is protected by the source layout itself, with nothing to check.
+Two characters buy two things. A consuming repository installs these skills side by side with its own, in one flat list, and the prefix is what tells a reader at a glance which skills came from this library and which domain each belongs to. And because the four prefixes are mutually exclusive and a filesystem cannot hold two folders of one name in one directory, no two skills in the library can end up with the same name — the flat namespace is protected by the source layout itself, with nothing to check.
 
 ## The build
 
@@ -56,11 +57,11 @@ Validation runs before the deletion, so a source tree that cannot produce a vali
 
 | Aborts the build | Why |
 |---|---|
-| An entry directly under `kit/skills/` that is not one of the three domain directories | It has no domain, so no prefix and no place in the output. |
+| An entry directly under `kit/skills/` that is not one of the four domain directories | It has no domain, so no prefix and no place in the output. |
 | A non-directory entry directly under a domain | Only skill folders belong there. |
 | A skill folder with no `SKILL.md` | There is nothing to install. |
 | A `SKILL.md` below a skill folder's top level | The one-level layout is the guarantee that the folder name is the skill name; a nested skill would have no name of its own. |
-| A folder name that is not `hc-`/`hb-`/`hf-` followed by 1–61 characters of `[a-z0-9-]` | The name is joined onto `dist/skills/` as a path segment, so a value containing `/` or `..` would put the folder somewhere other than directly under `dist/skills/`. 64 characters is the limit an installed skill name has to stay within, which the 3-character prefix leaves 61 of. |
+| A folder name that is not `hc-`/`hb-`/`hf-`/`hs-` followed by 1–61 characters of `[a-z0-9-]` | The name is joined onto `dist/skills/` as a path segment, so a value containing `/` or `..` would put the folder somewhere other than directly under `dist/skills/`. 64 characters is the limit an installed skill name has to stay within, which the 3-character prefix leaves 61 of. |
 | A prefix that does not match the folder's domain (`hb-` under `frontend/`) | The prefix is the domain, so a mismatch makes the name lie about where the skill lives. |
 | A `SKILL.md` with no parsable `name:` | Nothing declares what the installed skill is called. |
 | A `name:` that differs from its folder name | This is the check the whole scheme rests on. The two are one string by convention; only an enforced comparison keeps them one string in fact. |

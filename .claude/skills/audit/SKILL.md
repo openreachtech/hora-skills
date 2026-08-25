@@ -1,22 +1,22 @@
 ---
 name: audit
-description: "Repository-specific check that every skill under kit/skills/ sits one level below its domain directory, carries the domain's hc-/hb-/hf- prefix, and declares a `name:` equal to its own folder name — the same rules the flatten build aborts on, reported all at once with a non-zero exit for CI. Use before committing a new, renamed or moved skill. It reports only; it renames and moves nothing, and it checks no frontmatter field other than `name:`."
+description: "Repository-specific check that every skill under kit/skills/ sits one level below its domain directory, carries the domain's hc-/hb-/hf-/hs- prefix, and declares a `name:` equal to its own folder name — the same rules the flatten build aborts on, reported all at once with a non-zero exit for CI. Use before committing a new, renamed or moved skill. It reports only; it renames and moves nothing, and it checks no frontmatter field other than `name:`."
 ---
 
 # Audit
 
-A skill's folder name is its `name:` and the folder name it is installed under — one string, three places. Consuming repositories install every skill of this library side by side under `.claude/skills/`, so all of those names live in **one flat namespace**, and the source layout is what protects it: three domain directories, one level of skill folders inside each, prefixes (`hc-`, `hb-`, `hf-`) that cannot overlap between domains, and a filesystem that will not hold two folders of one name in one directory.
+A skill's folder name is its `name:` and the folder name it is installed under — one string, three places. Consuming repositories install every skill of this library side by side under `.claude/skills/`, so all of those names live in **one flat namespace**, and the source layout is what protects it: four domain directories, one level of skill folders inside each, prefixes (`hc-`, `hb-`, `hf-`, `hs-`) that cannot overlap between domains, and a filesystem that will not hold two folders of one name in one directory.
 
 That protection is only as real as the layout. A skill placed one directory deeper, a `name:` edited without renaming its folder, a folder renamed without editing `name:` — none of these look wrong in the file they occur in, and each breaks the one guarantee the whole scheme rests on. This audit makes the state of the layout visible from outside any single file.
 
 ## What is checked
 
-For every entry directly under `kit/skills/core/`, `kit/skills/backend/` and `kit/skills/frontend/`:
+For every entry directly under `kit/skills/core/`, `kit/skills/backend/`, `kit/skills/frontend/` and `kit/skills/support/`:
 
-- **A domain directory that is missing, or an entry directly under `kit/skills/` that is not one of the three, is a failure.** There is no fourth domain, and an entry outside the three has no prefix and no place in the output.
+- **A domain directory that is missing, or an entry directly under `kit/skills/` that is not one of the four, is a failure.** There is no fifth domain, and an entry outside the four has no prefix and no place in the output.
 - **An entry under a domain that is not a directory, or a directory with no `SKILL.md` directly inside it, is a failure.** Only skill folders belong there, and a folder with no `SKILL.md` installs nothing.
 - **A `SKILL.md` anywhere below a skill folder's own top level is a failure.** The one-level layout is what makes the folder name the skill name; a skill nested inside another has no name of its own. A skill folder's `references/` and `scripts/` subdirectories are its own files, never more skills.
-- **A folder name that is not `hc-`/`hb-`/`hf-` followed by 1–61 characters of `[a-z0-9-]` is a failure.** The name is joined onto `dist/skills/` as a path segment, so a value carrying `/` or `..` would land the folder somewhere else entirely; 64 characters is the limit an installed skill name has to stay within, of which the prefix takes 3. A single case keeps two names from folding onto one folder on a case-insensitive filesystem (macOS, Windows default).
+- **A folder name that is not `hc-`/`hb-`/`hf-`/`hs-` followed by 1–61 characters of `[a-z0-9-]` is a failure.** The name is joined onto `dist/skills/` as a path segment, so a value carrying `/` or `..` would land the folder somewhere else entirely; 64 characters is the limit an installed skill name has to stay within, of which the prefix takes 3. A single case keeps two names from folding onto one folder on a case-insensitive filesystem (macOS, Windows default).
 - **A prefix that does not match the folder's domain is a failure** — `hb-` under `frontend/` makes the name lie about where the skill lives, and it is the prefix, not the directory, that a consuming repository ever sees.
 - **A `SKILL.md` with no parsable `name:` is a failure**, and **a `name:` that differs from its folder name is a failure.** This last one is the check everything else rests on: the two are one string by convention, and only an enforced comparison keeps them one string in fact.
 
