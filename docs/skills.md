@@ -1,12 +1,12 @@
 # Skills
 
-A catalog of every skill in this repository — 114 in total — with a one- or two-line summary each.
+A catalog of every skill in this repository — 115 in total — with a one- or two-line summary each.
 
 Each skill lives at `kit/skills/<domain>/<name>/`, one level under its domain directory, and that folder name is both the skill's `name:` and the folder name it is installed under. **Skill** below is therefore all you need: it is what you invoke as `/name`, what appears under `.claude/skills/` once installed, and where the source sits. The two-character prefix is the domain — see [the flatten build convention](https://github.com/openreachtech/hora-skills/blob/main/.claude/skills/flatten/SKILL.md) for the layout and the naming rules. Full guidance for any skill is in its own `SKILL.md`.
 
 ## `core` — `hc-*`
 
-35 skills. Conventions and procedures that apply to any project, regardless of stack.
+36 skills. Conventions and procedures that apply to any project, regardless of stack.
 
 | Skill (= Command) | Summary |
 | :-- | :-- |
@@ -43,6 +43,7 @@ Each skill lives at `kit/skills/<domain>/<name>/`, one level under its domain di
 | `hc-scope` | Scope references among class members — `this` between static members, and `#get:Ctor` when referring from an instance to a static member. |
 | `hc-skill-updating` | Conventions for creating and updating skills — how to name one, placement rules, directory structure, and how to write a `SKILL.md`. |
 | `hc-statements` | Statements and control flow — no literal `undefined` in production code, higher-order functions over sequential processing, and ternary/`if` policies. |
+| `hc-test-cache` | Reuse a recorded test pass while a verification unit's inputs are unchanged — declaring the cache units, reading a cached run's MISS/REUSED lines, spot audit and exit codes, and when a record may not stand in for an execution. |
 | `hc-test-execution` | Run a project's tests and drive them to green without weakening them — nothing skipped, deleted, loosened or waited out to make the suite pass. |
 | `hc-workflows` | Development workflow rules — how to proceed with an implementation, and the steps always performed before committing and before completion. |
 
